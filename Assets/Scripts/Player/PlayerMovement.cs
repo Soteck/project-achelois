@@ -32,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
     public void FixedUpdate()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        
         Vector2 movementInput = inputActions.Player.Movement.ReadValue<Vector2>();
 
         if (isGrounded && velocity.y < 0f)
@@ -44,6 +45,7 @@ public class PlayerMovement : MonoBehaviour
 
 
         velocity.y += gravity * Time.deltaTime;
+        Debug.Log(isGrounded + " : " + velocity);
 
         controller.Move(velocity * Time.deltaTime);
     }

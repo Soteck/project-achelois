@@ -3,12 +3,7 @@ guid: 6ac9a4c70a0d3a44eb1ed7b4b3cbb5bc
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: models_weapons2_thompson_thompson_la_yd.tga
-    second: {fileID: 2100000, guid: 7a06a2b9e7e774f47ae64f7b1d8dcacf, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
