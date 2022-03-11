@@ -7,7 +7,6 @@ public class WeaponSwitcher : MonoBehaviour
 {
     public int selectedWeapon = 0;
     PlayerInputActions inputActions;
-    public UnityEngine.Animations.Rigging.Rig rig;
 
     public void Awake()
     {
@@ -83,13 +82,11 @@ public class WeaponSwitcher : MonoBehaviour
     private void SelectWeapon()
     {
         int i = 0;
-        rig.weight = 0.0f;
         foreach (Transform weapon in transform)
         {
             if (i == selectedWeapon)
             {
                 weapon.gameObject.SetActive(true);
-                rig.weight = 1.0f;
             }
             else
             {
