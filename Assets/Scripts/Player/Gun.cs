@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Gun : MonoBehaviour
+public class Gun : EquipableItem
 {
-
-    public Transform gripLocation;
 
     public float damage = 10f;
     public float range = 100f;
@@ -20,7 +18,6 @@ public class Gun : MonoBehaviour
     public int piuckupRounds = 30;
     public int magazineSize = 30;
 
-    public Camera fpsCam;
     public ParticleSystem muzzleFlash;
     public GameObject impactEffect;
     public AudioClip shootSound;
@@ -80,7 +77,7 @@ public class Gun : MonoBehaviour
             {
                 Reload();
             }
-        }
+        } 
 
     } 
 
@@ -94,7 +91,7 @@ public class Gun : MonoBehaviour
             shootSource.Play();
 
             RaycastHit hit;
-            if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out hit, range))
+            if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, range))
             {
                 Debug.Log(hit.transform.name);
 
