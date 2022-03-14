@@ -6,6 +6,7 @@ public class EquipableItem : MonoBehaviour
 {
     public Camera playerCamera;
     public string item_id;
+    public Animator animator;
 
 
     [Tooltip("Needed to save weapon pose")]

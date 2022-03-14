@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Gun : EquipableItem
 {
+    public GameObject magazine;
 
     public float damage = 10f;
     public float range = 100f;
@@ -137,6 +138,7 @@ public class Gun : EquipableItem
             if (storedRounds > 0)
             {
                 reloadSource.Play();
+                animator.SetTrigger("reload_weapon");
                 WaitReload();
             }
             else

@@ -141,6 +141,7 @@ public class EquipmentHolder : MonoBehaviour
     private EquipableItem InitEquipment(EquipableItem item)
     {
         item.playerCamera = playerCamera;
+        item.animator = animator;
         item.transform.parent = activeWeapon;
         item.transform.localPosition = Vector3.zero;
         item.transform.localRotation = Quaternion.identity;
