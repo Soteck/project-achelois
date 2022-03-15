@@ -174,12 +174,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 0}
   item_id: mp40
+  animator: {fileID: 0}
+  busy: 0
   weaponAnimation: {fileID: 7400000, guid: 1d27ffecca0a8344895694d6a92b7a7a, type: 2}
+  magazine: {fileID: 0}
   damage: 10
   range: 100
   fireRate: 8
   impactForce: 30
-  reloadTime: 2.5
+  reloadTime: 2
   autoReload: 1
   pickupStoredRounds: 150
   piuckupRounds: 30
@@ -202,19 +205,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff40b4156d87bea489a89f47c4fe359b, type: 3}
       propertyPath: m_LocalScale.x
-      value: 2.5
+      value: 0.024
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff40b4156d87bea489a89f47c4fe359b, type: 3}
       propertyPath: m_LocalScale.y
-      value: 2.4999998
+      value: 0.024
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff40b4156d87bea489a89f47c4fe359b, type: 3}
       propertyPath: m_LocalScale.z
-      value: 2.5
+      value: 0.024
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff40b4156d87bea489a89f47c4fe359b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff40b4156d87bea489a89f47c4fe359b, type: 3}
       propertyPath: m_LocalPosition.y
@@ -222,27 +225,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff40b4156d87bea489a89f47c4fe359b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.004
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff40b4156d87bea489a89f47c4fe359b, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.5
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff40b4156d87bea489a89f47c4fe359b, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff40b4156d87bea489a89f47c4fe359b, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.5
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff40b4156d87bea489a89f47c4fe359b, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff40b4156d87bea489a89f47c4fe359b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -90
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff40b4156d87bea489a89f47c4fe359b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -256,10 +259,18 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 9836ffa6418488f4eb4cc523cacf9c32, type: 2}
+    - target: {fileID: 866949833636953203, guid: ff40b4156d87bea489a89f47c4fe359b, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 9836ffa6418488f4eb4cc523cacf9c32, type: 2}
     - target: {fileID: 919132149155446097, guid: ff40b4156d87bea489a89f47c4fe359b, type: 3}
       propertyPath: m_Name
       value: body
       objectReference: {fileID: 0}
+    - target: {fileID: 1959773391973611691, guid: ff40b4156d87bea489a89f47c4fe359b, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 9836ffa6418488f4eb4cc523cacf9c32, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff40b4156d87bea489a89f47c4fe359b, type: 3}
 --- !u!4 &1495763776027292278 stripped

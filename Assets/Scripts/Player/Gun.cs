@@ -45,6 +45,7 @@ public class Gun : EquipableItem
         storedRounds = pickupStoredRounds;
 
     }
+    
     public AudioSource AddAudio(bool loop, bool playAwake, float vol, AudioClip clip)
     {
         AudioSource newAudio = gameObject.AddComponent<AudioSource>();
@@ -87,14 +88,14 @@ public class Gun : EquipableItem
         if (this.remainingRounds > 0)
         {
             remainingRounds--;
-            Debug.Log(remainingRounds + " " + storedRounds);
+            //Debug.Log(remainingRounds + " " + storedRounds);
             muzzleFlash.Play();
             shootSource.Play();
 
             RaycastHit hit;
             if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, range))
             {
-                Debug.Log(hit.transform.name);
+                //Debug.Log(hit.transform.name);
 
                 Target target = hit.transform.GetComponent<Target>();
                 if (target != null)
@@ -135,6 +136,7 @@ public class Gun : EquipableItem
     {
         if(remainingRounds < magazineSize)
         {
+            busy = true;
             if (storedRounds > 0)
             {
                 reloadSource.Play();
@@ -151,6 +153,7 @@ public class Gun : EquipableItem
 
     private void ReloadEnd()
     {
+        busy = false;
         int rounds = magazineSize;
         if(rounds > storedRounds)
         {

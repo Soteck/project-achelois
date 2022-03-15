@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEditor.Animations;
 
 public class EquipmentHolder : MonoBehaviour
 {
@@ -14,16 +12,13 @@ public class EquipmentHolder : MonoBehaviour
 
     public Transform crossHairTarget;
 
-    public UnityEngine.Animations.Rigging.Rig handIk;
-
 
     private PlayerInputActions inputActions;
     private List<EquipableItem> storedItems = new List<EquipableItem>();
     private EquipableItem activeItem;
 
 
-    Animator animator;
-    AnimatorOverrideController overrider;
+    public Animator animator;
     public void Awake()
     { 
         inputActions = new PlayerInputActions();
@@ -36,26 +31,47 @@ public class EquipmentHolder : MonoBehaviour
                 storedItems.Add(InitEquipment(item));
             }
         }
+
     }
 
     // Start is called before the first frame update
     public void Start()
     {
-        animator = GetComponent<Animator>();
-        overrider = new AnimatorOverrideController(animator.runtimeAnimatorController);
-        animator.runtimeAnimatorController = overrider;
-        handIk.weight = 0f;
-        animator.SetLayerWeight(1, 0.0f);
+        UnglitchAnimations();
         if (storedItems.Count > 0)
         {
             Equip(storedItems[0]);
         }
+        animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
+        animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
+        animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+        animator.updateMode = AnimatorUpdateMode.Normal;
+    }
+
+    public void UnglitchAnimations()
+    {
+        //Debug.Log(animator.isActiveAndEnabled);
+        //Invoke(nameof(UnglitchAnimations1), 0.005f);
+        //Invoke(nameof(UnglitchAnimations2), 0.010f);
+    }
+    public void UnglitchAnimations1()
+    {
+        animator.applyRootMotion = true;
+        //animator.updateMode = AnimatorUpdateMode.Normal;
+        //animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
+    }
+
+    public void UnglitchAnimations2()
+    {
+        animator.applyRootMotion = false;
+        //animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
+        //animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
     }
 
     public void Scroll(InputAction.CallbackContext context)
     {
-        Debug.Log(context);
-        if (context.phase == InputActionPhase.Performed)
+        //Debug.Log(context);
+        if(activeItem != null && !activeItem.busy && context.phase == InputActionPhase.Performed)
         {
             float scrollValue = context.ReadValue<float>();
             int previousSelectedWeapong = selectedWeapon;
@@ -118,6 +134,8 @@ public class EquipmentHolder : MonoBehaviour
         {
             EquipableItem item = Instantiate(itemPrefab);
             storedItems.Add(InitEquipment(item));
+            animator.Rebind();
+            animator.Play("equip_" + activeItem.item_id);
             if (storedItems.Count == 1)
             {
                 Equip(item);
@@ -157,39 +175,18 @@ public class EquipmentHolder : MonoBehaviour
         {
             item.gameObject.SetActive(true);
             activeItem = item;
-            handIk.weight = 1.0f;
-            animator.SetLayerWeight(1, 1.0f);
-            Invoke(nameof(SetAnimationDelayed), 0.001f);
+            animator.Play("equip_" + item.item_id);
         }
+        UnglitchAnimations();
 
     }
-
-    private void SetAnimationDelayed()
-    {
-
-        overrider["anim_no_weapon"] = activeItem.weaponAnimation;
-    }
-
+    
     private void UnEquip()
     {
-        if(activeItem != null)
+        if (activeItem != null)
         {
             activeItem.gameObject.SetActive(false);
         }
-        handIk.weight = 0f;
-        animator.SetLayerWeight(1, 0.0f);
     }
 
-
-    [ContextMenu("Save weapon pose")]
-    void SaveWeaponPose()
-    {
-        GameObjectRecorder recorder = new GameObjectRecorder(gameObject);
-        recorder.BindComponentsOfType<Transform>(activeWeapon.gameObject, false);
-        recorder.BindComponentsOfType<Transform>(leftGrip.gameObject, false);
-        recorder.BindComponentsOfType<Transform>(rightGrip.gameObject, false);
-        recorder.TakeSnapshot(0.0f);
-        recorder.SaveToClip(activeItem.weaponAnimation);
-        UnityEditor.AssetDatabase.SaveAssets();
-    }
 }
