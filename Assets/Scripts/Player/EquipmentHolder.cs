@@ -2,8 +2,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class EquipmentHolder : MonoBehaviour
-{
+public class EquipmentHolder : MonoBehaviour {
     public int selectedWeapon = 0;
     public Transform activeWeapon;
     public Transform rightGrip;
@@ -19,81 +18,68 @@ public class EquipmentHolder : MonoBehaviour
 
 
     public Animator animator;
-    public void Awake()
-    { 
+
+    public void Awake() {
         inputActions = new PlayerInputActions();
         inputActions.Player.Enable();
         inputActions.Player.Scroll.performed += Scroll;
-        foreach(EquipableItem item in activeWeapon.GetComponentsInChildren<EquipableItem>())
-        {
-            if (!storedItems.Contains(item))
-            {
+        foreach (EquipableItem item in activeWeapon.GetComponentsInChildren<EquipableItem>()) {
+            if (!storedItems.Contains(item)) {
                 storedItems.Add(InitEquipment(item));
             }
         }
-
     }
 
     // Start is called before the first frame update
-    public void Start()
-    {
+    public void Start() {
         UnglitchAnimations();
-        if (storedItems.Count > 0)
-        {
+        if (storedItems.Count > 0) {
             Equip(storedItems[0]);
         }
+
         animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
         animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
         animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
         animator.updateMode = AnimatorUpdateMode.Normal;
     }
 
-    public void UnglitchAnimations()
-    {
+    public void UnglitchAnimations() {
         //Debug.Log(animator.isActiveAndEnabled);
         //Invoke(nameof(UnglitchAnimations1), 0.005f);
         //Invoke(nameof(UnglitchAnimations2), 0.010f);
     }
-    public void UnglitchAnimations1()
-    {
+
+    public void UnglitchAnimations1() {
         animator.applyRootMotion = true;
         //animator.updateMode = AnimatorUpdateMode.Normal;
         //animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
     }
 
-    public void UnglitchAnimations2()
-    {
+    public void UnglitchAnimations2() {
         animator.applyRootMotion = false;
         //animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
         //animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
     }
 
-    public void Scroll(InputAction.CallbackContext context)
-    {
+    public void Scroll(InputAction.CallbackContext context) {
         //Debug.Log(context);
-        if(activeItem != null && !activeItem.busy && context.phase == InputActionPhase.Performed)
-        {
+        if (activeItem != null && !activeItem.busy && context.phase == InputActionPhase.Performed) {
             float scrollValue = context.ReadValue<float>();
             int previousSelectedWeapong = selectedWeapon;
-            if (scrollValue > 0f)
-            {
-                if (selectedWeapon >= storedItems.Count - 1)
-                {
+            if (scrollValue > 0f) {
+                if (selectedWeapon >= storedItems.Count - 1) {
                     selectedWeapon = 0;
                 }
-                else
-                {
+                else {
                     ++selectedWeapon;
                 }
             }
-            if (scrollValue < 0f)
-            {
-                if (selectedWeapon <= 0)
-                {
+
+            if (scrollValue < 0f) {
+                if (selectedWeapon <= 0) {
                     selectedWeapon = storedItems.Count - 1;
                 }
-                else
-                {
+                else {
                     --selectedWeapon;
                 }
             }
@@ -118,46 +104,39 @@ public class EquipmentHolder : MonoBehaviour
                 selectedWeapon = 3;
             }*/
 
-            if (previousSelectedWeapong != selectedWeapon)
-            {
+            if (previousSelectedWeapong != selectedWeapon) {
                 Equip(storedItems[selectedWeapon]);
             }
         }
     }
 
 
-    public void PickUp(EquipableItem itemPrefab)
-    {
+    public void PickUp(EquipableItem itemPrefab) {
         //TODO: play sound of pickup
 
-        if (!isAlreadyEquipped(itemPrefab))
-        {
+        if (!isAlreadyEquipped(itemPrefab)) {
             EquipableItem item = Instantiate(itemPrefab);
             storedItems.Add(InitEquipment(item));
-            if (storedItems.Count == 1)
-            {
+            if (storedItems.Count == 1) {
                 Equip(item);
             }
+
             animator.Rebind();
             animator.Play("equip_" + activeItem.item_id);
         }
-
     }
 
-    private bool isAlreadyEquipped(EquipableItem itemPrefab)
-    {
-        foreach(EquipableItem item in storedItems)
-        {
-            if(item.item_id == itemPrefab.item_id)
-            {
+    private bool isAlreadyEquipped(EquipableItem itemPrefab) {
+        foreach (EquipableItem item in storedItems) {
+            if (item.item_id == itemPrefab.item_id) {
                 return true;
             }
         }
+
         return false;
     }
 
-    private EquipableItem InitEquipment(EquipableItem item)
-    {
+    private EquipableItem InitEquipment(EquipableItem item) {
         item.playerCamera = playerCamera;
         item.animator = animator;
         item.transform.parent = activeWeapon;
@@ -168,25 +147,20 @@ public class EquipmentHolder : MonoBehaviour
         return item;
     }
 
-    private void Equip(EquipableItem item)
-    {
+    private void Equip(EquipableItem item) {
         UnEquip();
-        if(item != null)
-        {
+        if (item != null) {
             item.gameObject.SetActive(true);
             activeItem = item;
             animator.Play("equip_" + item.item_id);
         }
-        UnglitchAnimations();
 
+        UnglitchAnimations();
     }
-    
-    private void UnEquip()
-    {
-        if (activeItem != null)
-        {
+
+    private void UnEquip() {
+        if (activeItem != null) {
             activeItem.gameObject.SetActive(false);
         }
     }
-
 }
