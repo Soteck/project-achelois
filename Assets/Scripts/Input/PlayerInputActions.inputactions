@@ -11,7 +11,8 @@
                     "id": "47327ad4-cd57-4ec4-8ba3-d334bdff3d7a",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Movement",
@@ -19,7 +20,8 @@
                     "id": "184e9dcb-bfb6-4d1f-8a5d-656cdb26e5cd",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Lean",
@@ -27,7 +29,8 @@
                     "id": "2791425b-adbd-4024-bd9b-db2d221a13a3",
                     "expectedControlType": "Axis",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Action",
@@ -35,7 +38,8 @@
                     "id": "f52aa1e0-f544-4914-9eb9-f0065c0296a5",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Reload",
@@ -43,7 +47,8 @@
                     "id": "9c46f989-77e2-4257-8295-428dab17da4a",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Fire1",
@@ -51,7 +56,8 @@
                     "id": "92300225-6509-4d21-8ce3-5ab486f0ef28",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Fire2",
@@ -59,7 +65,8 @@
                     "id": "d4ce382d-9477-4928-a095-d276650b86c3",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Fire3",
@@ -67,7 +74,8 @@
                     "id": "098293e3-3a8b-467d-8754-04ce129e271f",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Look",
@@ -75,7 +83,8 @@
                     "id": "4fae2d6e-7ff3-41d3-ae38-0213a39fa984",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Scroll",
@@ -83,7 +92,8 @@
                     "id": "7036a1e8-d564-421d-a6f5-bac800d83fdf",
                     "expectedControlType": "Axis",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Sprint",
@@ -91,7 +101,17 @@
                     "id": "0a9268b7-eec3-41bf-bd19-6526797d1ba5",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Crouch",
+                    "type": "Button",
+                    "id": "1de2453c-dda3-495d-a474-0feaf45a0917",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -290,6 +310,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Sprint",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d728546f-d3cd-4a7c-b19f-c3fca7ab815c",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Crouch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

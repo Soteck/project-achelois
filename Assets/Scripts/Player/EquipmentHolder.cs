@@ -134,12 +134,12 @@ public class EquipmentHolder : MonoBehaviour
         {
             EquipableItem item = Instantiate(itemPrefab);
             storedItems.Add(InitEquipment(item));
-            animator.Rebind();
-            animator.Play("equip_" + activeItem.item_id);
             if (storedItems.Count == 1)
             {
                 Equip(item);
             }
+            animator.Rebind();
+            animator.Play("equip_" + activeItem.item_id);
         }
 
     }
