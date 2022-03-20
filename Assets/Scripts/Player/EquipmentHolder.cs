@@ -32,7 +32,6 @@ public class EquipmentHolder : MonoBehaviour {
 
     // Start is called before the first frame update
     public void Start() {
-        UnglitchAnimations();
         if (storedItems.Count > 0) {
             Equip(storedItems[0]);
         }
@@ -41,24 +40,6 @@ public class EquipmentHolder : MonoBehaviour {
         animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
         animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
         animator.updateMode = AnimatorUpdateMode.Normal;
-    }
-
-    public void UnglitchAnimations() {
-        //Debug.Log(animator.isActiveAndEnabled);
-        //Invoke(nameof(UnglitchAnimations1), 0.005f);
-        //Invoke(nameof(UnglitchAnimations2), 0.010f);
-    }
-
-    public void UnglitchAnimations1() {
-        animator.applyRootMotion = true;
-        //animator.updateMode = AnimatorUpdateMode.Normal;
-        //animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
-    }
-
-    public void UnglitchAnimations2() {
-        animator.applyRootMotion = false;
-        //animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
-        //animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
     }
 
     public void Scroll(InputAction.CallbackContext context) {
@@ -114,7 +95,7 @@ public class EquipmentHolder : MonoBehaviour {
     public void PickUp(EquipableItem itemPrefab) {
         //TODO: play sound of pickup
 
-        if (!isAlreadyEquipped(itemPrefab)) {
+        if (!IsAlreadyEquipped(itemPrefab)) {
             EquipableItem item = Instantiate(itemPrefab);
             storedItems.Add(InitEquipment(item));
             if (storedItems.Count == 1) {
@@ -126,7 +107,7 @@ public class EquipmentHolder : MonoBehaviour {
         }
     }
 
-    private bool isAlreadyEquipped(EquipableItem itemPrefab) {
+    private bool IsAlreadyEquipped(EquipableItem itemPrefab) {
         foreach (EquipableItem item in storedItems) {
             if (item.item_id == itemPrefab.item_id) {
                 return true;
@@ -155,7 +136,6 @@ public class EquipmentHolder : MonoBehaviour {
             animator.Play("equip_" + item.item_id);
         }
 
-        UnglitchAnimations();
     }
 
     private void UnEquip() {

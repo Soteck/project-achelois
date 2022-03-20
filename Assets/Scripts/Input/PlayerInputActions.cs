@@ -134,6 +134,33 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Limbo"",
+                    ""type"": ""Button"",
+                    ""id"": ""511f7aba-d1bd-45d5-a433-856e320f833c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Menu"",
+                    ""type"": ""Button"",
+                    ""id"": ""03b8704d-b7b0-4306-9a5b-49e781198799"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ConsoleOpen"",
+                    ""type"": ""Button"",
+                    ""id"": ""1df7945a-69c2-44e8-ae7e-1ad0c6d27d84"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -345,6 +372,39 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                     ""action"": ""Crouch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f031b0f8-21cc-48e6-b43f-a812b92aaa6d"",
+                    ""path"": ""<Keyboard>/l"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Limbo"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""777e176c-e0c9-416c-ae19-b5d3fc40dd1e"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Menu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""21c886b3-fd29-4f46-a434-9dc995750e70"",
+                    ""path"": ""<Keyboard>/backquote"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""ConsoleOpen"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -382,6 +442,9 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         m_Player_Scroll = m_Player.FindAction("Scroll", throwIfNotFound: true);
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
         m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
+        m_Player_Limbo = m_Player.FindAction("Limbo", throwIfNotFound: true);
+        m_Player_Menu = m_Player.FindAction("Menu", throwIfNotFound: true);
+        m_Player_ConsoleOpen = m_Player.FindAction("ConsoleOpen", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -453,6 +516,9 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Scroll;
     private readonly InputAction m_Player_Sprint;
     private readonly InputAction m_Player_Crouch;
+    private readonly InputAction m_Player_Limbo;
+    private readonly InputAction m_Player_Menu;
+    private readonly InputAction m_Player_ConsoleOpen;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -469,6 +535,9 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         public InputAction @Scroll => m_Wrapper.m_Player_Scroll;
         public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
         public InputAction @Crouch => m_Wrapper.m_Player_Crouch;
+        public InputAction @Limbo => m_Wrapper.m_Player_Limbo;
+        public InputAction @Menu => m_Wrapper.m_Player_Menu;
+        public InputAction @ConsoleOpen => m_Wrapper.m_Player_ConsoleOpen;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -514,6 +583,15 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                 @Crouch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCrouch;
                 @Crouch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCrouch;
                 @Crouch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCrouch;
+                @Limbo.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLimbo;
+                @Limbo.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLimbo;
+                @Limbo.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLimbo;
+                @Menu.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMenu;
+                @Menu.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMenu;
+                @Menu.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMenu;
+                @ConsoleOpen.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnConsoleOpen;
+                @ConsoleOpen.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnConsoleOpen;
+                @ConsoleOpen.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnConsoleOpen;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -554,6 +632,15 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                 @Crouch.started += instance.OnCrouch;
                 @Crouch.performed += instance.OnCrouch;
                 @Crouch.canceled += instance.OnCrouch;
+                @Limbo.started += instance.OnLimbo;
+                @Limbo.performed += instance.OnLimbo;
+                @Limbo.canceled += instance.OnLimbo;
+                @Menu.started += instance.OnMenu;
+                @Menu.performed += instance.OnMenu;
+                @Menu.canceled += instance.OnMenu;
+                @ConsoleOpen.started += instance.OnConsoleOpen;
+                @ConsoleOpen.performed += instance.OnConsoleOpen;
+                @ConsoleOpen.canceled += instance.OnConsoleOpen;
             }
         }
     }
@@ -581,5 +668,8 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         void OnScroll(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
         void OnCrouch(InputAction.CallbackContext context);
+        void OnLimbo(InputAction.CallbackContext context);
+        void OnMenu(InputAction.CallbackContext context);
+        void OnConsoleOpen(InputAction.CallbackContext context);
     }
 }
