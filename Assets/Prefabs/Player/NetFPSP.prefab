@@ -1153,14 +1153,14 @@ GameObject:
   m_Component:
   - component: {fileID: 2591657511345724512}
   - component: {fileID: 2591657511345724515}
-  - component: {fileID: 2591657511345724513}
+  - component: {fileID: 5801555268866056752}
   - component: {fileID: 6584912749748834672}
   - component: {fileID: 3228530631192356700}
   - component: {fileID: 1197857921907703752}
   - component: {fileID: 6117265805383922058}
   - component: {fileID: 7853438245753691099}
   m_Layer: 0
-  m_Name: First Person Player
+  m_Name: NetFPSP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1206,7 +1206,7 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0
   m_Center: {x: 0, y: 1.8, z: 0}
---- !u!114 &2591657511345724513
+--- !u!114 &5801555268866056752
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1215,24 +1215,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 2591657511345724514}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ea99fb41d0cf0b40a0a1219c4a198f5, type: 3}
+  m_Script: {fileID: 11500000, guid: 14fd6c6924934e3987afd3aea7d126d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 2591657511345724515}
-  speed: 20
-  gravity: -9.81
-  jumpHeight: 3
-  MoveSpeed: 2
-  SprintSpeed: 5.335
-  SpeedChangeRate: 10
-  FallTimeout: 0.15
-  JumpTimeout: 0.05
   groundCheck: {fileID: 2591657510823577117}
   groundDistance: 0.4
   groundMask:
     serializedVersion: 2
     m_Bits: 8
+  speed: 20
+  gravity: -9.81
+  jumpHeight: 3
+  aimComponent: {fileID: 5487366833304584088}
+  mouseSensivity: 15
+  moveSpeed: 2
+  sprintSpeed: 5.335
+  speedChangeRate: 10
+  fallTimeout: 0.15
+  jumpTimeout: 0.05
   animator: {fileID: 6584912749748834672}
+  networkPositionDirection:
+    m_InternalValue: {x: 0, y: 0, z: 0}
+  networkRotationDirection:
+    m_InternalValue: {x: 0, y: 0}
+  networkPlayerState:
+    m_InternalValue: 0
 --- !u!95 &6584912749748834672
 Animator:
   serializedVersion: 3
@@ -1298,7 +1306,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2591657511345724514}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b719299624b4d93bae5988db477498c, type: 3}
   m_Name: 
@@ -2013,7 +2021,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5487366833304584088}
-  - component: {fileID: 5624363345854872205}
   - component: {fileID: 4149741938772267429}
   m_Layer: 0
   m_Name: AimStart
@@ -2037,20 +2044,6 @@ Transform:
   m_Father: {fileID: 2591657511345724512}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5624363345854872205
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4520976453037558154}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8378533520e4a2c42baf620412b4cb0f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mouseSensivity: 10
-  playerBody: {fileID: 2591657511345724512}
 --- !u!114 &4149741938772267429
 MonoBehaviour:
   m_ObjectHideFlags: 0
