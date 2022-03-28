@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Network.Shared;
 using UnityEngine;
 
 public class Gun : EquipableItem {
@@ -157,5 +158,12 @@ public class Gun : EquipableItem {
 
     private bool CanShoot() {
         return Time.time >= nextTimeToFire;
+    }
+
+    public override EquipableItemNetworkData ToNetWorkData() {
+        return new EquipableItemNetworkData {
+            itemID = item_id,
+            itemMeta = $"{remainingRounds},{storedRounds}"
+        };
     }
 }

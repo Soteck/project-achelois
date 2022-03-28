@@ -11,6 +11,7 @@ namespace Controller {
         public float jumpHeight = 3f;
         public Transform aimComponent;
         public float mouseSensivity = 15f;
+        public Camera playerCamera;
 
         [FormerlySerializedAs("Move speed")] [Header("Player")] [Tooltip("Move speed of the character in m/s")]
         public float moveSpeed = 2.0f;
@@ -29,23 +30,8 @@ namespace Controller {
 
         public Animator animator;
         
-        
-        private Vector3 _velocity;
-
-        private bool _hasAnimator = true;
-
-
-        // animation IDs
-        private int _animIDSpeed;
-        private int _animIDGrounded;
-        private int _animIDJump;
-        private int _animIDFreeFall;
-        private int _animIDMotionSpeed;
 
         // player
-        private float _speed;
-        private float _animationBlend;
-        private float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
 
 
@@ -53,11 +39,20 @@ namespace Controller {
         private float _jumpTimeoutDelta;
         private float _fallTimeoutDelta;
         
+        //Ground
+        public Transform groundCheck;
+        public float groundDistance = 0.4f;
+        public LayerMask groundMask;
+        protected bool isGrounded;
+        
         [SerializeField]
         private NetworkVariable<Vector3> networkPositionDirection = new NetworkVariable<Vector3>();
 
         [SerializeField]
         private NetworkVariable<Vector2> networkRotationDirection = new NetworkVariable<Vector2>();
+
+        [SerializeField]
+        private NetworkVariable<float> networkVerticalVelocity = new NetworkVariable<float>();
 
         [SerializeField]
         private NetworkVariable<PlayerState> networkPlayerState = new NetworkVariable<PlayerState>();
@@ -71,10 +66,9 @@ namespace Controller {
         public new void Awake() {
             base.Awake();
             inputActions.Player.Jump.performed += Jump;
-        }
-
-        private void Start() {
-            AssignAnimationIDs();
+            if (IsClient && IsOwner) {
+                playerCamera.enabled = true;
+            }
         }
 
         protected override void ClientVisuals()
@@ -86,35 +80,27 @@ namespace Controller {
             }
         }
 
-        public void Jump(InputAction.CallbackContext context) {
+        private void Jump(InputAction.CallbackContext context) {
             if (context.phase == InputActionPhase.Performed && isGrounded) {
                 // Jump
                 if (_jumpTimeoutDelta <= 0.0f) {
                     // the square root of H * -2 * G = how much velocity needed to reach desired height
-                    _verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                    UpdateVerticalVelocityServerRpc(Mathf.Sqrt(jumpHeight * -2f * gravity));
 
-                    // update animator if using character
-                    if (_hasAnimator) {
-                        animator.SetBool(_animIDJump, true);
-                    }
+                    UpdatePlayerStateServerRpc(PlayerState.JumpStart);
                 }
             }
         }
 
-        protected override void ServerGravity() {
+        protected override void ServerCalculations() {
+            bool falling = false;
             if (isGrounded) {
                 // reset the fall timeout timer
                 _fallTimeoutDelta = fallTimeout;
 
-                // update animator if using character
-                if (_hasAnimator) {
-                    animator.SetBool(_animIDJump, false);
-                    animator.SetBool(_animIDFreeFall, false);
-                }
-
                 // stop our velocity dropping infinitely when grounded
-                if (_verticalVelocity < 0.0f) {
-                    _verticalVelocity = -2f;
+                if (networkVerticalVelocity.Value < 0.0f) {
+                    networkVerticalVelocity.Value = -2f;
                 }
 
 
@@ -132,28 +118,21 @@ namespace Controller {
                     _fallTimeoutDelta -= Time.deltaTime;
                 }
                 else {
-                    // update animator if using character
-                    if (_hasAnimator) {
-                        animator.SetBool(_animIDFreeFall, true);
-                    }
+                    falling = true;
                 }
             }
 
-            // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
-            if (_verticalVelocity < _terminalVelocity) {
-                _verticalVelocity += gravity * Time.deltaTime;
+            if (falling) {
+                UpdatePlayerStateServerRpc(PlayerState.OnAir);
             }
-        }
+            else {
+                UpdatePlayerStateServerRpc(PlayerState.Idle);
+            }
 
-
-
-
-        private void AssignAnimationIDs() {
-            _animIDSpeed = Animator.StringToHash("Speed");
-            _animIDGrounded = Animator.StringToHash("Grounded");
-            _animIDJump = Animator.StringToHash("Jump");
-            _animIDFreeFall = Animator.StringToHash("FreeFall");
-            _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+            // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
+            if (networkVerticalVelocity.Value < _terminalVelocity) {
+                networkVerticalVelocity.Value += gravity * Time.deltaTime;
+            }
         }
 
         protected override void ClientInput() {
@@ -183,40 +162,47 @@ namespace Controller {
 
         private Vector3 KeyboardInput() {
             Vector2 movementInput = inputActions.Player.Movement.ReadValue<Vector2>();
-            //Debug.Log("keyboard movement input old input: " + _oldInputPosition);
             return new Vector3(
                 movementInput.x * speed * Time.deltaTime, 
                 0, 
                 movementInput.y * speed * Time.deltaTime);
         }
 
-        protected override void ClientMoveAndRotate()
+        protected override void ClientMovement()
         {
             if (networkPositionDirection.Value != Vector3.zero)
             {
-                //Debug.Log("Moving controller to: " + networkPositionDirection.Value);
-                controller.Move(networkPositionDirection.Value);
+                controller.Move(transform.TransformDirection(networkPositionDirection.Value));
             }
             if (networkRotationDirection.Value != Vector2.zero)
             {
                 aimComponent.localRotation = Quaternion.Euler(networkRotationDirection.Value.y, 0f, 0f);
                 transform.Rotate(Vector3.up * networkRotationDirection.Value.x);
             }
+            
+        }
+        
+        protected override void ClientBeforeInput() {
+            isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
         }
         
         
         [ServerRpc]
-        public void UpdateClientPositionAndRotationServerRpc(Vector3 newPosition, Vector2 newRotation)
+        private void UpdateClientPositionAndRotationServerRpc(Vector3 newPosition, Vector2 newRotation)
         {
-            //Debug.Log("Updating " + newPosition + newRotation);
             networkPositionDirection.Value = newPosition;
             networkRotationDirection.Value = newRotation;
         }
 
         [ServerRpc]
-        public void UpdatePlayerStateServerRpc(PlayerState state)
+        private void UpdatePlayerStateServerRpc(PlayerState state)
         {
             networkPlayerState.Value = state;
+        }
+
+        [ServerRpc]
+        private void UpdateVerticalVelocityServerRpc(float velocity) {
+            networkVerticalVelocity.Value = velocity;
         }
     }
 }

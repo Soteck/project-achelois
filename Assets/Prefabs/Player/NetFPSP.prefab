@@ -862,7 +862,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2591657510236247224}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -1219,22 +1219,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 2591657511345724515}
-  groundCheck: {fileID: 2591657510823577117}
-  groundDistance: 0.4
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 8
   speed: 20
   gravity: -9.81
   jumpHeight: 3
   aimComponent: {fileID: 5487366833304584088}
   mouseSensivity: 15
+  playerCamera: {fileID: 2591657510236247230}
   moveSpeed: 2
   sprintSpeed: 5.335
   speedChangeRate: 10
   fallTimeout: 0.15
   jumpTimeout: 0.05
   animator: {fileID: 6584912749748834672}
+  groundCheck: {fileID: 2591657510823577117}
+  groundDistance: 0.4
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 8
   networkPositionDirection:
     m_InternalValue: {x: 0, y: 0, z: 0}
   networkRotationDirection:
@@ -1292,13 +1293,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6cab5cf223b95d4daa8f83b70995186, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  controller: {fileID: 0}
   selectedWeapon: 0
   activeWeapon: {fileID: 3331772548581234669}
-  rightGrip: {fileID: 5825294955359450922}
-  leftGrip: {fileID: 3656468328511477447}
   playerCamera: {fileID: 2591657510236247230}
-  crossHairTarget: {fileID: 7767481507066443883}
   animator: {fileID: 3682338190886987594}
+  activeItem:
+    m_InternalValue: 0
 --- !u!114 &6117265805383922058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1306,7 +1307,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2591657511345724514}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b719299624b4d93bae5988db477498c, type: 3}
   m_Name: 

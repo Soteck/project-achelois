@@ -1,39 +1,88 @@
 ﻿using System.Collections.Generic;
+using Controller;
+using Core;
+using Network.Shared;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
-public class EquipmentHolder : MonoBehaviour {
+public class EquipmentHolder : NetController {
     public int selectedWeapon = 0;
     public Transform activeWeapon;
-    public Transform rightGrip;
-    public Transform leftGrip;
     public Camera playerCamera;
-
-    public Transform crossHairTarget;
-
-
-    private PlayerInputActions inputActions;
-    private List<EquipableItem> storedItems = new List<EquipableItem>();
-    private EquipableItem activeItem;
-
-
     public Animator animator;
 
-    public void Awake() {
-        inputActions = new PlayerInputActions();
-        inputActions.Player.Enable();
+    private List<EquipableItem> _storedItems = new List<EquipableItem>();
+
+    [SerializeField] private NetworkList<EquipableItemNetworkData> _networkItems;
+    //TODO: Guardar una lista de objetos, con dos strings uno del ID y otro de metadatos
+    // Sincronizar estos datos con instancias en local de EquipableItem guardadas en otro array
+
+    [SerializeField] 
+    private NetworkVariable<int> networkActiveItem;
+    
+
+    private EquipableItem _changeWeapon = null;
+    private int localActiveItem = 0;
+
+    public new void Awake() {
+        base.Awake();
+        _networkItems = new NetworkList<EquipableItemNetworkData>();
+        networkActiveItem = new NetworkVariable<int>();
         inputActions.Player.Scroll.performed += Scroll;
         foreach (EquipableItem item in activeWeapon.GetComponentsInChildren<EquipableItem>()) {
-            if (!storedItems.Contains(item)) {
-                storedItems.Add(InitEquipment(item));
+            if (!_storedItems.Contains(item)) {
+                _storedItems.Add(InitEquipment(item));
             }
         }
     }
 
+    protected override void ServerCalculations() {
+        //Empty
+    }
+
+    protected override void ClientBeforeInput() {
+        //Empty
+    }
+
+    protected override void ClientInput() {
+        if (_changeWeapon != null) {
+            UpdateActualEquippedWeaponServerRpc(_storedItems.IndexOf(_changeWeapon));
+            _changeWeapon = null;
+        }
+    }
+
+    protected override void ClientMovement() {
+        if (_networkItems.Count != _storedItems.Count) {
+            foreach (var netItem in _networkItems) {
+                bool exists = false;
+                foreach (var storedItem in _storedItems) {
+                    if (storedItem.item_id == netItem.itemID) {
+                        exists = true;
+                        break;
+                    }
+                }
+
+                if (!exists) {
+                    DoNewPickup(netItem);
+                }
+            }
+        }
+
+        if (networkActiveItem.Value != localActiveItem) {
+            Equip(_storedItems[networkActiveItem.Value]);
+        }
+    }
+
+    protected override void ClientVisuals() {
+        //throw new System.NotImplementedException();
+    }
+
     // Start is called before the first frame update
     public void Start() {
-        if (storedItems.Count > 0) {
-            Equip(storedItems[0]);
+        if (_storedItems.Count > 0) {
+            UpdateActualEquippedWeaponServerRpc(0);
         }
 
         animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
@@ -42,13 +91,13 @@ public class EquipmentHolder : MonoBehaviour {
         animator.updateMode = AnimatorUpdateMode.Normal;
     }
 
-    public void Scroll(InputAction.CallbackContext context) {
+    private void Scroll(InputAction.CallbackContext context) {
         //Debug.Log(context);
-        if (activeItem != null && !activeItem.busy && context.phase == InputActionPhase.Performed) {
+        if (networkActiveItem != null && !_storedItems[networkActiveItem.Value].busy && context.phase == InputActionPhase.Performed) {
             float scrollValue = context.ReadValue<float>();
-            int previousSelectedWeapong = selectedWeapon;
+            int previousSelectedWeapon = selectedWeapon;
             if (scrollValue > 0f) {
-                if (selectedWeapon >= storedItems.Count - 1) {
+                if (selectedWeapon >= _storedItems.Count - 1) {
                     selectedWeapon = 0;
                 }
                 else {
@@ -58,7 +107,7 @@ public class EquipmentHolder : MonoBehaviour {
 
             if (scrollValue < 0f) {
                 if (selectedWeapon <= 0) {
-                    selectedWeapon = storedItems.Count - 1;
+                    selectedWeapon = _storedItems.Count - 1;
                 }
                 else {
                     --selectedWeapon;
@@ -85,30 +134,39 @@ public class EquipmentHolder : MonoBehaviour {
                 selectedWeapon = 3;
             }*/
 
-            if (previousSelectedWeapong != selectedWeapon) {
-                Equip(storedItems[selectedWeapon]);
+            if (previousSelectedWeapon != selectedWeapon) {
+                _changeWeapon = _storedItems[selectedWeapon];
             }
         }
     }
 
 
     public void PickUp(EquipableItem itemPrefab) {
-        //TODO: play sound of pickup
-
         if (!IsAlreadyEquipped(itemPrefab)) {
-            EquipableItem item = Instantiate(itemPrefab);
-            storedItems.Add(InitEquipment(item));
-            if (storedItems.Count == 1) {
-                Equip(item);
-            }
-
-            animator.Rebind();
-            animator.Play("equip_" + activeItem.item_id);
+            ServerPickupItemServerRpc(itemPrefab.ToNetWorkData());
         }
     }
 
+    private void DoNewPickup(EquipableItemNetworkData equipableItemNetworkData) {
+        //TODO: play sound of pickup
+
+
+        EquipableItem item = Instantiate(
+            EquipmentPrefabFactory.GetPrefabByItemID(
+                equipableItemNetworkData.itemID.ToString()
+            )
+        );
+        _storedItems.Add(InitEquipment(item));
+        if (_storedItems.Count == 1) {
+            Equip(item);
+        }
+
+        animator.Rebind();
+        animator.Play("equip_" + _storedItems[networkActiveItem.Value].item_id);
+    }
+
     private bool IsAlreadyEquipped(EquipableItem itemPrefab) {
-        foreach (EquipableItem item in storedItems) {
+        foreach (EquipableItem item in _storedItems) {
             if (item.item_id == itemPrefab.item_id) {
                 return true;
             }
@@ -120,9 +178,10 @@ public class EquipmentHolder : MonoBehaviour {
     private EquipableItem InitEquipment(EquipableItem item) {
         item.playerCamera = playerCamera;
         item.animator = animator;
-        item.transform.parent = activeWeapon;
-        item.transform.localPosition = Vector3.zero;
-        item.transform.localRotation = Quaternion.identity;
+        var itemTransform = item.transform;
+        itemTransform.parent = activeWeapon;
+        itemTransform.localPosition = Vector3.zero;
+        itemTransform.localRotation = Quaternion.identity;
         item.gameObject.SetActive(false);
 
         return item;
@@ -132,15 +191,22 @@ public class EquipmentHolder : MonoBehaviour {
         UnEquip();
         if (item != null) {
             item.gameObject.SetActive(true);
-            activeItem = item;
+            localActiveItem = _storedItems.IndexOf(item);
             animator.Play("equip_" + item.item_id);
         }
-
     }
 
-    private void UnEquip() {
-        if (activeItem != null) {
-            activeItem.gameObject.SetActive(false);
-        }
+    private void UnEquip() { 
+        _storedItems[localActiveItem]?.gameObject.SetActive(false);
+    }
+
+    [ServerRpc]
+    private void UpdateActualEquippedWeaponServerRpc(int activeItem) {
+        networkActiveItem.Value = activeItem;
+    }
+
+    [ServerRpc]
+    private void ServerPickupItemServerRpc(EquipableItemNetworkData itemMeta) {
+        _networkItems.Add(itemMeta);
     }
 }

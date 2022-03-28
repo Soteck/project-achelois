@@ -40,6 +40,8 @@ public class OverlayController : MonoBehaviour {
             else {
                 Logger.Info("Unable to start server...");
             }
+            HideMenu();
+            UndeployConsole();
         });
 
         // START HOST
@@ -57,6 +59,8 @@ public class OverlayController : MonoBehaviour {
             else {
                 Logger.Info("Unable to start host...");
             }
+            HideMenu();
+            UndeployConsole();
         });
 
         // START CLIENT
@@ -71,6 +75,8 @@ public class OverlayController : MonoBehaviour {
             else {
                 Logger.Info("Unable to start client...");
             }
+            HideMenu();
+            UndeployConsole();
         });
     }
 

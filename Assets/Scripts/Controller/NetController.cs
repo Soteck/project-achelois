@@ -10,11 +10,6 @@ namespace Controller {
         public CharacterController controller;
 
         protected PlayerInputActions inputActions;
-        
-        public Transform groundCheck;
-        public float groundDistance = 0.4f;
-        public LayerMask groundMask;
-        protected bool isGrounded;
 
         public void Awake() {
             inputActions = new PlayerInputActions();
@@ -23,23 +18,24 @@ namespace Controller {
         
         void Update()
         {
-            GroundedCheck();
             if (IsClient && IsOwner)
             {
+                ClientBeforeInput();
                 ClientInput();
             }
 
             if (IsServer) {
-                //ServerGravity();
+                ServerCalculations();
             }
 
-            ClientMoveAndRotate();
-            //ClientVisuals();
+            ClientMovement();
+            ClientVisuals();
         }
 
-        protected abstract void ServerGravity();
+        protected abstract void ServerCalculations();
+        protected abstract void ClientBeforeInput();
         protected abstract void ClientInput();
-        protected abstract void ClientMoveAndRotate();
+        protected abstract void ClientMovement();
         protected abstract void ClientVisuals();
 
 
@@ -54,11 +50,5 @@ namespace Controller {
             
         }
         
-        private void GroundedCheck() {
-            isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-            //if (_hasAnimator) {
-            //    animator.SetBool(_animIDGrounded, isGrounded);
-            //}
-        }
     }
 }
