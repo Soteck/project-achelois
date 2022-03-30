@@ -34,9 +34,8 @@ public class Gun : EquipableItem {
     private float reloadEndTime = 0f;
     PlayerInputActions inputActions;
 
-    public void Awake() {
-        inputActions = new PlayerInputActions();
-        inputActions.Player.Enable();
+    public new void Awake() {
+        base.Awake();
         shootSource = AddAudio(false, false, 1f, shootSound);
         reloadSource = AddAudio(false, false, 1f, reloadSound);
         drySource = AddAudio(false, false, 1f, drySound);
@@ -44,7 +43,7 @@ public class Gun : EquipableItem {
         storedRounds = pickupStoredRounds;
     }
 
-    public AudioSource AddAudio(bool loop, bool playAwake, float vol, AudioClip clip) {
+    private AudioSource AddAudio(bool loop, bool playAwake, float vol, AudioClip clip) {
         AudioSource newAudio = gameObject.AddComponent<AudioSource>();
         newAudio.clip = clip;
         newAudio.loop = loop;
@@ -54,14 +53,20 @@ public class Gun : EquipableItem {
         return newAudio;
     }
 
-    // Update is called once per frame
-    public void FixedUpdate() {
+    protected override void ServerCalculations() {
+        //empty
+    }
+
+    protected override void ClientBeforeInput() {
         if (reloadEndTime != 0) {
             if (Time.time >= nextTimeToFire) {
                 ReloadEnd();
             }
         }
-        else if (CanShoot()) {
+    }
+    
+    protected override void ClientInput() {
+        if (CanShoot()) {
             if (inputActions.Player.Fire1.ReadValue<float>() == 1f) {
                 WaitShoot();
                 Shoot();
@@ -70,6 +75,14 @@ public class Gun : EquipableItem {
                 Reload();
             }
         }
+    }
+
+    protected override void ClientMovement() {
+        
+    }
+
+    protected override void ClientVisuals() {
+        
     }
 
     private void Shoot() {
@@ -157,7 +170,7 @@ public class Gun : EquipableItem {
     }
 
     private bool CanShoot() {
-        return Time.time >= nextTimeToFire;
+        return !busy && Time.time >= nextTimeToFire;
     }
 
     public override EquipableItemNetworkData ToNetWorkData() {

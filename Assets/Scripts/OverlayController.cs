@@ -8,25 +8,33 @@ public class OverlayController : MonoBehaviour {
     public float consoleHeight = 120;
     public RectTransform console;
     public RectTransform menu;
+    public RectTransform limbo;
 
     [SerializeField] private Button startServerButton;
 
     [SerializeField] private Button startHostButton;
 
     [SerializeField] private Button startClientButton;
+    
+    [SerializeField] private Button joinTeamAButton;
+    
+    [SerializeField] private Button joinTeamBButton;
 
 
     private PlayerInputActions _inputActions;
     private bool _consoleDeployed = false;
     private bool _menuDeployed = false;
+    private bool _limboDeployed = false;
     private bool _consoleMoving = false;
     private float _consoleEndMoving = 0f;
 
     public void Awake() {
         console.gameObject.SetActive(false);
         menu.gameObject.SetActive(false);
+        limbo.gameObject.SetActive(false);
         UndeployConsole();
         HideMenu();
+        HideLimbo();
         SetupActions();
         SetupButtons();
     }
@@ -84,7 +92,7 @@ public class OverlayController : MonoBehaviour {
         _inputActions = new PlayerInputActions();
         _inputActions.Player.Enable();
         _inputActions.Player.ConsoleOpen.performed += context => {
-            if (!_menuDeployed) {
+            if (!_menuDeployed && !_limboDeployed) {
                 if (_consoleDeployed) {
                     UndeployConsole();
                 }
@@ -93,18 +101,31 @@ public class OverlayController : MonoBehaviour {
                 }
             }
         };
-        _inputActions.Player.Menu.performed += context => {
-            if (!_consoleDeployed) {
-                _menuDeployed = !_menuDeployed;
-                if (!_menuDeployed) {
-                    HideMenu();
+        _inputActions.Player.Limbo.performed += context => {
+            if (!_menuDeployed && !_consoleDeployed) {
+                if (_limboDeployed) {
+                    HideLimbo();
                 }
                 else {
-                    ShowMenu();
+                    ShowLimbo();
                 }
             }
-            else {
+        };
+        _inputActions.Player.Menu.performed += context => {
+            if (_consoleDeployed) {
                 UndeployConsole();
+                return;
+            }
+
+            if (_limboDeployed) {
+                HideLimbo();
+                return;
+            }
+            if (_menuDeployed) {
+                HideMenu();
+            }
+            else {
+                ShowMenu();
             }
         };
     }
@@ -154,12 +175,26 @@ public class OverlayController : MonoBehaviour {
     }
 
     private void ShowMenu() {
+        _menuDeployed = true;
         menu.gameObject.SetActive(true);
         UnlockCursor();
     }
 
     private void HideMenu() {
+        _menuDeployed = false;
         menu.gameObject.SetActive(false);
+        LockCursor();
+    }
+
+    private void ShowLimbo() {
+        _limboDeployed = true;
+        limbo.gameObject.SetActive(true);
+        UnlockCursor();
+    }
+
+    private void HideLimbo() {
+        _limboDeployed = false;
+        limbo.gameObject.SetActive(false);
         LockCursor();
     }
 

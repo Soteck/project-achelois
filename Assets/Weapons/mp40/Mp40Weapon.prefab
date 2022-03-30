@@ -176,7 +176,6 @@ MonoBehaviour:
   item_id: mp40
   animator: {fileID: 0}
   busy: 0
-  weaponAnimation: {fileID: 7400000, guid: 1d27ffecca0a8344895694d6a92b7a7a, type: 2}
   magazine: {fileID: 0}
   damage: 10
   range: 100
@@ -285,6 +284,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4346579889536150870}
     m_Modifications:
+    - target: {fileID: 293730157681188763, guid: 85f6fc3e5c996c141b9579c6dd21bba6, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 293730157681188763, guid: 85f6fc3e5c996c141b9579c6dd21bba6, type: 3}
       propertyPath: m_BoundingSphereOverride.w
       value: 0

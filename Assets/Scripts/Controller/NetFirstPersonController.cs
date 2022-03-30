@@ -94,13 +94,14 @@ namespace Controller {
 
         protected override void ServerCalculations() {
             bool falling = false;
+            float verticalVelocity = networkVerticalVelocity.Value;
             if (isGrounded) {
                 // reset the fall timeout timer
                 _fallTimeoutDelta = fallTimeout;
 
                 // stop our velocity dropping infinitely when grounded
-                if (networkVerticalVelocity.Value < 0.0f) {
-                    networkVerticalVelocity.Value = -2f;
+                if (verticalVelocity < 0.0f) {
+                    verticalVelocity = -2f;
                 }
 
 
@@ -130,8 +131,12 @@ namespace Controller {
             }
 
             // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
-            if (networkVerticalVelocity.Value < _terminalVelocity) {
-                networkVerticalVelocity.Value += gravity * Time.deltaTime;
+            if (verticalVelocity < _terminalVelocity) {
+                verticalVelocity += gravity * Time.deltaTime;
+            }
+
+            if (networkVerticalVelocity.Value != verticalVelocity) {
+                UpdateVerticalVelocityServerRpc(verticalVelocity);
             }
         }
 
@@ -203,6 +208,8 @@ namespace Controller {
         [ServerRpc]
         private void UpdateVerticalVelocityServerRpc(float velocity) {
             networkVerticalVelocity.Value = velocity;
+            networkPositionDirection.Value =
+                new Vector3(networkPositionDirection.Value.x, velocity, networkPositionDirection.Value.z);
         }
     }
 }

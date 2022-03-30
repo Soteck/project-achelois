@@ -49,7 +49,6 @@ MonoBehaviour:
   item_id: thompson
   animator: {fileID: 0}
   busy: 0
-  weaponAnimation: {fileID: 7400000, guid: f7438503a2281f44293ee5683390a93c, type: 2}
   magazine: {fileID: 0}
   damage: 10
   range: 100
@@ -308,6 +307,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8335820035002761007}
     m_Modifications:
+    - target: {fileID: 293730157681188763, guid: 85f6fc3e5c996c141b9579c6dd21bba6, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 293730157681188763, guid: 85f6fc3e5c996c141b9579c6dd21bba6, type: 3}
       propertyPath: m_BoundingSphereOverride.y
       value: 33
