@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using Core;
 using Unity.Netcode;
-using UnityEngine;
 
 public class MapController : NetworkSingleton<MapController> {
     
