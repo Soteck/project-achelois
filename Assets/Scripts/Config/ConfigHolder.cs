@@ -8,6 +8,7 @@ namespace Config {
         private const string DefaultPlayerName = "Achelois player";
         private const float DefaultMouseSensitivity = 15f;
         private const bool DefaultAutoSave = true;
+        private const bool DefaultAutoBalance = true;
 
         private void Start() {
             if (!File.Exists("config.cfg")) {
@@ -34,6 +35,7 @@ namespace Config {
             _cfg["Player"]["Name"].StringValue = DefaultPlayerName;
             _cfg["Input"]["MouseSensitivity"].FloatValue = DefaultMouseSensitivity;
             _cfg["Configuration"]["AutoSave"].BoolValue = DefaultAutoSave;
+            _cfg["Server"]["AutoBalance"].BoolValue = DefaultAutoBalance;
         }
 
         private void ShouldSave() {
@@ -69,6 +71,15 @@ namespace Config {
 
             set {
                 Instance._cfg["Input"]["MouseSensitivity"].FloatValue = value;
+                Instance.ShouldSave();
+            }
+        }
+
+        public static bool autoBalance {
+            get => Instance._cfg["Server"]["AutoBalance"].BoolValue;
+
+            set {
+                Instance._cfg["Server"]["AutoBalance"].BoolValue = value;
                 Instance.ShouldSave();
             }
         }

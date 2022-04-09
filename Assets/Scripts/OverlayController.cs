@@ -1,4 +1,6 @@
+using Player;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UNET;
 using UnityEngine;
 using UnityEngine.UI;
 using Logger = Core.Logger;
@@ -9,6 +11,8 @@ public class OverlayController : MonoBehaviour {
     public RectTransform console;
     public RectTransform menu;
     public RectTransform limbo;
+    public RectTransform hud;
+    public RectTransform playerStats;
 
     [SerializeField] private Button startServerButton;
 
@@ -76,6 +80,7 @@ public class OverlayController : MonoBehaviour {
             // if (RelayManager.Instance.IsRelayEnabled && !string.IsNullOrEmpty(joinCodeInput.text)) {
             //     await RelayManager.Instance.JoinRelay(joinCodeInput.text);
             // }
+            //(NetworkManager.Singleton.NetworkConfig.NetworkTransport as UNetTransport).ConnectAddress = "";
 
             if (NetworkManager.Singleton.StartClient()) {
                 Logger.Info("Client started...");
@@ -85,6 +90,14 @@ public class OverlayController : MonoBehaviour {
             }
             HideMenu();
             UndeployConsole();
+        });
+        
+        joinTeamAButton?.onClick.AddListener(() => {
+            MapController.RequestJoinTeam(Team.TeamA);
+        });
+        
+        joinTeamBButton?.onClick.AddListener(() => {
+            MapController.RequestJoinTeam(Team.TeamB);
         });
     }
 
@@ -127,6 +140,10 @@ public class OverlayController : MonoBehaviour {
             else {
                 ShowMenu();
             }
+        };
+
+        _inputActions.Player.PlayerStats.performed += context => {
+            
         };
     }
 
@@ -207,4 +224,7 @@ public class OverlayController : MonoBehaviour {
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
     }
+    
+    
+    //FindObjectsOfType(typeof(ArmyUnit));
 }

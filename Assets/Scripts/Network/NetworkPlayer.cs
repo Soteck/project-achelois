@@ -1,4 +1,6 @@
-﻿using Controller;
+﻿using Config;
+using Controller;
+using Network.Shared;
 using Player;
 using UnityEngine;
 using Unity.Netcode;
@@ -6,56 +8,72 @@ using UnityEngine.InputSystem;
 
 namespace Network {
 
-    public class NetworkPlayer : NetworkBehaviour {
+    public class NetworkPlayer : NetController {
 
-        public NetworkVariable<Vector3> position = new NetworkVariable<Vector3>();
         public NetworkVariable<Team> team = new NetworkVariable<Team>();
+        public NetworkVariable<PlayerSate> state = new NetworkVariable<PlayerSate>();
         
-        public FirstPersonController firstPersonPrefab;
-        public SpectatorController spectatorPrefab;
+        public NetworkVariable<PlayerNetworkData> networkData = new NetworkVariable<PlayerNetworkData>();
 
-        private PlayerInputActions _inputActions;
-        private bool locked = true;
+        public NetFirstPersonController firstPersonPrefab;
+        public NetSpectatorController spectatorPrefab;
 
-        public void Awake() {
-            _inputActions = new PlayerInputActions();
-            _inputActions.Player.Enable();
-            _inputActions.Player.Limbo.performed += Limbo;
-            _inputActions.Player.Menu.performed += Menu;
+
+        private Team activeTeam = Team.Spectator;
+        private PlayerSate activeState = PlayerSate.MapCamera;
+        private ulong currentFollowing;
+        
+        public new void Awake() {
+            base.Awake();
         }
 
-        public void Start() {
-            firstPersonPrefab.Disable();
-            spectatorPrefab.Enable();
+        protected override void ClientInput() {
+            bool fire1Triggered = inputActions.Player.Fire1.ReadValue<float>() > 0f;
+            bool fire2Triggered = inputActions.Player.Fire2.ReadValue<float>() > 0f;
+            bool jumpTriggered = inputActions.Player.Jump.ReadValue<float>() > 0f;
+            
+            //Fire 1 -> spec next player // Fire2 -> previous
+            //Jump -> Go to generic spectator
+            
         }
-        
-        private void Menu(InputAction.CallbackContext context) {
-            if (context.phase == InputActionPhase.Performed) {
-                locked = !locked;
-                if (locked) {
-                    Cursor.lockState = CursorLockMode.Locked;
-                } else {
-                    
-                    Cursor.lockState = CursorLockMode.Confined;
-                }
+
+
+        protected override void ClientVisuals() {
+            if (activeState != state.Value) {
+                //TODO
             }
 
+            if (activeTeam != team.Value) {
+                //TODO
+            }
+            
         }
 
-        private void Limbo(InputAction.CallbackContext context) {
-            if (context.phase == InputActionPhase.Performed) {
-                if (firstPersonPrefab.isActiveAndEnabled) {
-                    firstPersonPrefab.Disable();
-                    spectatorPrefab.Enable();
-                    position.Value = spectatorPrefab.gameObject.transform.position;
-                    team.Value = Team.SPECTATOR;
-                } else {
-                    firstPersonPrefab.Enable();
-                    spectatorPrefab.Disable();
-                    team.Value = Team.TEAM_A;
-                    position.Value = firstPersonPrefab.gameObject.transform.position;
-                }
+
+        protected override void ServerCalculations() {
+            //Empty
+        }
+
+        protected override void ClientBeforeInput() {
+            //Empty
+        }
+        protected override void ClientMovement() {
+            //Empty
+        }
+        void Start() {
+            if (IsClient && IsOwner) {
+                PlayerNetworkData data = new PlayerNetworkData();
+                data.playerName = ConfigHolder.playerName;
+                data.clientId = NetworkManager.Singleton.LocalClientId;
+                SaveNetworkDataServerRpc(data);
             }
+        }
+
+        
+
+        [ServerRpc]
+        private void SaveNetworkDataServerRpc(PlayerNetworkData data) {
+            networkData.Value = data;
         }
     }
 }
