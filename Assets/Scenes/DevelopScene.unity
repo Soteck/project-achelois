@@ -152,9 +152,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1e825e6904b459c89601947b15b52bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_NetworkManager: {fileID: 0}
+  m_NetworkManager: {fileID: 1167010724}
   PooledPrefabsList:
   - Prefab: {fileID: 2591657511345724514, guid: 6a160cd4b52cf7849a7fde6a762fbb48, type: 3}
+    PrewarmCount: 2
+  - Prefab: {fileID: 941205826761635473, guid: b9786866bfa99f94a9e36215c26c4586, type: 3}
     PrewarmCount: 2
 --- !u!4 &168946158
 Transform:
@@ -381,6 +383,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 679f23b8979763946a0ba79c6f4492a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  duration: 900
+  teamARespawn: 5
+  teamBRespawn: 6
+  mapCamera: {fileID: 722770768}
 --- !u!1 &674211457
 GameObject:
   m_ObjectHideFlags: 0
@@ -865,7 +871,7 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 1167010723}
-    PlayerPrefab: {fileID: 2591657511345724514, guid: 6a160cd4b52cf7849a7fde6a762fbb48, type: 3}
+    PlayerPrefab: {fileID: 260214250458331890, guid: 7bdb72b696dc6904f91de2ee0411896f, type: 3}
     NetworkPrefabs:
     - Override: 0
       Prefab: {fileID: 260214250458331890, guid: 7bdb72b696dc6904f91de2ee0411896f, type: 3}

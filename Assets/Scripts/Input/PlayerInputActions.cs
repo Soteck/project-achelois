@@ -161,6 +161,15 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""PlayerStats"",
+                    ""type"": ""Button"",
+                    ""id"": ""e5ba9cc4-ab66-4f28-83b2-553b3d5fc7ba"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -405,6 +414,17 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                     ""action"": ""ConsoleOpen"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""debdc5ca-2959-48b3-95a0-875ad5f00a3b"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""PlayerStats"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -445,6 +465,7 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         m_Player_Limbo = m_Player.FindAction("Limbo", throwIfNotFound: true);
         m_Player_Menu = m_Player.FindAction("Menu", throwIfNotFound: true);
         m_Player_ConsoleOpen = m_Player.FindAction("ConsoleOpen", throwIfNotFound: true);
+        m_Player_PlayerStats = m_Player.FindAction("PlayerStats", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -519,6 +540,7 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Limbo;
     private readonly InputAction m_Player_Menu;
     private readonly InputAction m_Player_ConsoleOpen;
+    private readonly InputAction m_Player_PlayerStats;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -538,6 +560,7 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         public InputAction @Limbo => m_Wrapper.m_Player_Limbo;
         public InputAction @Menu => m_Wrapper.m_Player_Menu;
         public InputAction @ConsoleOpen => m_Wrapper.m_Player_ConsoleOpen;
+        public InputAction @PlayerStats => m_Wrapper.m_Player_PlayerStats;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -592,6 +615,9 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                 @ConsoleOpen.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnConsoleOpen;
                 @ConsoleOpen.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnConsoleOpen;
                 @ConsoleOpen.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnConsoleOpen;
+                @PlayerStats.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPlayerStats;
+                @PlayerStats.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPlayerStats;
+                @PlayerStats.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPlayerStats;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -641,6 +667,9 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                 @ConsoleOpen.started += instance.OnConsoleOpen;
                 @ConsoleOpen.performed += instance.OnConsoleOpen;
                 @ConsoleOpen.canceled += instance.OnConsoleOpen;
+                @PlayerStats.started += instance.OnPlayerStats;
+                @PlayerStats.performed += instance.OnPlayerStats;
+                @PlayerStats.canceled += instance.OnPlayerStats;
             }
         }
     }
@@ -671,5 +700,6 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         void OnLimbo(InputAction.CallbackContext context);
         void OnMenu(InputAction.CallbackContext context);
         void OnConsoleOpen(InputAction.CallbackContext context);
+        void OnPlayerStats(InputAction.CallbackContext context);
     }
 }

@@ -139,6 +139,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "PlayerStats",
+                    "type": "Button",
+                    "id": "e5ba9cc4-ab66-4f28-83b2-553b3d5fc7ba",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -381,6 +390,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "ConsoleOpen",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "debdc5ca-2959-48b3-95a0-875ad5f00a3b",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "PlayerStats",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
