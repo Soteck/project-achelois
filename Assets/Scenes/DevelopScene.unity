@@ -248,6 +248,8 @@ GameObject:
   - component: {fileID: 295885725}
   - component: {fileID: 295885728}
   - component: {fileID: 295885727}
+  - component: {fileID: 295885729}
+  - component: {fileID: 295885726}
   m_Layer: 0
   m_Name: SPAWN_B
   m_TagString: Untagged
@@ -269,6 +271,20 @@ Transform:
   m_Father: {fileID: 737126329}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &295885726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 295885724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce573ba6e65a4bb6904477784eb6c459, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  team: 2
+  spawnName: Start spawn B
 --- !u!23 &295885727
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -318,6 +334,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 295885724}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &295885729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 295885724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3175188494
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!4 &480178389 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ff40b4156d87bea489a89f47c4fe359b, type: 3}
@@ -387,6 +419,8 @@ MonoBehaviour:
   teamARespawn: 5
   teamBRespawn: 6
   mapCamera: {fileID: 722770768}
+  controlablePlayerPrefab: {fileID: 2591657511345724514, guid: 6a160cd4b52cf7849a7fde6a762fbb48, type: 3}
+  spectatorPrefab: {fileID: 941205826761635473, guid: b9786866bfa99f94a9e36215c26c4586, type: 3}
 --- !u!1 &674211457
 GameObject:
   m_ObjectHideFlags: 0
@@ -1318,6 +1352,8 @@ GameObject:
   - component: {fileID: 1948787016}
   - component: {fileID: 1948787019}
   - component: {fileID: 1948787018}
+  - component: {fileID: 1948787020}
+  - component: {fileID: 1948787017}
   m_Layer: 0
   m_Name: SPAWN_A
   m_TagString: Untagged
@@ -1339,6 +1375,20 @@ Transform:
   m_Father: {fileID: 223928239}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1948787017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948787015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce573ba6e65a4bb6904477784eb6c459, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  team: 1
+  spawnName: Start spawn A
 --- !u!23 &1948787018
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1388,6 +1438,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1948787015}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1948787020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948787015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2246311495
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1001 &2113360944
 PrefabInstance:
   m_ObjectHideFlags: 0
