@@ -1,5 +1,5 @@
 ﻿namespace Player {
     public enum PlayerSate {
-        Fallowing, Spectating, PlayingAlive, PlayingDead, MapCamera, 
+        Following, Spectating, PlayingAlive, PlayingDead, MapCamera, 
     }
 }

@@ -1,4 +1,5 @@
-﻿using Unity.Netcode;
+﻿using System;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -69,6 +70,10 @@ namespace Controller {
             if (IsClient && IsOwner) {
                 playerCamera.enabled = true;
             }
+        }
+
+        private void OnEnable() {
+            _oldInputPosition = transform.position;
         }
 
         protected override void ClientVisuals()
@@ -148,6 +153,7 @@ namespace Controller {
             {
                 _oldInputPosition = inputPosition;
                 _oldInputRotation = inputRotation;
+                Debug.Log(inputPosition);
                 UpdateClientPositionAndRotationServerRpc(inputPosition, inputRotation );
             }
         }

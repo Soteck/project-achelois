@@ -1,4 +1,5 @@
-﻿using Config;
+﻿using System;
+using Config;
 using Controller;
 using Network.Shared;
 using Player;
@@ -14,17 +15,17 @@ namespace Network {
         public NetworkVariable<PlayerSate> state = new NetworkVariable<PlayerSate>();
         
         public NetworkVariable<PlayerNetworkData> networkData = new NetworkVariable<PlayerNetworkData>();
-
-        public NetFirstPersonController firstPersonPrefab;
-        public NetSpectatorController spectatorPrefab;
-
+        public NetworkVariable<Guid> selectedSpawnPoint = new NetworkVariable<Guid>();
 
         private Team activeTeam = Team.Spectator;
         private PlayerSate activeState = PlayerSate.MapCamera;
         private ulong currentFollowing;
+
+        public Camera activeCamera;
         
         public new void Awake() {
             base.Awake();
+            
         }
 
         protected override void ClientInput() {
@@ -50,16 +51,19 @@ namespace Network {
         }
 
 
+        
+
+
         protected override void ServerCalculations() {
             //Empty
         }
-
         protected override void ClientBeforeInput() {
             //Empty
         }
         protected override void ClientMovement() {
             //Empty
         }
+        
         void Start() {
             if (IsClient && IsOwner) {
                 PlayerNetworkData data = new PlayerNetworkData();

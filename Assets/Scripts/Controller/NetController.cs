@@ -18,18 +18,20 @@ namespace Controller {
         
         void Update()
         {
-            if (IsClient && IsOwner)
-            {
-                ClientBeforeInput();
-                ClientInput();
-            }
+            if (IsSpawned) {
+                if (IsClient && IsOwner)
+                {
+                    ClientBeforeInput();
+                    ClientInput();
+                }
 
-            if (IsServer) {
-                ServerCalculations();
-            }
+                if (IsServer) {
+                    ServerCalculations();
+                }
 
-            ClientMovement();
-            ClientVisuals();
+                ClientMovement();
+                ClientVisuals();
+            }
         }
 
         protected abstract void ServerCalculations();

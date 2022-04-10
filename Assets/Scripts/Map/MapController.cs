@@ -1,13 +1,11 @@
-using System;
 using System.Collections.Generic;
 using Config;
 using Controller;
 using Core;
-using Network.Shared;
+using Map;
 using Player;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Logger = Core.Logger;
 using NetworkPlayer = Network.NetworkPlayer;
 
@@ -16,9 +14,11 @@ public class MapController : NetworkSingleton<MapController> {
     public int duration = 15 * 60;
     public int teamARespawn = 5;
     public int teamBRespawn = 6;
-    
+
     //Input data
     public Camera mapCamera;
+    public GameObject controlablePlayerPrefab;
+    public GameObject spectatorPrefab;
 
     //Variables sync between clients and server
     private NetworkVariable<int> playersInGame = new NetworkVariable<int>();
@@ -29,73 +29,110 @@ public class MapController : NetworkSingleton<MapController> {
 
 
     //This variables are on the server, but not on the client
-    private Dictionary<ulong, Network.NetworkPlayer> all_players;
-    private List<ulong> team_a_players;
-    private List<ulong> team_b_players;
+    private Dictionary<ulong, NetworkPlayer> _allPlayers;
+    private List<ulong> _teamAPlayers;
+    private List<ulong> _teamBPlayers;
+    private bool serverInit = false;
 
 
-    private void Awake() {
-        if (IsServer) {
+    private void ServerInit() {
+        if (!serverInit) {
+            //Init server variables
             mapDuration.Value = duration;
             timeElapsed.Value = 0;
             team_a_respawn_count.Value = 0;
             team_b_respawn_count.Value = 0;
-            //Init server variables
-            all_players = new Dictionary<ulong, Network.NetworkPlayer>();
-            team_a_players = new List<ulong>();
-            team_b_players = new List<ulong>();
+            _allPlayers = new Dictionary<ulong, NetworkPlayer>();
+            _teamAPlayers = new List<ulong>();
+            _teamBPlayers = new List<ulong>();
+            serverInit = true;
         }
     }
 
     private void Update() {
-        if (IsServer) {
+        if (IsServer && serverInit) {
             timeElapsed.Value += Time.deltaTime;
             if (timeElapsed.Value / teamARespawn > team_a_respawn_count.Value) {
-                RespawnTeamA();
+                ServerRespawnTeamA();
             }
 
             if (timeElapsed.Value / teamBRespawn > team_b_respawn_count.Value) {
-                RespawnTeamB();
+                ServerRespawnTeamB();
             }
         }
     }
 
-    private void RespawnTeamA() {
+    private void ServerRespawnTeamA() {
         Logger.Info("Respawning team A");
         team_a_respawn_count.Value++;
+        int teamSpawningNumber = 0;
+        foreach (ulong playerId in _teamAPlayers) {
+            var player = _allPlayers[playerId];
+            if (player.state.Value != PlayerSate.PlayingAlive) {
+                ServerSpawnControlablePlayer(playerId, player, teamSpawningNumber++);
+            }
+        }
     }
 
-    private void RespawnTeamB() {
+    private void ServerRespawnTeamB() {
         Logger.Info("Respawning team B");
         team_b_respawn_count.Value++;
+        int teamSpawningNumber = 0;
+        foreach (ulong playerId in _teamBPlayers) {
+            var player = _allPlayers[playerId];
+            if (player.state.Value != PlayerSate.PlayingAlive) {
+                ServerSpawnControlablePlayer(playerId, player, teamSpawningNumber++);
+            }
+        }
+    }
+
+    private void ServerSpawnControlablePlayer(ulong playerId, NetworkPlayer player, int number) {
+        GameObject go = NetworkObjectPool.Instance.GetNetworkObject(controlablePlayerPrefab).gameObject;
+        Vector3 position = SpawnArea.GetSpawnPosition(player.selectedSpawnPoint.Value, number);
+        //go.transform.position = new Vector3(Random.Range(-10, 10), 10.0f, Random.Range(-10, 10));
+        //go.transform.position = go.transform.TransformDirection(position);
+
+        NetworkObject no = go.GetComponent<NetworkObject>();
+        no.transform.position = position;
+        no.Spawn();
+        no.ChangeOwnership(playerId);
+        player.state.Value = PlayerSate.PlayingAlive;
+        player.activeCamera = go.GetComponent<NetFirstPersonController>().playerCamera;
+        DisableAllCameras(player.activeCamera);
     }
 
     void Start() {
-        if (IsServer) {
-            NetworkManager.Singleton.OnClientConnectedCallback += (id) => {
+        NetworkManager.Singleton.OnServerStarted += () => {
+            NetworkObjectPool.Instance.InitializePool();
+            ServerInit();
+        };
+
+        NetworkManager.Singleton.OnClientConnectedCallback += (id) => {
+            if (IsServer) {
+                if (!serverInit) {
+                    ServerInit();
+                }
+
                 playersInGame.Value++;
                 NetworkPlayer playerObject = NetworkManager.Singleton.ConnectedClients[id].PlayerObject
                     .GetComponent<NetworkPlayer>();
-                all_players[id] = playerObject;
-            };
+                _allPlayers[id] = playerObject;
+            }
+        };
 
-            NetworkManager.Singleton.OnClientDisconnectCallback += (id) => {
+        NetworkManager.Singleton.OnClientDisconnectCallback += (id) => {
+            if (IsServer) {
                 playersInGame.Value--;
-                all_players[id] = null;
-                team_a_players.Remove(id);
-                team_b_players.Remove(id);
-            };
-            
-            NetworkManager.Singleton.OnServerStarted += () =>
-            {
-                NetworkObjectPool.Instance.InitializePool();
-            };
-        }
+                _allPlayers[id] = null;
+                _teamAPlayers.Remove(id);
+                _teamBPlayers.Remove(id);
+            }
+        };
     }
 
     [ServerRpc]
     private void RequestJoinServerRpc(Team team, ulong playerId) {
-        NetworkPlayer player = this.all_players[playerId];
+        NetworkPlayer player = this._allPlayers[playerId];
         Team from = Team.Spectator;
         bool canJoin = false;
         //Check if the change can be done
@@ -107,10 +144,10 @@ public class MapController : NetworkSingleton<MapController> {
                 }
                 else {
                     if (team == Team.TeamA) {
-                        canJoin = team_a_players.Count <= team_b_players.Count;
+                        canJoin = _teamAPlayers.Count <= _teamBPlayers.Count;
                     }
                     else if (team == Team.TeamB) {
-                        canJoin = team_b_players.Count <= team_a_players.Count;
+                        canJoin = _teamBPlayers.Count <= _teamAPlayers.Count;
                     }
                 }
             }
@@ -122,21 +159,24 @@ public class MapController : NetworkSingleton<MapController> {
         if (canJoin) {
             //Remove information from de previous team
             if (from == Team.TeamA) {
-                team_a_players.Remove(playerId);
+                _teamAPlayers.Remove(playerId);
             }
             else if (from == Team.TeamB) {
-                team_b_players.Remove(playerId);
+                _teamBPlayers.Remove(playerId);
             }
+
             //Add player to the new team
             if (team == Team.TeamA) {
-                team_a_players.Add(playerId);
+                _teamAPlayers.Add(playerId);
                 player.team.Value = Team.TeamA;
                 player.state.Value = PlayerSate.PlayingDead;
+                player.selectedSpawnPoint.Value = SpawnArea.GetDefaultTeamASpawnArea();
             }
             else if (team == Team.TeamB) {
-                team_b_players.Add(playerId);
+                _teamBPlayers.Add(playerId);
                 player.team.Value = Team.TeamB;
                 player.state.Value = PlayerSate.PlayingDead;
+                player.selectedSpawnPoint.Value = SpawnArea.GetDefaultTeamBSpawnArea();
             }
             else {
                 player.team.Value = Team.Spectator;
@@ -147,6 +187,7 @@ public class MapController : NetworkSingleton<MapController> {
     public static int PlayersInGame() {
         return Instance.playersInGame.Value;
     }
+
     public static float TimeElapsed() {
         return Instance.timeElapsed.Value;
     }
@@ -154,8 +195,40 @@ public class MapController : NetworkSingleton<MapController> {
     public static void RequestJoinTeam(Team team, ulong playerId) {
         Instance.RequestJoinServerRpc(team, playerId);
     }
-    
+
     public static void RequestJoinTeam(Team team) {
         Instance.RequestJoinServerRpc(team, NetworkManager.Singleton.LocalClientId);
+    }
+
+    public static void FollowPlayer(ulong playerId) {
+        NetworkPlayer player = Instance._allPlayers[playerId];
+        if (player != null) {
+            DisableAllCameras(player.activeCamera);
+        }
+        else {
+            Logger.Warning("Error following player, player not found " + playerId);
+        }
+    }
+
+    public static void MapCamera() {
+        DisableAllCameras(Instance.mapCamera);
+    }
+
+    public static void DisableAllCameras(Camera dontDisable) {
+        //Camera[] cameras = FindObjectsOfType(typeof(Camera)) as Camera[];
+        Camera[] cameras = Camera.allCameras;
+        foreach (Camera camera in cameras) {
+            if (dontDisable != null) {
+                if (camera == dontDisable) {
+                    camera.enabled = true;
+                }
+                else {
+                    camera.enabled = false;
+                }
+            }
+            else {
+                camera.enabled = false;
+            }
+        }
     }
 }
