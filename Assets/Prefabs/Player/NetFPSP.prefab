@@ -1264,7 +1264,7 @@ MonoBehaviour:
   controller: {fileID: 2591657511345724515}
   speed: 20
   gravity: -9.81
-  jumpHeight: 3
+  jumpHeight: 0.4
   aimComponent: {fileID: 5487366833304584088}
   mouseSensivity: 15
   playerCamera: {fileID: 2591657510236247230}
