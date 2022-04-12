@@ -36,9 +36,7 @@ public class OverlayController : MonoBehaviour {
         console.gameObject.SetActive(false);
         menu.gameObject.SetActive(false);
         limbo.gameObject.SetActive(false);
-        UndeployConsole();
-        HideMenu();
-        HideLimbo();
+        HideAllElements();
         SetupActions();
         SetupButtons();
     }
@@ -52,8 +50,7 @@ public class OverlayController : MonoBehaviour {
             else {
                 Logger.Info("Unable to start server...");
             }
-            HideMenu();
-            UndeployConsole();
+            HideAllElements();
         });
 
         // START HOST
@@ -71,8 +68,7 @@ public class OverlayController : MonoBehaviour {
             else {
                 Logger.Info("Unable to start host...");
             }
-            HideMenu();
-            UndeployConsole();
+            HideAllElements();
         });
 
         // START CLIENT
@@ -88,17 +84,25 @@ public class OverlayController : MonoBehaviour {
             else {
                 Logger.Info("Unable to start client...");
             }
-            HideMenu();
-            UndeployConsole();
+
+            HideAllElements();
         });
         
         joinTeamAButton?.onClick.AddListener(() => {
             MapController.RequestJoinTeam(Team.TeamA);
+            HideAllElements();
         });
         
         joinTeamBButton?.onClick.AddListener(() => {
             MapController.RequestJoinTeam(Team.TeamB);
+            HideAllElements();
         });
+    }
+
+    private void HideAllElements() {
+        HideMenu();
+        UndeployConsole();
+        HideLimbo();
     }
 
     private void SetupActions() {

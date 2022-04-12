@@ -8,4 +8,6 @@ public abstract class EquipableItem : NetController {
     public Animator animator;
     public bool busy = false;
     public abstract EquipableItemNetworkData ToNetWorkData();
+
+    public abstract string GetStatus();
 }

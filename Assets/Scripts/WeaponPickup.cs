@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Core;
+using Player;
 using UnityEngine;
 
 public class WeaponPickup : MonoBehaviour
@@ -14,7 +15,7 @@ public class WeaponPickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        EquipmentHolder holder = other.gameObject.GetComponent<EquipmentHolder>();
+        PlayableSoldier holder = other.gameObject.GetComponent<PlayableSoldier>();
         if (holder)
         {
             holder.PickUp(itemPrefab);

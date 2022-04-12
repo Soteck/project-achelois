@@ -98,6 +98,9 @@ public class MapController : NetworkSingleton<MapController> {
         no.ChangeOwnership(playerId);
         player.state.Value = PlayerSate.PlayingAlive;
         player.activeCamera = go.GetComponent<NetFirstPersonController>().playerCamera;
+        PlayableSoldier po = go.GetComponent<PlayableSoldier>();
+        player.currentSoldier = po;
+        po.networkHealth.Value = 100f;
         DisableAllCameras(player.activeCamera);
     }
 

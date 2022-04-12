@@ -65,25 +65,23 @@ public class Gun : EquipableItem {
             }
         }
     }
-    
+
     protected override void ClientInput() {
         if (CanShoot()) {
-            if (inputActions.Player.Fire1.ReadValue<float>() == 1f) {
+            if (inputActions.Player.Fire1.ReadValue<float>() > 0f) {
                 WaitShoot();
                 Shoot();
             }
-            else if (inputActions.Player.Reload.ReadValue<float>() == 1f) {
+            else if (inputActions.Player.Reload.ReadValue<float>() > 0f) {
                 Reload();
             }
         }
     }
 
     protected override void ClientMovement() {
-        
     }
 
     protected override void ClientVisuals() {
-        
     }
 
     private void Shoot() {
@@ -179,5 +177,9 @@ public class Gun : EquipableItem {
             itemID = item_id,
             itemMeta = $"{remainingRounds},{storedRounds}"
         };
+    }
+
+    public override string GetStatus() {
+        return this.remainingRounds + "/" + this.storedRounds;
     }
 }

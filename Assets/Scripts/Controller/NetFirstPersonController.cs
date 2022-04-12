@@ -46,6 +46,7 @@ namespace Controller {
         public LayerMask groundMask;
         protected bool isGrounded;
         
+        
         [SerializeField]
         private NetworkVariable<Vector3> networkPositionDirection = new NetworkVariable<Vector3>();
 
@@ -66,9 +67,9 @@ namespace Controller {
 
         public new void Awake() {
             base.Awake();
-            inputActions.Player.Jump.performed += Jump;
             if (IsClient && IsOwner) {
                 playerCamera.enabled = true;
+                inputActions.Player.Jump.performed += Jump;
             }
         }
 

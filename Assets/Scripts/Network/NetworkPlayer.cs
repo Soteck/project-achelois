@@ -22,9 +22,15 @@ namespace Network {
         private ulong currentFollowing;
 
         public Camera activeCamera;
-        
+        public static NetworkPlayer networkPlayerOwner;
+        public PlayableSoldier currentSoldier;
+
+
         public new void Awake() {
             base.Awake();
+            if (IsClient && IsOwner) {
+                networkPlayerOwner = this;
+            }
             
         }
 

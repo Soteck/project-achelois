@@ -7,12 +7,15 @@ namespace Player {
     public class HudController : MonoBehaviour {
         public TextMeshProUGUI timeTxt;
         public TextMeshProUGUI ammoTxt;
+        public TextMeshProUGUI healthTxt;
 
         private void Update() {
-            timeTxt.SetText(getTextTeam());
+            timeTxt.SetText(getTeamText());
+            ammoTxt.SetText(getAmmoText());
+            healthTxt.SetText(getHealthText());
         }
 
-        private string getTextTeam() {
+        private string getTeamText() {
             float time = MapController.TimeElapsed();
 
             double teamARemaining = 0;
@@ -25,6 +28,33 @@ namespace Player {
             }
 
             return teamARemaining + "/" + teamBRemaining + " - " + time;
+        }
+
+        private string getAmmoText() {
+            if (Network.NetworkPlayer.networkPlayerOwner != null) {
+                PlayableSoldier ps = Network.NetworkPlayer.networkPlayerOwner.currentSoldier;
+                if (ps) {
+                    EquipableItem activeItem = ps.ActiveItem();
+                    if (activeItem) {
+                        return activeItem.GetStatus();
+                    }
+                }
+
+            }
+
+            return "??/???";
+        }
+
+        private string getHealthText() {
+            if (Network.NetworkPlayer.networkPlayerOwner != null) {
+                PlayableSoldier ps = Network.NetworkPlayer.networkPlayerOwner.currentSoldier;
+                if (ps) {
+                    EquipableItem activeItem = ps.ActiveItem();
+                    return ps.networkHealth.Value + "";
+                }
+            }
+
+            return "???";
         }
     }
 }
