@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1704875651167249003}
   - component: {fileID: 5669869187668256770}
   - component: {fileID: 996351967495167215}
+  - component: {fileID: 874666692309993728}
   m_Layer: 0
   m_Name: ThompsonWeapon
   m_TagString: Untagged
@@ -45,6 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdc2c08110ad4a241a98e77eb9e8f6a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  controller: {fileID: 0}
   playerCamera: {fileID: 0}
   item_id: thompson
   animator: {fileID: 0}
@@ -55,15 +57,15 @@ MonoBehaviour:
   fireRate: 8
   impactForce: 30
   reloadTime: 2
-  autoReload: 1
   pickupStoredRounds: 150
-  piuckupRounds: 30
+  pickupRounds: 30
   magazineSize: 30
   muzzleFlash: {fileID: 333127417925353546}
   impactEffect: {fileID: 9092126711446130011, guid: f953b2431b07a514eb48bde8e5af3664, type: 3}
   shootSound: {fileID: 8300000, guid: 2e7aef0251489824ca1fd8f92e820f77, type: 3}
   reloadSound: {fileID: 8300000, guid: 73dfd949440acdd4593f9055f7b3b6eb, type: 3}
   drySound: {fileID: 8300000, guid: 5b8eac5e3069cf14aa719e14e6791a9f, type: 3}
+  bulletTrailPrefab: {fileID: 6187151195308867699, guid: 461d82bd6bece0b4a948988a2da75693, type: 3}
 --- !u!114 &996351967495167215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,6 +78,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48948dfe9d76b07488dacd46a7955fa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &874666692309993728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1704875651167249004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &5333102857356467901
 GameObject:
   m_ObjectHideFlags: 0

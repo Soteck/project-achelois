@@ -184,15 +184,15 @@ MonoBehaviour:
   fireRate: 8
   impactForce: 30
   reloadTime: 2
-  autoReload: 1
   pickupStoredRounds: 160
-  piuckupRounds: 32
+  pickupRounds: 30
   magazineSize: 32
   muzzleFlash: {fileID: 5196827435082068567}
   impactEffect: {fileID: 9092126711446130011, guid: f953b2431b07a514eb48bde8e5af3664, type: 3}
   shootSound: {fileID: 8300000, guid: afd5e1a1a2a73e74ca9ea682605a38ca, type: 3}
   reloadSound: {fileID: 8300000, guid: e5a14a2010da16b4bbfd991b3300e700, type: 3}
   drySound: {fileID: 8300000, guid: 5b8eac5e3069cf14aa719e14e6791a9f, type: 3}
+  bulletTrailPrefab: {fileID: 6187151195308867699, guid: 461d82bd6bece0b4a948988a2da75693, type: 3}
 --- !u!114 &3253205381847608918
 MonoBehaviour:
   m_ObjectHideFlags: 0

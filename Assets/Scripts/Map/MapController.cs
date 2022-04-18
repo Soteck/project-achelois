@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Config;
 using Controller;
 using Core;
+using Enums;
 using Map;
 using Player;
 using Unity.Netcode;

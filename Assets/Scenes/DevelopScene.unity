@@ -769,6 +769,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 1079000542279237018, guid: fbe8bcddf166a344b9b96f5de588fa7c, type: 3}
+  itemMeta: 32,160
 --- !u!135 &994588108
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1264,6 +1265,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 5669869187668256770, guid: 7e8253c58b9d0404ea3408d01fe31dd2, type: 3}
+  itemMeta: 30,150
 --- !u!135 &1820368319
 SphereCollider:
   m_ObjectHideFlags: 0
