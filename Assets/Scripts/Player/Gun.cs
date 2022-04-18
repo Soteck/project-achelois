@@ -1,185 +1,241 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Config;
+using Enums;
 using Network.Shared;
-using Player;
+using Unity.Netcode;
 using UnityEngine;
+using Util;
 
-public class Gun : EquipableItem {
-    public GameObject magazine;
+namespace Player {
+    public class Gun : EquipableItem {
+        public GameObject magazine;
 
-    public float damage = 10f;
-    public float range = 100f;
-    public float fireRate = 15f;
-    public float impactForce = 30f;
+        public float damage = 10f;
+        public float range = 100f;
+        public float fireRate = 15f;
+        public float impactForce = 30f;
 
-    public float reloadTime = 2.5f;
+        public float reloadTime = 2.5f;
 
-    public bool autoReload = true;
+        public int pickupStoredRounds = 150;
+        public int pickupRounds = 30;
+        public int magazineSize = 30;
 
-    public int pickupStoredRounds = 150;
-    public int piuckupRounds = 30;
-    public int magazineSize = 30;
+        public ParticleSystem muzzleFlash;
+        public GameObject impactEffect;
+        public AudioClip shootSound;
+        public AudioClip reloadSound;
+        public AudioClip drySound;
 
-    public ParticleSystem muzzleFlash;
-    public GameObject impactEffect;
-    public AudioClip shootSound;
-    public AudioClip reloadSound;
-    public AudioClip drySound;
-    private AudioSource shootSource;
-    private AudioSource reloadSource;
-    private AudioSource drySource;
+        public TrailRenderer bulletTrailPrefab;
 
-    private float nextTimeToFire = 0f;
-    private int remainingRounds = 0;
-    private int storedRounds = 0;
-    private float reloadEndTime = 0f;
-    PlayerInputActions inputActions;
 
-    public new void Awake() {
-        base.Awake();
-        shootSource = AddAudio(false, false, 1f, shootSound);
-        reloadSource = AddAudio(false, false, 1f, reloadSound);
-        drySource = AddAudio(false, false, 1f, drySound);
-        remainingRounds = piuckupRounds;
-        storedRounds = pickupStoredRounds;
-    }
+        private float _nextTimeToFire = 1f;
 
-    private AudioSource AddAudio(bool loop, bool playAwake, float vol, AudioClip clip) {
-        AudioSource newAudio = gameObject.AddComponent<AudioSource>();
-        newAudio.clip = clip;
-        newAudio.loop = loop;
-        newAudio.playOnAwake = playAwake;
-        newAudio.volume = vol;
+        //private int remainingRounds = 0;
+        //private int storedRounds = 0;
+        private float _reloadEndTime = 0f;
+        //PlayerInputActions inputActions;
 
-        return newAudio;
-    }
 
-    protected override void ServerCalculations() {
-        //empty
-    }
+        //Variables sync between clients and server
+        private readonly NetworkVariable<GunState> _networkGunState = new NetworkVariable<GunState>();
+        private readonly NetworkVariable<int> _networkClipRemainingRounds = new NetworkVariable<int>();
+        private readonly NetworkVariable<int> _networkStoredRemainingRounds = new NetworkVariable<int>();
 
-    protected override void ClientBeforeInput() {
-        if (reloadEndTime != 0) {
-            if (Time.time >= nextTimeToFire) {
-                ReloadEnd();
+        //Private variables for the client
+        private GunState _localGunState;
+        private AudioSource _shootSource;
+        private AudioSource _reloadSource;
+        private AudioSource _drySource;
+        private bool _reloading = false;
+
+        public new void Awake() {
+            base.Awake();
+            _shootSource = AudioUtil.AddAudio(gameObject, false, false, 1f, shootSound);
+            _reloadSource = AudioUtil.AddAudio(gameObject, false, false, 1f, reloadSound);
+            _drySource = AudioUtil.AddAudio(gameObject, false, false, 1f, drySound);
+            // remainingRounds = pickupRounds;
+            // storedRounds = pickupStoredRounds;
+        }
+
+
+        protected override void ClientBeforeInput() {
+            if (_reloadEndTime != 0 && _reloading && Time.time < _reloadEndTime) {
+                //Reload ended but not yet notified
+                _reloading = false;
+                _reloadEndTime = 0;
+                ReloadEndServerRpc();
+            }
+
+            busy = !_reloading && !(_nextTimeToFire != 0f && Time.time >= _nextTimeToFire);
+        }
+
+        protected override void ClientInput() {
+            if (!busy) {
+                if (inputActions.Player.Fire1.ReadValue<float>() > 0f) {
+                    _nextTimeToFire = 0f;
+                    ShootWeaponServerRpc(playerCamera.transform.position, Time.time);
+                }
+                else if (inputActions.Player.Reload.ReadValue<float>() > 0f) {
+                    ReloadServerRpc(Time.time);
+                }
             }
         }
-    }
 
-    protected override void ClientInput() {
-        if (CanShoot()) {
-            if (inputActions.Player.Fire1.ReadValue<float>() > 0f) {
-                WaitShoot();
-                Shoot();
-            }
-            else if (inputActions.Player.Reload.ReadValue<float>() > 0f) {
-                Reload();
+        protected override void ClientMovement() {
+            //empty
+        }
+
+        protected override void ServerCalculations() {
+            //empty
+        }
+
+        protected override void InternalCallInitMetaData(EquipableItemNetworkData meta) {
+            DryClientRpc();
+        }
+
+
+
+        protected override void ClientVisuals() {
+            if (_networkGunState.Value != _localGunState) {
+                _localGunState = _networkGunState.Value;
+                //TODO: Play state change
             }
         }
-    }
 
-    protected override void ClientMovement() {
-    }
+        [ServerRpc]
+        private void ReloadServerRpc(float timeStart) {
+            if (_networkClipRemainingRounds.Value < magazineSize) {
+                if (_networkStoredRemainingRounds.Value > 0) {
+                    ReloadStartClientRpc(timeStart + reloadTime);
+                }
+                else {
+                    DryClientRpc();
+                }
+            }
+        }
 
-    protected override void ClientVisuals() {
-    }
 
-    private void Shoot() {
-        if (this.remainingRounds > 0) {
-            remainingRounds--;
-            //Debug.Log(remainingRounds + " " + storedRounds);
-            muzzleFlash.Play();
-            shootSource.Play();
+        [ServerRpc]
+        private void ReloadEndServerRpc() {
+            int rounds = magazineSize;
+            if (rounds > _networkClipRemainingRounds.Value) {
+                rounds = _networkClipRemainingRounds.Value;
+            }
 
-            RaycastHit hit;
-            if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, range)) {
-                //Debug.Log(hit.transform.name);
+            if (_networkClipRemainingRounds.Value > 0) {
+                rounds -= _networkClipRemainingRounds.Value;
+            }
 
-                Target target = hit.transform.GetComponent<Target>();
-                if (target != null) {
-                    target.TakeDamage(damage);
+            _networkClipRemainingRounds.Value -= rounds;
+            if (_networkClipRemainingRounds.Value < 1) {
+                RemainingDryClientRpc();
+            }
+
+            _networkClipRemainingRounds.Value += rounds;
+            _reloadEndTime = 0f;
+        }
+
+        [ServerRpc]
+        private void ShootWeaponServerRpc(Vector3 barrelPosition, float startShootTime) {
+            if (_networkClipRemainingRounds.Value > 0) {
+                _networkClipRemainingRounds.Value--;
+
+                if (Physics.Raycast(barrelPosition, playerCamera.transform.forward, out RaycastHit hit,
+                        range)) {
+                    //Debug.Log(hit.transform.name);
+                    ShootWeaponHitClientRpc(barrelPosition, startShootTime + (1f / fireRate), hit.point, hit.normal);
+
+                    Target target = hit.transform.GetComponent<Target>();
+                    if (target != null) {
+                        target.TakeDamage(damage);
+                    }
+
+                    if (hit.rigidbody != null) {
+                        hit.rigidbody.AddForce(-hit.normal * impactForce);
+                    }
+                }
+                else {
+                    ShootWeaponClientRpc(barrelPosition, startShootTime + (1f / fireRate));
                 }
 
-                if (hit.rigidbody != null) {
-                    hit.rigidbody.AddForce(-hit.normal * impactForce);
+                if (_networkClipRemainingRounds.Value < 1) {
+                    DryClientRpc();
                 }
-
-                GameObject impactGO = Instantiate(impactEffect, hit.point, Quaternion.LookRotation(hit.normal));
-                Destroy(impactGO, 2f);
-            }
-
-            if (this.remainingRounds < 1) {
-                Dry();
-            }
-        }
-        else {
-            Dry();
-        }
-    }
-
-    private void Dry() {
-        drySource.Play();
-        if (autoReload) {
-            Reload();
-        }
-    }
-
-    private void Reload() {
-        if (remainingRounds < magazineSize) {
-            busy = true;
-            if (storedRounds > 0) {
-                reloadSource.Play();
-                animator.SetTrigger("reload_weapon");
-                WaitReload();
             }
             else {
-                drySource.Play();
-                WaitShoot();
+                DryClientRpc();
             }
         }
-    }
-
-    private void ReloadEnd() {
-        busy = false;
-        int rounds = magazineSize;
-        if (rounds > storedRounds) {
-            rounds = storedRounds;
+        
+        [ServerRpc]
+        private void InitMetaDataServerRpc() {
+            //TODO: Improve this, ugly AF
+            // string[] data = meta.ToString().Split(',');
+            // _networkClipRemainingRounds.Value = int.Parse(data[0]);
+            // _networkStoredRemainingRounds.Value = int.Parse(data[1]);
         }
 
-        if (remainingRounds > 0) {
-            rounds -= remainingRounds;
+        // ClientRpc are executed on all client instances
+
+        [ClientRpc]
+        private void ShootWeaponHitClientRpc(
+            Vector3 barrelPosition, float nexShootTime, Vector3 hitPoint, Vector3 hitNormal) {
+            muzzleFlash.Play();
+            _shootSource.Play();
+            _nextTimeToFire = nexShootTime;
+            GameObject impactGo = Instantiate(impactEffect, hitPoint, Quaternion.LookRotation(hitNormal));
+            Destroy(impactGo, 2f);
+
+            if (bulletTrailPrefab != null) {
+                TrailRenderer bullet = Instantiate(bulletTrailPrefab, barrelPosition, Quaternion.identity);
+                bullet.AddPosition(barrelPosition);
+                bullet.transform.position = hitPoint;
+            }
         }
 
-        storedRounds -= rounds;
-        if (storedRounds < 1) {
-            drySource.Play();
+        [ClientRpc]
+        private void ShootWeaponClientRpc(Vector3 barrelPosition, float nexShootTime) {
+            muzzleFlash.Play();
+            _shootSource.Play();
+            _nextTimeToFire = nexShootTime;
         }
 
-        remainingRounds += rounds;
-        reloadEndTime = 0f;
-    }
 
-    private void WaitReload() {
-        nextTimeToFire = Time.time + reloadTime;
-        reloadEndTime = nextTimeToFire;
-    }
+        [ClientRpc]
+        private void DryClientRpc() {
+            _drySource.Play();
+            if (IsOwner && ConfigHolder.autoReload) {
+                ReloadServerRpc(Time.time);
+            }
+        }
 
-    private void WaitShoot() {
-        nextTimeToFire = Time.time + 1f / fireRate;
-    }
+        [ClientRpc]
+        private void RemainingDryClientRpc() {
+            if (IsOwner) {
+                _drySource.Play();
+            }
+        }
 
-    private bool CanShoot() {
-        return !busy && Time.time >= nextTimeToFire;
-    }
+        [ClientRpc]
+        private void ReloadStartClientRpc(float reloadEndTime) {
+            _reloadEndTime = reloadEndTime;
+            _reloadSource.Play();
+            animator.SetTrigger("reload_weapon");
+            busy = true;
+            _reloading = true;
+        }
 
-    public override EquipableItemNetworkData ToNetWorkData() {
-        return new EquipableItemNetworkData {
-            itemID = item_id,
-            itemMeta = $"{remainingRounds},{storedRounds}"
-        };
-    }
+        //Output functions
+        public override EquipableItemNetworkData ToNetWorkData() {
+            return new EquipableItemNetworkData {
+                itemID = (NetworkString) item_id,
+                itemMeta = (NetworkString) $"{_networkClipRemainingRounds.Value},{_networkStoredRemainingRounds.Value}"
+            };
+        }
 
-    public override string GetStatus() {
-        return this.remainingRounds + "/" + this.storedRounds;
+        public override string GetStatus() {
+            return _networkClipRemainingRounds.Value + "/" + _networkStoredRemainingRounds.Value;
+        }
     }
 }

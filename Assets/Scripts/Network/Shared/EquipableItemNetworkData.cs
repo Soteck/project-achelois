@@ -7,10 +7,10 @@ namespace Network.Shared {
     public struct EquipableItemNetworkData  : INetworkSerializable, IEquatable<EquipableItemNetworkData> {
         
         [SerializeField]
-        public FixedString32Bytes itemID;
+        public NetworkString itemID;
         
         [SerializeField]
-        public FixedString32Bytes itemMeta;
+        public NetworkString itemMeta;
         
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter {
             serializer.SerializeValue(ref itemID);

@@ -37,7 +37,7 @@ namespace Player {
 
             foreach (EquipableItem item in activeWeapon.GetComponentsInChildren<EquipableItem>()) {
                 if (!_storedItems.Contains(item)) {
-                    _storedItems.Add(InitEquipment(item));
+                    _storedItems.Add(InitEquipment(item, item.ToNetWorkData()));
                 }
             }
         }
@@ -153,9 +153,11 @@ namespace Player {
         }
 
 
-        public void PickUp(EquipableItem itemPrefab) {
+        public void PickUp(EquipableItem itemPrefab, string itemMeta) {
             if (!IsAlreadyEquipped(itemPrefab)) {
-                ServerPickupItemServerRpc(itemPrefab.ToNetWorkData());
+                var data = itemPrefab.ToNetWorkData();
+                data.itemMeta = itemMeta;
+                ServerPickupItemServerRpc(data);
             }
         }
 
@@ -171,7 +173,7 @@ namespace Player {
                 Quaternion.identity,
                 activeWeapon
             );
-            _storedItems.Add(InitEquipment(item));
+            _storedItems.Add(InitEquipment(item, equipableItemNetworkData));
             if (_storedItems.Count == 1) {
                 Equip(item);
             }
@@ -190,7 +192,7 @@ namespace Player {
             return false;
         }
 
-        private EquipableItem InitEquipment(EquipableItem item) {
+        private EquipableItem InitEquipment(EquipableItem item, EquipableItemNetworkData equipableItemNetworkData) {
             item.playerCamera = playerCamera;
             item.animator = animator;
             var itemTransform = item.transform;
@@ -198,6 +200,7 @@ namespace Player {
             itemTransform.localPosition = Vector3.zero;
             itemTransform.localRotation = Quaternion.identity;
             item.gameObject.SetActive(false);
+            item.CallInitMetaData(equipableItemNetworkData);
 
             return item;
         }

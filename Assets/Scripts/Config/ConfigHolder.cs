@@ -8,7 +8,8 @@ namespace Config {
         private const string DefaultPlayerName = "Achelois player";
         private const float DefaultMouseSensitivity = 15f;
         private const bool DefaultAutoSave = true;
-        private const bool DefaultAutoBalance = true;
+        private const bool ServerDefaultAutoBalance = true;
+        private const bool DefaultAutoReload = true;
 
         private void Start() {
             if (!File.Exists("config.cfg")) {
@@ -34,8 +35,9 @@ namespace Config {
         {
             _cfg["Player"]["Name"].StringValue = DefaultPlayerName;
             _cfg["Input"]["MouseSensitivity"].FloatValue = DefaultMouseSensitivity;
+            _cfg["Weapons"]["AutoReload"].BoolValue = DefaultAutoReload;
             _cfg["Configuration"]["AutoSave"].BoolValue = DefaultAutoSave;
-            _cfg["Server"]["AutoBalance"].BoolValue = DefaultAutoBalance;
+            _cfg["Server"]["AutoBalance"].BoolValue = ServerDefaultAutoBalance;
         }
 
         private void ShouldSave() {
@@ -80,6 +82,15 @@ namespace Config {
 
             set {
                 Instance._cfg["Server"]["AutoBalance"].BoolValue = value;
+                Instance.ShouldSave();
+            }
+        }
+
+        public static bool autoReload {
+            get => Instance._cfg["Weapons"]["AutoReload"].BoolValue;
+
+            set {
+                Instance._cfg["Weapons"]["AutoReload"].BoolValue = value;
                 Instance.ShouldSave();
             }
         }

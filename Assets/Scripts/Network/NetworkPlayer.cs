@@ -1,6 +1,7 @@
 ﻿using System;
 using Config;
 using Controller;
+using Enums;
 using Network.Shared;
 using Player;
 using UnityEngine;

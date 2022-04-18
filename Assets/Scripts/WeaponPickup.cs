@@ -8,6 +8,7 @@ using UnityEngine;
 public class WeaponPickup : MonoBehaviour
 {
     public EquipableItem itemPrefab;
+    public string itemMeta;
 
     public void Awake() {
         EquipmentPrefabFactory.Register(itemPrefab);
@@ -18,7 +19,7 @@ public class WeaponPickup : MonoBehaviour
         PlayableSoldier holder = other.gameObject.GetComponent<PlayableSoldier>();
         if (holder)
         {
-            holder.PickUp(itemPrefab);
+            holder.PickUp(itemPrefab, itemMeta);
         }
     }
 }

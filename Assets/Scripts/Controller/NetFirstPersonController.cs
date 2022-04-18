@@ -1,4 +1,6 @@
 ﻿using System;
+using Enums;
+using Network.Shared;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -57,13 +59,13 @@ namespace Controller {
         private NetworkVariable<float> networkVerticalVelocity = new NetworkVariable<float>();
 
         [SerializeField]
-        private NetworkVariable<PlayerState> networkPlayerState = new NetworkVariable<PlayerState>();
+        private NetworkVariable<SoldierState> networkPlayerState = new NetworkVariable<SoldierState>();
 
 
         // client caches positions
         private Vector3 _oldInputPosition = Vector3.zero;
         private Vector2 _oldInputRotation = Vector2.zero;
-        private PlayerState _oldPlayerState = PlayerState.Idle;
+        private SoldierState _oldSoldierState = SoldierState.Idle;
 
         public new void Awake() {
             base.Awake();
@@ -79,9 +81,9 @@ namespace Controller {
 
         protected override void ClientVisuals()
         {
-            if (_oldPlayerState != networkPlayerState.Value)
+            if (_oldSoldierState != networkPlayerState.Value)
             {
-                _oldPlayerState = networkPlayerState.Value;
+                _oldSoldierState = networkPlayerState.Value;
                 animator.SetTrigger($"{networkPlayerState.Value}");
             }
         }
@@ -93,7 +95,7 @@ namespace Controller {
                     // the square root of H * -2 * G = how much velocity needed to reach desired height
                     UpdateVerticalVelocityServerRpc(Mathf.Sqrt(jumpHeight * -2f * gravity));
 
-                    UpdatePlayerStateServerRpc(PlayerState.JumpStart);
+                    UpdatePlayerStateServerRpc(SoldierState.JumpStart);
                 }
             }
         }
@@ -130,10 +132,10 @@ namespace Controller {
             }
 
             if (falling) {
-                UpdatePlayerStateServerRpc(PlayerState.OnAir);
+                UpdatePlayerStateServerRpc(SoldierState.OnAir);
             }
             else {
-                UpdatePlayerStateServerRpc(PlayerState.Idle);
+                UpdatePlayerStateServerRpc(SoldierState.Idle);
             }
 
             // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
@@ -207,7 +209,7 @@ namespace Controller {
         }
 
         [ServerRpc]
-        private void UpdatePlayerStateServerRpc(PlayerState state)
+        private void UpdatePlayerStateServerRpc(SoldierState state)
         {
             networkPlayerState.Value = state;
         }
