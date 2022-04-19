@@ -69,14 +69,14 @@ namespace Controller {
 
         public new void Awake() {
             base.Awake();
-            if (IsClient && IsOwner) {
-                playerCamera.enabled = true;
-                inputActions.Player.Jump.performed += Jump;
-            }
+            _oldInputPosition = transform.position;
+            inputActions.Player.Disable();
         }
 
-        private void OnEnable() {
-            _oldInputPosition = transform.position;
+        public override void OnGainedOwnership() {
+            playerCamera.enabled = true;
+            inputActions.Player.Jump.performed += Jump;
+            inputActions.Player.Enable();
         }
 
         protected override void ClientVisuals()

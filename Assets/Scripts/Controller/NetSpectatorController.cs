@@ -50,10 +50,14 @@ namespace Controller {
         protected new void Awake() {
             base.Awake();
             _jumpVelocity = gravity * -20f;
-            if (IsClient && IsOwner) {
-                playerCamera.enabled = true;
-            }
+            inputActions.Player.Disable();
         }
+
+        public override void OnGainedOwnership() {
+            inputActions.Player.Enable();
+            playerCamera.enabled = true;
+        }
+        
 
         protected override void ClientBeforeInput() {
             //empty

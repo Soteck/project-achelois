@@ -29,10 +29,17 @@ namespace Network {
 
         public new void Awake() {
             base.Awake();
-            if (IsClient && IsOwner) {
-                networkPlayerOwner = this;
+        }
+
+        public override void OnGainedOwnership() {
+            if (networkPlayerOwner != null) {
+                Debug.LogWarning("NetworkPlayer.networkPlayerOwner already set!");
             }
-            
+            networkPlayerOwner = this;
+            PlayerNetworkData data = new PlayerNetworkData();
+            data.playerName = ConfigHolder.playerName;
+            data.clientId = NetworkManager.Singleton.LocalClientId;
+            SaveNetworkDataServerRpc(data);
         }
 
         protected override void ClientInput() {
@@ -57,10 +64,6 @@ namespace Network {
             
         }
 
-
-        
-
-
         protected override void ServerCalculations() {
             //Empty
         }
@@ -70,17 +73,6 @@ namespace Network {
         protected override void ClientMovement() {
             //Empty
         }
-        
-        void Start() {
-            if (IsClient && IsOwner) {
-                PlayerNetworkData data = new PlayerNetworkData();
-                data.playerName = ConfigHolder.playerName;
-                data.clientId = NetworkManager.Singleton.LocalClientId;
-                SaveNetworkDataServerRpc(data);
-            }
-        }
-
-        
 
         [ServerRpc]
         private void SaveNetworkDataServerRpc(PlayerNetworkData data) {

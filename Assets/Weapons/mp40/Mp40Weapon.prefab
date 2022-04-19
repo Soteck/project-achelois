@@ -137,8 +137,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 198360122155917371}
-  - component: {fileID: 1079000542279237018}
   - component: {fileID: 3253205381847608918}
+  - component: {fileID: 1079000542279237018}
   m_Layer: 0
   m_Name: Mp40Weapon
   m_TagString: Untagged
@@ -161,6 +161,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3253205381847608918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 917167284303365054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &1079000542279237018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193,22 +209,6 @@ MonoBehaviour:
   reloadSound: {fileID: 8300000, guid: e5a14a2010da16b4bbfd991b3300e700, type: 3}
   drySound: {fileID: 8300000, guid: 5b8eac5e3069cf14aa719e14e6791a9f, type: 3}
   bulletTrailPrefab: {fileID: 6187151195308867699, guid: 461d82bd6bece0b4a948988a2da75693, type: 3}
---- !u!114 &3253205381847608918
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 917167284303365054}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 951099334
-  AlwaysReplicateAsRoot: 0
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
 --- !u!1001 &1389567501473256861
 PrefabInstance:
   m_ObjectHideFlags: 0

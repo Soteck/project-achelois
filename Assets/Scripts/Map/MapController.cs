@@ -88,15 +88,16 @@ public class MapController : NetworkSingleton<MapController> {
     }
 
     private void ServerSpawnControlablePlayer(ulong playerId, NetworkPlayer player, int number) {
-        GameObject go = NetworkObjectPool.Instance.GetNetworkObject(controlablePlayerPrefab).gameObject;
+        //GameObject go = NetworkObjectPool.Instance.GetNetworkObject(controlablePlayerPrefab).gameObject;
         Vector3 position = SpawnArea.GetSpawnPosition(player.selectedSpawnPoint.Value, number);
+        GameObject go = Instantiate(controlablePlayerPrefab, position, Quaternion.identity);
         //go.transform.position = new Vector3(Random.Range(-10, 10), 10.0f, Random.Range(-10, 10));
         //go.transform.position = go.transform.TransformDirection(position);
 
         NetworkObject no = go.GetComponent<NetworkObject>();
         no.transform.position = position;
-        no.Spawn();
-        no.ChangeOwnership(playerId);
+        no.SpawnWithOwnership(playerId);
+        //no.ChangeOwnership(playerId);
         player.state.Value = PlayerSate.PlayingAlive;
         player.activeCamera = go.GetComponent<NetFirstPersonController>().playerCamera;
         PlayableSoldier po = go.GetComponent<PlayableSoldier>();
@@ -107,31 +108,25 @@ public class MapController : NetworkSingleton<MapController> {
 
     void Start() {
         NetworkManager.Singleton.OnServerStarted += () => {
-            NetworkObjectPool.Instance.InitializePool();
+            //NetworkObjectPool.Instance.InitializePool();
             ServerInit();
-        };
+            ServerAddConnectedClient(NetworkManager.Singleton.LocalClientId);
+            NetworkManager.Singleton.OnClientConnectedCallback += ServerAddConnectedClient;
 
-        NetworkManager.Singleton.OnClientConnectedCallback += (id) => {
-            if (IsServer) {
-                if (!serverInit) {
-                    ServerInit();
-                }
-
-                playersInGame.Value++;
-                NetworkPlayer playerObject = NetworkManager.Singleton.ConnectedClients[id].PlayerObject
-                    .GetComponent<NetworkPlayer>();
-                _allPlayers[id] = playerObject;
-            }
-        };
-
-        NetworkManager.Singleton.OnClientDisconnectCallback += (id) => {
-            if (IsServer) {
+            NetworkManager.Singleton.OnClientDisconnectCallback += (id) => {
                 playersInGame.Value--;
                 _allPlayers[id] = null;
                 _teamAPlayers.Remove(id);
                 _teamBPlayers.Remove(id);
-            }
+            };
         };
+    }
+
+    private void ServerAddConnectedClient(ulong id) {
+        playersInGame.Value++;
+        NetworkPlayer playerObject = NetworkManager.Singleton.ConnectedClients[id].PlayerObject
+            .GetComponent<NetworkPlayer>();
+        _allPlayers[id] = playerObject;
     }
 
     [ServerRpc]

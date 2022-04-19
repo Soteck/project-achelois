@@ -6,6 +6,8 @@ using UnityEngine;
 using Util;
 
 namespace Player {
+    
+    [RequireComponent(typeof(NetworkObject))]
     public class Gun : EquipableItem {
         public GameObject magazine;
 
@@ -54,8 +56,13 @@ namespace Player {
             _shootSource = AudioUtil.AddAudio(gameObject, false, false, 1f, shootSound);
             _reloadSource = AudioUtil.AddAudio(gameObject, false, false, 1f, reloadSound);
             _drySource = AudioUtil.AddAudio(gameObject, false, false, 1f, drySound);
+            inputActions.Player.Disable();
             // remainingRounds = pickupRounds;
             // storedRounds = pickupStoredRounds;
+        }
+
+        public override void OnGainedOwnership() {
+            inputActions.Player.Enable();
         }
 
 
@@ -64,22 +71,36 @@ namespace Player {
                 //Reload ended but not yet notified
                 _reloading = false;
                 _reloadEndTime = 0;
-                ReloadEndServerRpc();
+                ReloadEndServerNRpc();
             }
 
-            busy = !_reloading && !(_nextTimeToFire != 0f && Time.time >= _nextTimeToFire);
+            busy = _reloading && !(_nextTimeToFire != 0f && Time.time >= _nextTimeToFire);
         }
+
 
         protected override void ClientInput() {
             if (!busy) {
                 if (inputActions.Player.Fire1.ReadValue<float>() > 0f) {
                     _nextTimeToFire = 0f;
-                    ShootWeaponServerRpc(playerCamera.transform.position, Time.time);
+                    ShootWeaponServerNRpc(playerCamera.transform.position, Time.time);
                 }
                 else if (inputActions.Player.Reload.ReadValue<float>() > 0f) {
-                    ReloadServerRpc(Time.time);
+                    ReloadServerNRpc(Time.time);
                 }
             }
+        }
+
+        private void ReloadServerNRpc(float time) {
+            
+        }
+        private void ReloadEndServerNRpc() {
+            
+        }
+        private void ShootWeaponServerNRpc(Vector3 transformPosition, float time) {
+            
+        }
+        private void DryClientNRpc() {
+            
         }
 
         protected override void ClientMovement() {
@@ -91,7 +112,7 @@ namespace Player {
         }
 
         protected override void InternalCallInitMetaData(EquipableItemNetworkData meta) {
-            DryClientRpc();
+            InitMetaDataServerRpc(meta);
         }
 
 
@@ -102,129 +123,131 @@ namespace Player {
                 //TODO: Play state change
             }
         }
-
+        //
+        // [ServerRpc]
+        // private void ReloadServerRpc(float timeStart) {
+        //     if (_networkClipRemainingRounds.Value < magazineSize) {
+        //         if (_networkStoredRemainingRounds.Value > 0) {
+        //             ReloadStartClientRpc(timeStart + reloadTime);
+        //         }
+        //         else {
+        //             DryClientRpc();
+        //         }
+        //     }
+        // }
+        //
+        //
+        // [ServerRpc]
+        // private void ReloadEndServerRpc() {
+        //     int rounds = magazineSize;
+        //     if (rounds > _networkClipRemainingRounds.Value) {
+        //         rounds = _networkClipRemainingRounds.Value;
+        //     }
+        //
+        //     if (_networkClipRemainingRounds.Value > 0) {
+        //         rounds -= _networkClipRemainingRounds.Value;
+        //     }
+        //
+        //     _networkClipRemainingRounds.Value -= rounds;
+        //     if (_networkClipRemainingRounds.Value < 1) {
+        //         RemainingDryClientRpc();
+        //     }
+        //
+        //     _networkClipRemainingRounds.Value += rounds;
+        //     _reloadEndTime = 0f;
+        // }
+        //
+        // [ServerRpc]
+        // private void ShootWeaponServerRpc(Vector3 barrelPosition, float startShootTime) {
+        //     if (_networkClipRemainingRounds.Value > 0) {
+        //         _networkClipRemainingRounds.Value--;
+        //
+        //         if (Physics.Raycast(barrelPosition, playerCamera.transform.forward, out RaycastHit hit,
+        //                 range)) {
+        //             //Debug.Log(hit.transform.name);
+        //             ShootWeaponHitClientRpc(barrelPosition, startShootTime + (1f / fireRate), hit.point, hit.normal);
+        //
+        //             Target target = hit.transform.GetComponent<Target>();
+        //             if (target != null) {
+        //                 target.TakeDamage(damage);
+        //             }
+        //
+        //             if (hit.rigidbody != null) {
+        //                 hit.rigidbody.AddForce(-hit.normal * impactForce);
+        //             }
+        //         }
+        //         else {
+        //             ShootWeaponClientRpc(barrelPosition, startShootTime + (1f / fireRate));
+        //         }
+        //
+        //         if (_networkClipRemainingRounds.Value < 1) {
+        //             DryClientRpc();
+        //         }
+        //     }
+        //     else {
+        //         DryClientRpc();
+        //     }
+        // }
+        //
         [ServerRpc]
-        private void ReloadServerRpc(float timeStart) {
-            if (_networkClipRemainingRounds.Value < magazineSize) {
-                if (_networkStoredRemainingRounds.Value > 0) {
-                    ReloadStartClientRpc(timeStart + reloadTime);
-                }
-                else {
-                    DryClientRpc();
-                }
-            }
-        }
-
-
-        [ServerRpc]
-        private void ReloadEndServerRpc() {
-            int rounds = magazineSize;
-            if (rounds > _networkClipRemainingRounds.Value) {
-                rounds = _networkClipRemainingRounds.Value;
-            }
-
-            if (_networkClipRemainingRounds.Value > 0) {
-                rounds -= _networkClipRemainingRounds.Value;
-            }
-
-            _networkClipRemainingRounds.Value -= rounds;
-            if (_networkClipRemainingRounds.Value < 1) {
-                RemainingDryClientRpc();
-            }
-
-            _networkClipRemainingRounds.Value += rounds;
-            _reloadEndTime = 0f;
-        }
-
-        [ServerRpc]
-        private void ShootWeaponServerRpc(Vector3 barrelPosition, float startShootTime) {
-            if (_networkClipRemainingRounds.Value > 0) {
-                _networkClipRemainingRounds.Value--;
-
-                if (Physics.Raycast(barrelPosition, playerCamera.transform.forward, out RaycastHit hit,
-                        range)) {
-                    //Debug.Log(hit.transform.name);
-                    ShootWeaponHitClientRpc(barrelPosition, startShootTime + (1f / fireRate), hit.point, hit.normal);
-
-                    Target target = hit.transform.GetComponent<Target>();
-                    if (target != null) {
-                        target.TakeDamage(damage);
-                    }
-
-                    if (hit.rigidbody != null) {
-                        hit.rigidbody.AddForce(-hit.normal * impactForce);
-                    }
-                }
-                else {
-                    ShootWeaponClientRpc(barrelPosition, startShootTime + (1f / fireRate));
-                }
-
-                if (_networkClipRemainingRounds.Value < 1) {
-                    DryClientRpc();
-                }
-            }
-            else {
-                DryClientRpc();
-            }
-        }
-        
-        [ServerRpc]
-        private void InitMetaDataServerRpc() {
+        private void InitMetaDataServerRpc(EquipableItemNetworkData meta) {
             //TODO: Improve this, ugly AF
-            // string[] data = meta.ToString().Split(',');
-            // _networkClipRemainingRounds.Value = int.Parse(data[0]);
-            // _networkStoredRemainingRounds.Value = int.Parse(data[1]);
+             string[] data = meta.itemMeta.ToString().Split(',');
+             _networkClipRemainingRounds.Value = int.Parse(data[0]);
+             _networkStoredRemainingRounds.Value = int.Parse(data[1]);
+            // _networkClipRemainingRounds.Value = 30;
+            // _networkStoredRemainingRounds.Value = 150;
         }
-
+        //
         // ClientRpc are executed on all client instances
-
-        [ClientRpc]
-        private void ShootWeaponHitClientRpc(
-            Vector3 barrelPosition, float nexShootTime, Vector3 hitPoint, Vector3 hitNormal) {
-            muzzleFlash.Play();
-            _shootSource.Play();
-            _nextTimeToFire = nexShootTime;
-            GameObject impactGo = Instantiate(impactEffect, hitPoint, Quaternion.LookRotation(hitNormal));
-            Destroy(impactGo, 2f);
-
-            if (bulletTrailPrefab != null) {
-                TrailRenderer bullet = Instantiate(bulletTrailPrefab, barrelPosition, Quaternion.identity);
-                bullet.AddPosition(barrelPosition);
-                bullet.transform.position = hitPoint;
-            }
-        }
-
-        [ClientRpc]
-        private void ShootWeaponClientRpc(Vector3 barrelPosition, float nexShootTime) {
-            muzzleFlash.Play();
-            _shootSource.Play();
-            _nextTimeToFire = nexShootTime;
-        }
-
-
-        [ClientRpc]
-        private void DryClientRpc() {
-            _drySource.Play();
-            if (IsOwner && ConfigHolder.autoReload) {
-                ReloadServerRpc(Time.time);
-            }
-        }
-
-        [ClientRpc]
-        private void RemainingDryClientRpc() {
-            if (IsOwner) {
-                _drySource.Play();
-            }
-        }
-
-        [ClientRpc]
-        private void ReloadStartClientRpc(float reloadEndTime) {
-            _reloadEndTime = reloadEndTime;
-            _reloadSource.Play();
-            animator.SetTrigger("reload_weapon");
-            busy = true;
-            _reloading = true;
-        }
+        //
+        // [ClientRpc]
+        // private void ShootWeaponHitClientRpc(
+        //     Vector3 barrelPosition, float nexShootTime, Vector3 hitPoint, Vector3 hitNormal) {
+        //     muzzleFlash.Play();
+        //     _shootSource.Play();
+        //     _nextTimeToFire = nexShootTime;
+        //     GameObject impactGo = Instantiate(impactEffect, hitPoint, Quaternion.LookRotation(hitNormal));
+        //     Destroy(impactGo, 2f);
+        //
+        //     if (bulletTrailPrefab != null) {
+        //         TrailRenderer bullet = Instantiate(bulletTrailPrefab, barrelPosition, Quaternion.identity);
+        //         bullet.AddPosition(barrelPosition);
+        //         bullet.transform.position = hitPoint;
+        //     }
+        // }
+        //
+        // [ClientRpc]
+        // private void ShootWeaponClientRpc(Vector3 barrelPosition, float nexShootTime) {
+        //     muzzleFlash.Play();
+        //     _shootSource.Play();
+        //     _nextTimeToFire = nexShootTime;
+        // }
+        //
+        //
+        // [ClientRpc]
+        // private void DryClientRpc() {
+        //     _drySource.Play();
+        //     if (IsOwner && ConfigHolder.autoReload) {
+        //         ReloadServerRpc(Time.time);
+        //     }
+        // }
+        //
+        // [ClientRpc]
+        // private void RemainingDryClientRpc() {
+        //     if (IsOwner) {
+        //         _drySource.Play();
+        //     }
+        // }
+        //
+        // [ClientRpc]
+        // private void ReloadStartClientRpc(float reloadEndTime) {
+        //     _reloadEndTime = reloadEndTime;
+        //     _reloadSource.Play();
+        //     animator.SetTrigger("reload_weapon");
+        //     busy = true;
+        //     _reloading = true;
+        // }
 
         //Output functions
         public override EquipableItemNetworkData ToNetWorkData() {
