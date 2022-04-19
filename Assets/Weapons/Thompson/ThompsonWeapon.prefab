@@ -70,7 +70,7 @@ MonoBehaviour:
   magazine: {fileID: 0}
   damage: 10
   range: 100
-  fireRate: 8
+  fireRate: 600
   impactForce: 30
   reloadTime: 2
   pickupStoredRounds: 150

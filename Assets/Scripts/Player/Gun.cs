@@ -73,11 +73,13 @@ namespace Player {
         protected override void ClientBeforeInput() {
             
             bool canShoot = false;
-            if (_reloadEndTime != 0 && _reloading && Time.time < _reloadEndTime) {
-                //Reload ended but not yet notified
-                _reloading = false;
-                _reloadEndTime = 0;
-                ReloadEndServerRpc();
+            if (_reloading) {
+                if (_reloadEndTime != 0 && Time.time >= _reloadEndTime) {
+                    //Reload ended but not yet notified
+                    _reloading = false;
+                    ReloadEndServerRpc();
+                    _reloadEndTime = 0;
+                }
             }
             else {
                 canShoot = !_hasShooted && Time.time >= _nextTimeToFire;
@@ -135,22 +137,23 @@ namespace Player {
         
         [ServerRpc]
         private void ReloadEndServerRpc() {
-            int rounds = magazineSize;
-            if (rounds > _networkClipRemainingRounds.Value) {
-                rounds = _networkClipRemainingRounds.Value;
+            //Rounds to add to the magazine
+            //Start with the full magazine minus the remaining bullets
+            int rounds = magazineSize - _networkClipRemainingRounds.Value;
+            
+            //If the amount to add is greater than the amount stored, we limit it to the amount stored
+            if (_networkStoredRemainingRounds.Value < rounds) {
+                rounds = _networkStoredRemainingRounds.Value;
             }
         
-            if (_networkClipRemainingRounds.Value > 0) {
-                rounds -= _networkClipRemainingRounds.Value;
-            }
-        
-            _networkClipRemainingRounds.Value -= rounds;
+            //Subtract the bullets from storage 
+            _networkStoredRemainingRounds.Value -= rounds;
             if (_networkClipRemainingRounds.Value < 1) {
                 RemainingDryClientRpc();
             }
-        
+            
+            //Add the bullets to the clip
             _networkClipRemainingRounds.Value += rounds;
-            _reloadEndTime = 0f;
         }
         
         [ServerRpc]
