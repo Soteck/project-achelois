@@ -61,11 +61,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de878523f64b4b0f97907bcf24a68a31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
+  initialized:
+    m_InternalValue: 0
   team:
     m_InternalValue: 0
   state:
     m_InternalValue: 0
+  networkFollowing:
+    m_InternalValue: 0
+  activeCamera: {fileID: 0}
+  currentSoldier: {fileID: 0}
+  spectatorController: {fileID: 0}
 --- !u!1 &1883722321785800897
 GameObject:
   m_ObjectHideFlags: 0
@@ -114,7 +120,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1883722321785800897}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -157,7 +163,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 1883722321785800897}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1

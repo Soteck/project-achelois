@@ -34,7 +34,7 @@ namespace Controller {
         public float jumpTimeout = 0.05f;
 
         public Animator animator;
-        
+        public PlayableSoldier soldier;
 
         // player
         private float _terminalVelocity = 53.0f;
@@ -72,14 +72,13 @@ namespace Controller {
         public new void Awake() {
             base.Awake();
             _oldInputPosition = transform.position;
+            inputActions.Player.Jump.performed += Jump;
             inputActions.Player.Disable();
+            soldier = gameObject.GetComponent<PlayableSoldier>();
         }
 
-        public override void OnGainedOwnership() {
-            playerCamera.enabled = true;
-            inputActions.Player.Jump.performed += Jump;
-            inputActions.Player.Enable();
-            CameraUtil.DisableAllCameras(playerCamera);
+        public override void OnNetworkDespawn() {
+            inputActions.Player.Disable();
         }
 
         protected override void ClientVisuals()

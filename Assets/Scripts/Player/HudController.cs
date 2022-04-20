@@ -1,23 +1,28 @@
 using System;
+using Core;
+using Enums;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace Player {
-    public class HudController : MonoBehaviour {
+    public class HudController : Singleton<HudController> {
+        public TextMeshProUGUI teamTxt;
         public TextMeshProUGUI spawnTimeTxt;
         public TextMeshProUGUI mapTimeTxt;
         public TextMeshProUGUI ammoTxt;
         public TextMeshProUGUI healthTxt;
 
+        private Team _drawingTeam;
         private void Update() {
+            teamTxt.SetText(GetTeamTxt());
             mapTimeTxt.SetText(getMapText());
-            spawnTimeTxt.SetText(getTeamText());
+            spawnTimeTxt.SetText(getRespawnsText());
             ammoTxt.SetText(getAmmoText());
             healthTxt.SetText(getHealthText());
         }
 
-        private string getTeamText() {
+        private string getRespawnsText() {
             float time = MapController.TimeElapsed();
 
             double teamARemaining = 0;
@@ -34,6 +39,19 @@ namespace Player {
 
         private string getMapText() {
             return Math.Floor(MapController.TimeElapsed()) + "";
+        }
+        
+        private string GetTeamTxt() {
+            switch (_drawingTeam) {
+                case Team.Spectator:
+                    return "Spectator";
+                case Team.TeamA:
+                    return "Team A";
+                case Team.TeamB:
+                    return "Team B";
+            }
+
+            return "Unknown";
         }
         
         
@@ -64,5 +82,10 @@ namespace Player {
 
             return "???";
         }
+
+        public static void ChangeTeam(Team team) {
+            Instance._drawingTeam = team;
+        }
+
     }
 }

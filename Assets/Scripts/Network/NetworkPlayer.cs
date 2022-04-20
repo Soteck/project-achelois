@@ -4,32 +4,54 @@ using Controller;
 using Enums;
 using Network.Shared;
 using Player;
-using UnityEngine;
 using Unity.Netcode;
-using UnityEngine.InputSystem;
+using UnityEngine;
 using Util;
+using Random = UnityEngine.Random;
 
 namespace Network {
-    public class NetworkPlayer : NetController {
+    public class NetworkPlayer : NetworkBehaviour {
+        public NetworkVariable<PlayerNetworkData> networkData = new NetworkVariable<PlayerNetworkData>();
+        public NetworkVariable<bool> initialized = new NetworkVariable<bool>();
+        public NetworkVariable<Guid> selectedSpawnPoint = new NetworkVariable<Guid>();
+        
+        
         public NetworkVariable<Team> team = new NetworkVariable<Team>();
         public NetworkVariable<PlayerSate> state = new NetworkVariable<PlayerSate>();
+        public NetworkVariable<ulong> networkFollowing = new NetworkVariable<ulong>();
 
-        public NetworkVariable<PlayerNetworkData> networkData = new NetworkVariable<PlayerNetworkData>();
-        public NetworkVariable<Guid> selectedSpawnPoint = new NetworkVariable<Guid>();
 
         private Team activeTeam = Team.Spectator;
         private PlayerSate activeState = PlayerSate.MapCamera;
+        
         private ulong currentFollowing;
-
         public Camera activeCamera;
         public PlayableSoldier currentSoldier;
+        public NetSpectatorController spectatorController;
 
+        private PlayerInputActions _inputActions;
 
-        public new void Awake() {
-            base.Awake();
+        public void Awake() {
+            _inputActions = new PlayerInputActions();
+            _inputActions.Player.Enable();
         }
 
-        public override void OnGainedOwnership() {
+
+        void Update() {
+            if (!initialized.Value) {
+                InitializeConfig();
+            }
+            else {
+                if (IsSpawned) {
+                    if (IsClient && IsOwner) {
+                        ClientInput();
+                        ClientVisuals();
+                    }
+                }
+            }
+        }
+
+        private void InitializeConfig() {
             if (IsOwner) {
                 PlayerNetworkData data = new PlayerNetworkData();
                 data.playerName = ConfigHolder.playerName;
@@ -38,47 +60,114 @@ namespace Network {
             }
         }
 
-        protected override void ClientInput() {
-            bool fire1Triggered = inputActions.Player.Fire1.ReadValue<float>() > 0f;
-            bool fire2Triggered = inputActions.Player.Fire2.ReadValue<float>() > 0f;
-            bool jumpTriggered = inputActions.Player.Jump.ReadValue<float>() > 0f;
+        private void ClientInput() {
+            bool fire1Triggered = _inputActions.Player.Fire1.WasPerformedThisFrame();
+            bool fire2Triggered = _inputActions.Player.Fire2.WasPerformedThisFrame();
+            bool jumpTriggered = _inputActions.Player.Jump.WasPerformedThisFrame();
 
+            if (activeState == PlayerSate.MapCamera && jumpTriggered) {
+                RequestStandaloneSpectatorServerRpc();
+            }
             //Fire 1 -> spec next player // Fire2 -> previous
             //Jump -> Go to generic spectator
         }
 
 
-        protected override void ClientVisuals() {
+        private void ClientVisuals() {
             if (activeState != state.Value) {
-                //TODO
+                activeState = state.Value;
+                switch (activeState) {
+                    case PlayerSate.MapCamera:
+                        DisableSpectator();
+                        FollowMapCamera();
+                        break;
+                    case PlayerSate.Following:
+                    case PlayerSate.PlayingDead:
+                        DisableSpectator();
+                        FollowPlayer(networkFollowing.Value);
+                        break;
+                    case PlayerSate.PlayingAlive:
+                        DisableSpectator();
+                        AttachSoldier();
+                        break;
+                    case PlayerSate.Spectating:
+                        EnableSpectator();
+                        break;
+                }
             }
 
             if (activeTeam != team.Value) {
-                //TODO
+                activeTeam = team.Value;
+                HudController.ChangeTeam(activeTeam);
+            }
+
+            if (currentFollowing != networkFollowing.Value) {
+                currentFollowing = networkFollowing.Value;
+                FollowPlayer(currentFollowing);
             }
         }
 
-        protected override void ServerCalculations() {
-            //Empty
+        private void EnableSpectator() {
+            spectatorController.Enable();
+            spectatorController.playerCamera.enabled = true;
+            CameraUtil.DisableAllCameras(spectatorController.playerCamera);
         }
 
-        protected override void ClientBeforeInput() {
-            //Empty
+        private void AttachSoldier() {
+            currentSoldier = PlayableSoldier.FindByOwnerId(NetworkManager.Singleton.LocalClientId);
+            spectatorController.Disable();
+            currentSoldier.Enable();
+            currentSoldier.controller.Enable();
+            currentSoldier.playerCamera.enabled = true;
+            CameraUtil.DisableAllCameras(currentSoldier.playerCamera);
+            
         }
 
-        protected override void ClientMovement() {
-            //Empty
+        private void FollowPlayer(ulong networkFollowingValue) {
+            //NetworkPlayer player = MapController.GetPlayer(networkFollowingValue);
+            PlayableSoldier soldier = PlayableSoldier.FindByOwnerId(networkFollowingValue);
+            if (soldier) {
+                currentSoldier = soldier;
+                currentSoldier.playerCamera.enabled = true;
+                CameraUtil.DisableAllCameras(soldier.playerCamera);
+            }
         }
+
+        private void FollowMapCamera() {
+            MapController.MapCamera().enabled = true;
+            CameraUtil.DisableAllCameras(MapController.MapCamera());
+        }
+
+        private void DisableSpectator() {
+            spectatorController.Disable();
+        }
+
 
         public void RequestJoinTeam(Team teamToJoin) {
-            this.RequestJoinTeamServerRpc(teamToJoin, NetworkManager.Singleton.LocalClientId);
+            RequestJoinTeamServerRpc(teamToJoin, NetworkManager.Singleton.LocalClientId);
         }
 
+
+        //Server RPC methods
         [ServerRpc]
         private void RequestJoinTeamServerRpc(Team teamToJoin, ulong playerId) {
             MapController.ServerRequestJoinTeam(teamToJoin, playerId);
         }
+        
+        [ServerRpc]
+        private void RequestStandaloneSpectatorServerRpc() {
+            if (team.Value == Team.Spectator) {
+                state.Value = PlayerSate.Spectating;
+            }
+        }
 
+        [ServerRpc]
+        private void SaveNetworkDataServerRpc(PlayerNetworkData data) {
+            initialized.Value = true;
+            networkData.Value = data;
+        }
+        
+        //Public accessors
         public static NetworkPlayer networkPlayerOwner {
             get {
                 if (NetworkManager.Singleton.IsClient && NetworkManager.Singleton.LocalClient != null) {
@@ -89,10 +178,5 @@ namespace Network {
             }
         }
 
-
-        [ServerRpc]
-        private void SaveNetworkDataServerRpc(PlayerNetworkData data) {
-            networkData.Value = data;
-        }
     }
 }

@@ -25,6 +25,7 @@ namespace Player {
 
         private EquipableItem _changeWeapon = null;
         private int localActiveItem = -1;
+        public NetFirstPersonController controller;
 
         public new void Awake() {
             base.Awake();
@@ -32,16 +33,13 @@ namespace Player {
             networkActiveItem = new NetworkVariable<int>();
 
             inputActions.Player.Disable();
+            inputActions.Player.Scroll.performed += Scroll;
+            controller = gameObject.GetComponent<NetFirstPersonController>();
             // foreach (EquipableItem item in activeWeapon.GetComponentsInChildren<EquipableItem>()) {
             //     if (!_storedItems.Contains(item)) {
             //         _storedItems.Add(InitEquipment(item, item.ToNetWorkData()));
             //     }
             // }
-        }
-
-        public override void OnGainedOwnership() {
-            inputActions.Player.Enable();
-            inputActions.Player.Scroll.performed += Scroll;
         }
 
 
@@ -255,6 +253,17 @@ namespace Player {
             else {
                 Debug.LogError("Item with item ID notified from the server but not found: " + itemMetaItemID);
             }
+        }
+
+        public static PlayableSoldier FindByOwnerId(ulong ownerId) {
+            PlayableSoldier[] allSoldiers = GameObject.FindObjectsOfType<PlayableSoldier>();
+            foreach (var soldier in allSoldiers) {
+                if (soldier.OwnerClientId == ownerId) {
+                    return soldier;
+                }
+            }
+
+            return null;
         }
     }
 }

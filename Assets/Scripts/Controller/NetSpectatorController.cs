@@ -52,11 +52,6 @@ namespace Controller {
             _jumpVelocity = gravity * -20f;
             inputActions.Player.Disable();
         }
-
-        public override void OnGainedOwnership() {
-            inputActions.Player.Enable();
-            playerCamera.enabled = true;
-        }
         
 
         protected override void ClientBeforeInput() {

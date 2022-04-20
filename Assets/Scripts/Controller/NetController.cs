@@ -29,8 +29,10 @@ namespace Controller {
                     //ServerCalculations();
                 }
 
-                ClientMovement();
-                ClientVisuals();
+                if (IsClient) {
+                    ClientMovement();
+                    ClientVisuals();
+                }
             }
         }
 
@@ -45,11 +47,10 @@ namespace Controller {
             gameObject.SetActive(true);
             inputActions.Player.Enable();
         }
-
+        
         public void Disable() {
             gameObject.SetActive(false);
             inputActions.Player.Disable();
-            
         }
         
     }

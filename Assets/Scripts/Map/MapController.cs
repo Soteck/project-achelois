@@ -7,6 +7,7 @@ using Map;
 using Player;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Playables;
 using Logger = Core.Logger;
 using NetworkPlayer = Network.NetworkPlayer;
 
@@ -125,6 +126,13 @@ public class MapController : NetworkSingleton<MapController> {
         NetworkPlayer playerObject = NetworkManager.Singleton.ConnectedClients[id].PlayerObject
             .GetComponent<NetworkPlayer>();
         _allPlayers[id] = playerObject;
+
+
+        var cameraTransform = mapCamera.transform;
+        GameObject spectator = Instantiate(spectatorPrefab, cameraTransform.position, cameraTransform.rotation);
+        playerObject.spectatorController = spectator.GetComponent<NetSpectatorController>();
+
+        playerObject.state.Value = PlayerSate.MapCamera;
     }
 
     private void DoServerRequestJoinTeam(Team team, ulong playerId) {
@@ -176,6 +184,12 @@ public class MapController : NetworkSingleton<MapController> {
             }
             else {
                 player.team.Value = Team.Spectator;
+                player.state.Value = PlayerSate.MapCamera;
+            }
+            PlayableSoldier soldier = PlayableSoldier.FindByOwnerId(playerId);
+            if (soldier) {
+                NetworkObject no = soldier.GetComponent<NetworkObject>();
+                no.Despawn();
             }
         }
     }
@@ -192,17 +206,11 @@ public class MapController : NetworkSingleton<MapController> {
         Instance.DoServerRequestJoinTeam(team, playerId);
     }
 
-    // public static void FollowPlayer(ulong playerId) {
-    //     NetworkPlayer player = Instance._allPlayers[playerId];
-    //     if (player != null) {
-    //         DisableAllCameras(player.activeCamera);
-    //     }
-    //     else {
-    //         Logger.Warning("Error following player, player not found " + playerId);
-    //     }
-    // }
-    //
-    // public static void MapCamera() {
-    //     DisableAllCameras(Instance.mapCamera);
-    // }
+    public static NetworkPlayer GetPlayer(ulong playerId) {
+         return Instance._allPlayers[playerId];
+    }
+    
+    public static Camera MapCamera() {
+        return Instance.mapCamera;
+    }
 }

@@ -1544,6 +1544,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1272606817317612538, guid: 160912583e446af45bba86eea905947a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -125
+      objectReference: {fileID: 0}
+    - target: {fileID: 4576082091526724277, guid: 160912583e446af45bba86eea905947a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -50
+      objectReference: {fileID: 0}
     - target: {fileID: 8390506371771930664, guid: 160912583e446af45bba86eea905947a, type: 3}
       propertyPath: m_Name
       value: OverlayCanvas
