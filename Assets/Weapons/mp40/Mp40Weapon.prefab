@@ -195,6 +195,7 @@ MonoBehaviour:
   animator: {fileID: 0}
   busy: 0
   magazine: {fileID: 0}
+  barrelEnd: {fileID: 3651827240750954317}
   damage: 10
   range: 100
   fireRate: 600
@@ -209,6 +210,36 @@ MonoBehaviour:
   reloadSound: {fileID: 8300000, guid: e5a14a2010da16b4bbfd991b3300e700, type: 3}
   drySound: {fileID: 8300000, guid: 5b8eac5e3069cf14aa719e14e6791a9f, type: 3}
   bulletTrailPrefab: {fileID: 6187151195308867699, guid: 461d82bd6bece0b4a948988a2da75693, type: 3}
+--- !u!1 &3651827240750954317
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1883687220020698695}
+  m_Layer: 0
+  m_Name: BarrelEnd
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1883687220020698695
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3651827240750954317}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -22.31, y: 2.93, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1495763776027292278}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1389567501473256861
 PrefabInstance:
   m_ObjectHideFlags: 0

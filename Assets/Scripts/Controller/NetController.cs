@@ -26,7 +26,7 @@ namespace Controller {
                 }
 
                 if (IsServer) {
-                    ServerCalculations();
+                    //ServerCalculations();
                 }
 
                 ClientMovement();

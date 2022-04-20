@@ -1,10 +1,12 @@
 ﻿using System;
 using Enums;
 using Network.Shared;
+using Player;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
+using Util;
 
 namespace Controller {
     public class NetFirstPersonController : NetController {
@@ -77,6 +79,7 @@ namespace Controller {
             playerCamera.enabled = true;
             inputActions.Player.Jump.performed += Jump;
             inputActions.Player.Enable();
+            CameraUtil.DisableAllCameras(playerCamera);
         }
 
         protected override void ClientVisuals()

@@ -1248,7 +1248,6 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
-  CanCommitToTransform: 0
 --- !u!114 &5801555268866056752
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1344,6 +1343,8 @@ MonoBehaviour:
   playerCamera: {fileID: 2591657510236247230}
   animator: {fileID: 3682338190886987594}
   networkActiveItem:
+    m_InternalValue: 0
+  networkHealth:
     m_InternalValue: 0
 --- !u!1 &2701189706130882737
 GameObject:
@@ -2831,7 +2832,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5256141874486216884
 Transform:
   m_ObjectHideFlags: 0

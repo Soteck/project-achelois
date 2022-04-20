@@ -68,9 +68,9 @@ public class MapController : NetworkSingleton<MapController> {
         team_a_respawn_count.Value++;
         int teamSpawningNumber = 0;
         foreach (ulong playerId in _teamAPlayers) {
-            var player = _allPlayers[playerId];
+            NetworkPlayer player = _allPlayers[playerId];
             if (player.state.Value != PlayerSate.PlayingAlive) {
-                ServerSpawnControlablePlayer(playerId, player, teamSpawningNumber++);
+                ServerSpawnControllablePlayer(playerId, player, teamSpawningNumber++);
             }
         }
     }
@@ -80,14 +80,14 @@ public class MapController : NetworkSingleton<MapController> {
         team_b_respawn_count.Value++;
         int teamSpawningNumber = 0;
         foreach (ulong playerId in _teamBPlayers) {
-            var player = _allPlayers[playerId];
+            NetworkPlayer player = _allPlayers[playerId];
             if (player.state.Value != PlayerSate.PlayingAlive) {
-                ServerSpawnControlablePlayer(playerId, player, teamSpawningNumber++);
+                ServerSpawnControllablePlayer(playerId, player, teamSpawningNumber++);
             }
         }
     }
 
-    private void ServerSpawnControlablePlayer(ulong playerId, NetworkPlayer player, int number) {
+    private void ServerSpawnControllablePlayer(ulong playerId, NetworkPlayer player, int number) {
         //GameObject go = NetworkObjectPool.Instance.GetNetworkObject(controlablePlayerPrefab).gameObject;
         Vector3 position = SpawnArea.GetSpawnPosition(player.selectedSpawnPoint.Value, number);
         GameObject go = Instantiate(controlablePlayerPrefab, position, Quaternion.identity);
@@ -99,11 +99,9 @@ public class MapController : NetworkSingleton<MapController> {
         no.SpawnWithOwnership(playerId);
         //no.ChangeOwnership(playerId);
         player.state.Value = PlayerSate.PlayingAlive;
-        player.activeCamera = go.GetComponent<NetFirstPersonController>().playerCamera;
         PlayableSoldier po = go.GetComponent<PlayableSoldier>();
-        player.currentSoldier = po;
         po.networkHealth.Value = 100f;
-        DisableAllCameras(player.activeCamera);
+        // DisableAllCameras(player.activeCamera);
     }
 
     void Start() {
@@ -129,8 +127,7 @@ public class MapController : NetworkSingleton<MapController> {
         _allPlayers[id] = playerObject;
     }
 
-    [ServerRpc]
-    private void RequestJoinServerRpc(Team team, ulong playerId) {
+    private void DoServerRequestJoinTeam(Team team, ulong playerId) {
         NetworkPlayer player = this._allPlayers[playerId];
         Team from = Team.Spectator;
         bool canJoin = false;
@@ -191,43 +188,21 @@ public class MapController : NetworkSingleton<MapController> {
         return Instance.timeElapsed.Value;
     }
 
-    public static void RequestJoinTeam(Team team, ulong playerId) {
-        Instance.RequestJoinServerRpc(team, playerId);
+    public static void ServerRequestJoinTeam(Team team, ulong playerId) {
+        Instance.DoServerRequestJoinTeam(team, playerId);
     }
 
-    public static void RequestJoinTeam(Team team) {
-        Instance.RequestJoinServerRpc(team, NetworkManager.Singleton.LocalClientId);
-    }
-
-    public static void FollowPlayer(ulong playerId) {
-        NetworkPlayer player = Instance._allPlayers[playerId];
-        if (player != null) {
-            DisableAllCameras(player.activeCamera);
-        }
-        else {
-            Logger.Warning("Error following player, player not found " + playerId);
-        }
-    }
-
-    public static void MapCamera() {
-        DisableAllCameras(Instance.mapCamera);
-    }
-
-    public static void DisableAllCameras(Camera dontDisable) {
-        //Camera[] cameras = FindObjectsOfType(typeof(Camera)) as Camera[];
-        Camera[] cameras = Camera.allCameras;
-        foreach (Camera camera in cameras) {
-            if (dontDisable != null) {
-                if (camera == dontDisable) {
-                    camera.enabled = true;
-                }
-                else {
-                    camera.enabled = false;
-                }
-            }
-            else {
-                camera.enabled = false;
-            }
-        }
-    }
+    // public static void FollowPlayer(ulong playerId) {
+    //     NetworkPlayer player = Instance._allPlayers[playerId];
+    //     if (player != null) {
+    //         DisableAllCameras(player.activeCamera);
+    //     }
+    //     else {
+    //         Logger.Warning("Error following player, player not found " + playerId);
+    //     }
+    // }
+    //
+    // public static void MapCamera() {
+    //     DisableAllCameras(Instance.mapCamera);
+    // }
 }

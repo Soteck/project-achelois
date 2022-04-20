@@ -5,6 +5,7 @@ using Unity.Netcode.Transports.UNET;
 using UnityEngine;
 using UnityEngine.UI;
 using Logger = Core.Logger;
+using NetworkPlayer = Network.NetworkPlayer;
 
 public class OverlayController : MonoBehaviour {
     public float consoleDeployTime = 0.1f;
@@ -90,12 +91,12 @@ public class OverlayController : MonoBehaviour {
         });
         
         joinTeamAButton?.onClick.AddListener(() => {
-            MapController.RequestJoinTeam(Team.TeamA);
+            NetworkPlayer.networkPlayerOwner.RequestJoinTeam(Team.TeamA);
             HideAllElements();
         });
         
         joinTeamBButton?.onClick.AddListener(() => {
-            MapController.RequestJoinTeam(Team.TeamB);
+            NetworkPlayer.networkPlayerOwner.RequestJoinTeam(Team.TeamB);
             HideAllElements();
         });
     }

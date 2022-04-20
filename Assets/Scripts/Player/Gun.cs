@@ -3,6 +3,7 @@ using Enums;
 using Network.Shared;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Util;
 
 namespace Player {
@@ -10,6 +11,7 @@ namespace Player {
     [RequireComponent(typeof(NetworkObject))]
     public class Gun : EquipableItem {
         public GameObject magazine;
+        public GameObject barrelEnd;
 
         public float damage = 10f;
         public float range = 100f;
@@ -92,12 +94,12 @@ namespace Player {
 
         protected override void ClientInput() {
             if (!busy) {
-                if (inputActions.Player.Fire1.ReadValue<float>() > 0f) {
+                InputAction fire1 = inputActions.Player.Fire1;
+                if (fire1.IsPressed()) {
                     _hasShooted = true;
-                    //TODO: Change the position to the actual barrel position
-                    ShootWeaponServerRpc(playerCamera.transform.position, Time.time);
+                    ShootWeaponServerRpc(barrelEnd.transform.position, Time.time);
                 }
-                else if (inputActions.Player.Reload.ReadValue<float>() > 0f) {
+                else if (inputActions.Player.Reload.WasPerformedThisFrame()) {
                     ReloadServerRpc(Time.time);
                 }
             }
@@ -148,7 +150,7 @@ namespace Player {
         
             //Subtract the bullets from storage 
             _networkStoredRemainingRounds.Value -= rounds;
-            if (_networkClipRemainingRounds.Value < 1) {
+            if (_networkStoredRemainingRounds.Value < 1) {
                 RemainingDryClientRpc();
             }
             
@@ -215,7 +217,7 @@ namespace Player {
                 TrailRenderer bullet = Instantiate(bulletTrailPrefab, barrelPosition, Quaternion.identity);
                 bullet.AddPosition(barrelPosition);
                 bullet.transform.position = hitPoint;
-                Destroy(impactGo, 4f);
+                Destroy(bullet.gameObject, 4f);
             }
         }
         

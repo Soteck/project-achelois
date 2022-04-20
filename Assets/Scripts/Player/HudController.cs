@@ -5,12 +5,14 @@ using UnityEngine;
 
 namespace Player {
     public class HudController : MonoBehaviour {
-        public TextMeshProUGUI timeTxt;
+        public TextMeshProUGUI spawnTimeTxt;
+        public TextMeshProUGUI mapTimeTxt;
         public TextMeshProUGUI ammoTxt;
         public TextMeshProUGUI healthTxt;
 
         private void Update() {
-            timeTxt.SetText(getTeamText());
+            mapTimeTxt.SetText(getMapText());
+            spawnTimeTxt.SetText(getTeamText());
             ammoTxt.SetText(getAmmoText());
             healthTxt.SetText(getHealthText());
         }
@@ -27,8 +29,14 @@ namespace Player {
                                             (time % MapController.Instance.teamBRespawn));
             }
 
-            return teamARemaining + "/" + teamBRemaining + " - " + time;
+            return teamARemaining + "/" + teamBRemaining;
         }
+
+        private string getMapText() {
+            return Math.Floor(MapController.TimeElapsed()) + "";
+        }
+        
+        
 
         private string getAmmoText() {
             if (Network.NetworkPlayer.networkPlayerOwner != null) {
