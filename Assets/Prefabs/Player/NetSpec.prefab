@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 941205825056272543}
   - component: {fileID: 941205825056272537}
   - component: {fileID: 941205825056272542}
+  - component: {fileID: 2967680469181149603}
   m_Layer: 0
   m_Name: MainCamera
   m_TagString: Untagged
@@ -25,7 +26,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 941205825056272540}
-  m_LocalRotation: {x: -0.11233615, y: 0, z: 0, w: 0.9936703}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -83,6 +84,32 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 941205825056272540}
   m_Enabled: 1
+--- !u!114 &2967680469181149603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 941205825056272540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b719299624b4d93bae5988db477498c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncPositionX: 0
+  SyncPositionY: 0
+  SyncPositionZ: 0
+  SyncRotAngleX: 1
+  SyncRotAngleY: 0
+  SyncRotAngleZ: 0
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  InLocalSpace: 1
+  Interpolate: 1
 --- !u!1 &941205825506207719
 GameObject:
   m_ObjectHideFlags: 0
@@ -206,8 +233,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 941205826761635473}
-  m_LocalRotation: {x: 0, y: 0.45864987, z: 0, w: -0.88861716}
-  m_LocalPosition: {x: 20.355549, y: 1.0799999, z: 4.7097864}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 941205825506207718}
@@ -267,9 +294,9 @@ MonoBehaviour:
   SyncRotAngleX: 1
   SyncRotAngleY: 1
   SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
@@ -287,8 +314,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 936a6f5de6f74318a238ad1270d4481a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 941205826761635472}
   playerCamera: {fileID: 941205825056272537}
+  controller: {fileID: 941205826761635472}
   speed: 12
   mouseSensivity: 15
   jumpHeight: 3
@@ -297,15 +324,9 @@ MonoBehaviour:
   SprintSpeed: 5.335
   RotationSmoothTime: 0.12
   SpeedChangeRate: 10
-  playerBody: {fileID: 941205825056272543}
+  lookTransform: {fileID: 941205825056272543}
   groundCheck: {fileID: 941205825506207718}
   groundDistance: 0.4
   groundMask:
     serializedVersion: 2
     m_Bits: 8
-  networkPositionDirection:
-    m_InternalValue: {x: 0, y: 0, z: 0}
-  networkRotationDirection:
-    m_InternalValue: {x: 0, y: 0}
-  networkVerticalVelocity:
-    m_InternalValue: 0

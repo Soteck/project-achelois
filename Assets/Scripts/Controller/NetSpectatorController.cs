@@ -1,161 +1,110 @@
-﻿using Unity.Netcode;
+﻿using Config;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Controller {
-    public class NetSpectatorController : NetController {
+    public class NetSpectatorController : NetworkBehaviour {
         public Camera playerCamera;
+        public CharacterController controller;
+        public Transform lookTransform;
 
         public float speed = 12f;
-        public float mouseSensivity = 100f;
-        public float jumpHeight = 3f;
-        public float gravity = -9.81f;
-
-        [Header("Player")] [Tooltip("Move speed of the character in m/s")]
-        public float MoveSpeed = 2.0f;
-
-        [Tooltip("Sprint speed of the character in m/s")]
-        public float SprintSpeed = 5.335f;
-
-        [Tooltip("How fast the character turns to face movement direction")] [Range(0.0f, 0.3f)]
-        public float RotationSmoothTime = 0.12f;
-
-        [Tooltip("Acceleration and deceleration")]
-        public float SpeedChangeRate = 10.0f;
-
-        public Transform playerBody;
-        public Transform groundCheck;
-        public float groundDistance = 0.4f;
-        public LayerMask groundMask;
-
-        private Vector3 _velocity;
+        public float sprintMultiplier = 1.5f;
 
         // player
-        private float _xRotation = 0f;
-        private float _jumpVelocity;
-
-        [SerializeField]
-        private NetworkVariable<Vector3> networkPositionDirection = new NetworkVariable<Vector3>();
-
-        [SerializeField]
-        private NetworkVariable<Vector2> networkRotationDirection = new NetworkVariable<Vector2>();
-
-        [SerializeField]
-        private NetworkVariable<float> networkVerticalVelocity = new NetworkVariable<float>();
-        
+        private PlayerInputActions _inputActions;
 
         // client caches positions
-        private Vector3 _oldInputPosition = Vector3.zero;
-        private Vector2 _oldInputRotation = Vector2.zero;
-        
-        protected new void Awake() {
-            base.Awake();
-            _jumpVelocity = gravity * -20f;
+        private float _internalXRotation;
+
+        protected void Awake() {
+            _inputActions = new PlayerInputActions();
             playerCamera.enabled = false;
-            inputActions.Player.Disable();
-        }
-        
-
-        protected override void ClientBeforeInput() {
-            //empty
+            _inputActions.Player.Disable();
         }
 
-        protected override void ClientInput() {
-            Vector3 inputPosition = KeyboardInput();
-            Vector2 inputRotation = MouseInput();
-            if (_oldInputPosition != inputPosition ||
-                _oldInputRotation != inputRotation)
-            {
-                _oldInputPosition = inputPosition;
-                _oldInputRotation = inputRotation;
-                UpdateClientPositionAndRotationServerRpc(inputPosition, inputRotation );
+        void Update() {
+            if (IsSpawned) {
+                if (IsClient && IsOwner) {
+                    ClientInput();
+                }
             }
         }
 
-        protected override void ClientMovement() {
-            if (networkPositionDirection.Value != Vector3.zero)
-            {
-                controller.Move(transform.TransformDirection(networkPositionDirection.Value));
-            }
-            if (networkRotationDirection.Value != Vector2.zero)
-            {
-                playerBody.localRotation = Quaternion.Euler(networkRotationDirection.Value.y, 0f, 0f);
-                transform.Rotate(Vector3.up * networkRotationDirection.Value.x);
-            }
+        private void ClientInput() {
+            Vector3 movementInput = KeyboardInput();
+            Vector3 rotationInput = MouseInput();
+            controller.Move(transform.TransformDirection(movementInput));
+
+            //Unity Y axis is vertical, rotating through it will look -Y = left // +Y = right
+            //Unity X axis is horizontal, rotating through it will look -X = down // +X = up
+            //Unity Z axis is depth, won't rotate through it
+            transform.Rotate(new Vector3(0f, rotationInput.x, 0f), Space.World);
+
+            _internalXRotation = Mathf.Clamp(_internalXRotation + rotationInput.y, -90f, 90f);
+            lookTransform.localRotation = Quaternion.Euler(_internalXRotation, 0f, 0f);
         }
 
-        protected override void ClientVisuals() {
-            
-        }
-        
 
         private Vector2 MouseInput() {
-            Vector2 movementInput = inputActions.Player.Look.ReadValue<Vector2>();
-            float mouseX = movementInput.x * mouseSensivity * Time.deltaTime; //Up-Down
-            float mouseY = movementInput.y * mouseSensivity * Time.deltaTime; //Left-Right
+            // -X = Left // + X = Right
+            // -Y = UP // +Y = DOWN
+            float mouseSensitivity = ConfigHolder.mouseSensitivity;
+            Vector2 movementInput = _inputActions.Player.Look.ReadValue<Vector2>();
 
-            float positionX = _oldInputRotation.y;
-            positionX -= mouseY;
-            positionX = Mathf.Clamp(positionX, -90f, 90f);
-
-            return new Vector2(mouseX, positionX);
-        }
-
-        private void MoveKeyboard() {
-            Vector2 movementInput = inputActions.Player.Movement.ReadValue<Vector2>();
-            bool isJumping = inputActions.Player.Jump.ReadValue<float>() > 0f;
-            bool isCrouching = inputActions.Player.Crouch.ReadValue<float>() > 0f;
-
-            Vector3 move = transform.right * movementInput.x + transform.forward * movementInput.y;
-            //Debug.Log(move);
-            controller.Move(move * speed * Time.deltaTime);
-
-            if (isJumping) {
-                _velocity.y = _jumpVelocity * Time.deltaTime;
-            }
-            else if (isCrouching) {
-                _velocity.y = _jumpVelocity * Time.deltaTime * -1;
+            float mouseXInput = movementInput.x * mouseSensitivity * Time.deltaTime;
+            float mouseYInput;
+            if (ConfigHolder.invertMouse) {
+                mouseYInput = movementInput.y * -mouseSensitivity * Time.deltaTime;
             }
             else {
-                _velocity.y = 0;
+                mouseYInput = movementInput.y * mouseSensitivity * Time.deltaTime;
             }
 
-            //Debug.Log(isGrounded + " : " + velocity);
-
-            controller.Move(_velocity * Time.deltaTime);
+            return new Vector2(mouseXInput, mouseYInput);
         }
 
         private Vector3 KeyboardInput() {
-            Vector2 controllerHorizontalInput = inputActions.Player.Movement.ReadValue<Vector2>();
-            bool isJumping = inputActions.Player.Jump.IsPressed();
-            bool isCrouching = inputActions.Player.Crouch.IsPressed();
+            Vector2 controllerHorizontalInput = _inputActions.Player.Movement.ReadValue<Vector2>();
+            float moveSpeed = speed;
+            bool isJumping = _inputActions.Player.Jump.IsPressed();
+            bool isCrouching = _inputActions.Player.Crouch.IsPressed();
+            bool isSprinting = _inputActions.Player.Sprint.IsPressed();
+
             float verticalMovement = 0;
             if (isJumping) {
                 verticalMovement += 1;
             }
+
             if (isCrouching) {
                 verticalMovement -= 1;
             }
+
+            if (isSprinting) {
+                moveSpeed *= sprintMultiplier;
+            }
+
             //If player presses both buttons it wont move. Not my business.
             return new Vector3(
-                controllerHorizontalInput.x * speed * Time.deltaTime, 
-                verticalMovement * speed * Time.deltaTime, 
-                controllerHorizontalInput.y * speed * Time.deltaTime);
+                controllerHorizontalInput.x * moveSpeed * Time.deltaTime,
+                verticalMovement * moveSpeed * Time.deltaTime,
+                controllerHorizontalInput.y * moveSpeed * Time.deltaTime);
         }
-        
-        protected override void ServerCalculations() {
-            //Empty
+
+
+        public void Enable() {
+            gameObject.SetActive(true);
+            _inputActions.Player.Enable();
         }
-        
-        [ServerRpc]
-        private void UpdateClientPositionAndRotationServerRpc(Vector3 newPosition, Vector2 newRotation)
-        {
-            networkPositionDirection.Value = newPosition;
-            networkRotationDirection.Value = newRotation;
+
+        public void Disable() {
+            gameObject.SetActive(false);
+            _inputActions.Player.Disable();
         }
-        
-        
+
+
         public static NetSpectatorController FindByOwnerId(ulong ownerId) {
-            NetSpectatorController[] allControllers = GameObject.FindObjectsOfType<NetSpectatorController>();
+            NetSpectatorController[] allControllers = FindObjectsOfType<NetSpectatorController>();
             foreach (NetSpectatorController controller in allControllers) {
                 if (controller.OwnerClientId == ownerId) {
                     return controller;

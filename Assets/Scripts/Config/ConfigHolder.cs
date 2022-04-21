@@ -10,6 +10,7 @@ namespace Config {
         private const bool DefaultAutoSave = true;
         private const bool ServerDefaultAutoBalance = true;
         private const bool DefaultAutoReload = true;
+        private const bool DefaultInvertMouse = true;
 
         private void Start() {
             if (!File.Exists("config.cfg")) {
@@ -35,6 +36,7 @@ namespace Config {
         {
             _cfg["Player"]["Name"].StringValue = DefaultPlayerName;
             _cfg["Input"]["MouseSensitivity"].FloatValue = DefaultMouseSensitivity;
+            _cfg["Input"]["InvertMouse"].BoolValue = DefaultInvertMouse;
             _cfg["Weapons"]["AutoReload"].BoolValue = DefaultAutoReload;
             _cfg["Configuration"]["AutoSave"].BoolValue = DefaultAutoSave;
             _cfg["Server"]["AutoBalance"].BoolValue = ServerDefaultAutoBalance;
@@ -91,6 +93,15 @@ namespace Config {
 
             set {
                 Instance._cfg["Weapons"]["AutoReload"].BoolValue = value;
+                Instance.ShouldSave();
+            }
+        }
+
+        public static bool invertMouse {
+            get => Instance._cfg["Input"]["InvertMouse"].BoolValue;
+
+            set {
+                Instance._cfg["Input"]["InvertMouse"].BoolValue = value;
                 Instance.ShouldSave();
             }
         }
