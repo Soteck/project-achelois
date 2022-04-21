@@ -657,6 +657,9 @@ MonoBehaviour:
   mapTimeTxt: {fileID: 8290244152992748418}
   ammoTxt: {fileID: 3840443287609358443}
   healthTxt: {fileID: 5389758164345944217}
+  teamAPlayers: {fileID: 6613595368693960742}
+  teamBPlayers: {fileID: 7822139064857679607}
+  spectatorPlayers: {fileID: 583277236345922630}
 --- !u!1 &4937215245533276961
 GameObject:
   m_ObjectHideFlags: 0
@@ -942,7 +945,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5386398337831567980
 RectTransform:
   m_ObjectHideFlags: 0

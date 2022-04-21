@@ -5,6 +5,7 @@ using Network.Shared;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace Player {
     public class PlayableSoldier : NetController {
@@ -25,16 +26,16 @@ namespace Player {
 
         private EquipableItem _changeWeapon = null;
         private int localActiveItem = -1;
-        public NetFirstPersonController controller;
+        public NetFirstPersonController fpsController;
 
-        public new void Awake() {
+        public new void Awake() { 
             base.Awake();
             _networkItems = new NetworkList<EquipableItemNetworkData>();
             networkActiveItem = new NetworkVariable<int>();
 
             inputActions.Player.Disable();
             inputActions.Player.Scroll.performed += Scroll;
-            controller = gameObject.GetComponent<NetFirstPersonController>();
+            fpsController = gameObject.GetComponent<NetFirstPersonController>();
             // foreach (EquipableItem item in activeWeapon.GetComponentsInChildren<EquipableItem>()) {
             //     if (!_storedItems.Contains(item)) {
             //         _storedItems.Add(InitEquipment(item, item.ToNetWorkData()));

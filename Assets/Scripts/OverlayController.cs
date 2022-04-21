@@ -36,6 +36,8 @@ public class OverlayController : MonoBehaviour {
     private bool _consoleMoving = false;
     private float _consoleEndMoving = 0f;
 
+    private bool _showingStats = false;
+
     public void Awake() {
         console.gameObject.SetActive(false);
         menu.gameObject.SetActive(false);
@@ -155,9 +157,6 @@ public class OverlayController : MonoBehaviour {
             }
         };
 
-        _inputActions.Player.PlayerStats.performed += context => {
-            
-        };
     }
 
     private void Update() {
@@ -171,6 +170,31 @@ public class OverlayController : MonoBehaviour {
 
             console.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, GetConsolePosition(), 1);
         }
+
+        if (_inputActions.Player.PlayerStats.IsPressed()) {
+            if (!_showingStats) {
+                _showingStats = true;
+                ShowStats();
+            }
+        }
+        else {
+            if (_showingStats) {
+                _showingStats = false;
+                HideStats();
+            }
+        }
+    }
+
+    private void HideStats() {
+        //hud.GetComponent<CanvasRenderer>().SetAlpha(0f);
+        hud.gameObject.SetActive(true);
+        playerStats.gameObject.SetActive(false);
+        //playerStats.GetComponent<Image>().CrossFadeAlpha(1f, 1.0f, false);
+    }
+
+    private void ShowStats() {
+        hud.gameObject.SetActive(false);
+        playerStats.gameObject.SetActive(true);
     }
 
     private float GetConsolePosition() {

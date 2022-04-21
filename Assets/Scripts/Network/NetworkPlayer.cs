@@ -117,7 +117,7 @@ namespace Network {
             currentSoldier = PlayableSoldier.FindByOwnerId(NetworkManager.Singleton.LocalClientId);
             spectatorController.Disable();
             currentSoldier.Enable();
-            currentSoldier.controller.Enable();
+            currentSoldier.fpsController.Enable();
             currentSoldier.playerCamera.enabled = true;
             CameraUtil.DisableAllCameras(currentSoldier.playerCamera);
             

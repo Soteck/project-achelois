@@ -12,6 +12,11 @@ namespace Player {
         public TextMeshProUGUI mapTimeTxt;
         public TextMeshProUGUI ammoTxt;
         public TextMeshProUGUI healthTxt;
+        
+        
+        public TextMeshProUGUI teamAPlayers;
+        public TextMeshProUGUI teamBPlayers;
+        public TextMeshProUGUI spectatorPlayers;
 
         private Team _drawingTeam;
         private void Update() {
@@ -21,6 +26,8 @@ namespace Player {
             ammoTxt.SetText(getAmmoText());
             healthTxt.SetText(getHealthText());
         }
+        
+
 
         private string getRespawnsText() {
             float time = MapController.TimeElapsed();
@@ -86,6 +93,8 @@ namespace Player {
         public static void ChangeTeam(Team team) {
             Instance._drawingTeam = team;
         }
+        
+        
 
     }
 }
