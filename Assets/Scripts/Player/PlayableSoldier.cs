@@ -26,7 +26,7 @@ namespace Player {
 
         private EquipableItem _changeWeapon = null;
         private int localActiveItem = -1;
-        public NetFirstPersonController fpsController;
+        public NetPlayerController playerController;
 
         public new void Awake() { 
             base.Awake();
@@ -35,7 +35,6 @@ namespace Player {
 
             inputActions.Player.Disable();
             inputActions.Player.Scroll.performed += Scroll;
-            fpsController = gameObject.GetComponent<NetFirstPersonController>();
             // foreach (EquipableItem item in activeWeapon.GetComponentsInChildren<EquipableItem>()) {
             //     if (!_storedItems.Contains(item)) {
             //         _storedItems.Add(InitEquipment(item, item.ToNetWorkData()));

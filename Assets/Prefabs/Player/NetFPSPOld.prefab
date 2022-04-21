@@ -1155,12 +1155,12 @@ GameObject:
   - component: {fileID: 2591657511345724515}
   - component: {fileID: 7853438245753691099}
   - component: {fileID: 6117265805383922058}
+  - component: {fileID: 5801555268866056752}
   - component: {fileID: 6584912749748834672}
   - component: {fileID: 3228530631192356700}
   - component: {fileID: 1197857921907703752}
-  - component: {fileID: -8306263352360427543}
   m_Layer: 0
-  m_Name: NetFPSP
+  m_Name: NetFPSPOld
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1229,7 +1229,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2591657511345724514}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b719299624b4d93bae5988db477498c, type: 3}
   m_Name: 
@@ -1248,6 +1248,45 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
+--- !u!114 &5801555268866056752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2591657511345724514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14fd6c6924934e3987afd3aea7d126d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 2591657511345724515}
+  speed: 20
+  gravity: -9.81
+  jumpHeight: 0.4
+  aimComponent: {fileID: 5487366833304584088}
+  mouseSensivity: 15
+  playerCamera: {fileID: 2591657510236247230}
+  moveSpeed: 2
+  sprintSpeed: 5.335
+  speedChangeRate: 10
+  fallTimeout: 0.15
+  jumpTimeout: 0.05
+  animator: {fileID: 6584912749748834672}
+  soldier: {fileID: 0}
+  groundCheck: {fileID: 2591657510823577117}
+  groundDistance: 0.4
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 8
+  networkPositionDirection:
+    m_InternalValue: {x: 0, y: 0, z: 0}
+  networkRotationDirection:
+    m_InternalValue: {x: 0, y: 0}
+  networkVerticalVelocity:
+    m_InternalValue: 0
+  networkPlayerState:
+    m_InternalValue: 0
 --- !u!95 &6584912749748834672
 Animator:
   serializedVersion: 3
@@ -1299,7 +1338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6cab5cf223b95d4daa8f83b70995186, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 2591657511345724515}
+  controller: {fileID: 0}
   selectedWeapon: 0
   activeWeapon: {fileID: 3331772548581234669}
   playerCamera: {fileID: 2591657510236247230}
@@ -1308,34 +1347,7 @@ MonoBehaviour:
     m_InternalValue: 0
   networkHealth:
     m_InternalValue: 0
-  playerController: {fileID: -8306263352360427543}
---- !u!114 &-8306263352360427543
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2591657511345724514}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c76bd48e3d344701a5ce9870e4782d57, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerCamera: {fileID: 2591657510236247230}
-  controller: {fileID: 2591657511345724515}
-  lookTransform: {fileID: 5487366833304584088}
-  soldier: {fileID: 1197857921907703752}
-  speed: 12
-  sprintMultiplier: 1.5
-  gravity: -9.81
-  jumpHeight: 0.5
-  fallTimeout: 0.15
-  jumpTimeout: 0.05
-  groundCheck: {fileID: 2591657510823577117}
-  groundDistance: 0.4
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 8
+  fpsController: {fileID: 0}
 --- !u!1 &2701189706130882737
 GameObject:
   m_ObjectHideFlags: 0

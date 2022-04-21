@@ -66,7 +66,7 @@ namespace Player {
 
         private string getAmmoText() {
             if (Network.NetworkPlayer.networkPlayerOwner != null) {
-                NetFirstPersonController netFirstPersonController = Network.NetworkPlayer.networkPlayerOwner.fpsController;
+                NetPlayerController netFirstPersonController = Network.NetworkPlayer.networkPlayerOwner.fpsController;
                 if (netFirstPersonController) {
                     PlayableSoldier playableSoldier = netFirstPersonController.soldier;
                     EquipableItem activeItem = playableSoldier.ActiveItem();
@@ -82,7 +82,7 @@ namespace Player {
 
         private string getHealthText() {
             if (Network.NetworkPlayer.networkPlayerOwner != null) {
-                NetFirstPersonController netFirstPersonController = Network.NetworkPlayer.networkPlayerOwner.fpsController;
+                NetPlayerController netFirstPersonController = Network.NetworkPlayer.networkPlayerOwner.fpsController;
                 if (netFirstPersonController) {
                     PlayableSoldier playableSoldier = netFirstPersonController.soldier;
                     return playableSoldier.networkHealth.Value + "";

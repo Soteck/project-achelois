@@ -28,7 +28,7 @@ namespace Network {
         
         private ulong currentFollowing;
         public Camera activeCamera;
-        public NetFirstPersonController fpsController;
+        public NetPlayerController fpsController;
         public NetSpectatorController spectatorController;
 
         private PlayerInputActions _inputActions;
@@ -128,7 +128,7 @@ namespace Network {
         }
 
         private void AttachSoldier() {
-            fpsController = NetFirstPersonController.FindByOwnerId(NetworkManager.Singleton.LocalClientId);
+            fpsController = NetPlayerController.FindByOwnerId(NetworkManager.Singleton.LocalClientId);
             spectatorController.Disable();
             fpsController.Enable();
             fpsController.soldier.Enable();
@@ -137,7 +137,7 @@ namespace Network {
         }
 
         private void FollowPlayer(ulong networkFollowingValue) {
-            NetFirstPersonController playerController = NetFirstPersonController.FindByOwnerId(NetworkManager.Singleton.LocalClientId);
+            NetPlayerController playerController = NetPlayerController.FindByOwnerId(NetworkManager.Singleton.LocalClientId);
             
             if (playerController) {
                 PlayableSoldier soldier = playerController.soldier;

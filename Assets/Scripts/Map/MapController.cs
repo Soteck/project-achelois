@@ -186,7 +186,7 @@ public class MapController : NetworkSingleton<MapController> {
                 player.team.Value = Team.Spectator;
                 player.state.Value = PlayerSate.MapCamera;
             }
-            NetFirstPersonController controller = NetFirstPersonController.FindByOwnerId(playerId);
+            NetPlayerController controller = NetPlayerController.FindByOwnerId(playerId);
             if (controller) {
                 NetworkObject no = controller.GetComponent<NetworkObject>();
                 no.Despawn();
