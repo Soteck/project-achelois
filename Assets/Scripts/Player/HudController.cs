@@ -1,4 +1,5 @@
 using System;
+using Controller;
 using Core;
 using Enums;
 using TMPro;
@@ -65,9 +66,10 @@ namespace Player {
 
         private string getAmmoText() {
             if (Network.NetworkPlayer.networkPlayerOwner != null) {
-                PlayableSoldier ps = Network.NetworkPlayer.networkPlayerOwner.currentSoldier;
-                if (ps) {
-                    EquipableItem activeItem = ps.ActiveItem();
+                NetFirstPersonController netFirstPersonController = Network.NetworkPlayer.networkPlayerOwner.fpsController;
+                if (netFirstPersonController) {
+                    PlayableSoldier playableSoldier = netFirstPersonController.soldier;
+                    EquipableItem activeItem = playableSoldier.ActiveItem();
                     if (activeItem) {
                         return activeItem.GetStatus();
                     }
@@ -80,10 +82,10 @@ namespace Player {
 
         private string getHealthText() {
             if (Network.NetworkPlayer.networkPlayerOwner != null) {
-                PlayableSoldier ps = Network.NetworkPlayer.networkPlayerOwner.currentSoldier;
-                if (ps) {
-                    EquipableItem activeItem = ps.ActiveItem();
-                    return ps.networkHealth.Value + "";
+                NetFirstPersonController netFirstPersonController = Network.NetworkPlayer.networkPlayerOwner.fpsController;
+                if (netFirstPersonController) {
+                    PlayableSoldier playableSoldier = netFirstPersonController.soldier;
+                    return playableSoldier.networkHealth.Value + "";
                 }
             }
 

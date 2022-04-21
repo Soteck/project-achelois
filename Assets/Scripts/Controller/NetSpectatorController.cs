@@ -50,6 +50,7 @@ namespace Controller {
         protected new void Awake() {
             base.Awake();
             _jumpVelocity = gravity * -20f;
+            playerCamera.enabled = false;
             inputActions.Player.Disable();
         }
         
@@ -124,13 +125,21 @@ namespace Controller {
         }
 
         private Vector3 KeyboardInput() {
-            Vector2 movementInput = inputActions.Player.Movement.ReadValue<Vector2>();
-            bool isJumping = inputActions.Player.Jump.ReadValue<float>() > 0f;
-            bool isCrouching = inputActions.Player.Crouch.ReadValue<float>() > 0f;
+            Vector2 controllerHorizontalInput = inputActions.Player.Movement.ReadValue<Vector2>();
+            bool isJumping = inputActions.Player.Jump.IsPressed();
+            bool isCrouching = inputActions.Player.Crouch.IsPressed();
+            float verticalMovement = 0;
+            if (isJumping) {
+                verticalMovement += 1;
+            }
+            if (isCrouching) {
+                verticalMovement -= 1;
+            }
+            //If player presses both buttons it wont move. Not my business.
             return new Vector3(
-                movementInput.x * speed * Time.deltaTime, 
-                0, 
-                movementInput.y * speed * Time.deltaTime);
+                controllerHorizontalInput.x * speed * Time.deltaTime, 
+                verticalMovement * speed * Time.deltaTime, 
+                controllerHorizontalInput.y * speed * Time.deltaTime);
         }
         
         protected override void ServerCalculations() {
@@ -142,6 +151,18 @@ namespace Controller {
         {
             networkPositionDirection.Value = newPosition;
             networkRotationDirection.Value = newRotation;
+        }
+        
+        
+        public static NetSpectatorController FindByOwnerId(ulong ownerId) {
+            NetSpectatorController[] allControllers = GameObject.FindObjectsOfType<NetSpectatorController>();
+            foreach (NetSpectatorController controller in allControllers) {
+                if (controller.OwnerClientId == ownerId) {
+                    return controller;
+                }
+            }
+
+            return null;
         }
     }
 }

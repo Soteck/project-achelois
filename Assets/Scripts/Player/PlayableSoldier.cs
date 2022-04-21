@@ -256,15 +256,5 @@ namespace Player {
             }
         }
 
-        public static PlayableSoldier FindByOwnerId(ulong ownerId) {
-            PlayableSoldier[] allSoldiers = GameObject.FindObjectsOfType<PlayableSoldier>();
-            foreach (var soldier in allSoldiers) {
-                if (soldier.OwnerClientId == ownerId) {
-                    return soldier;
-                }
-            }
-
-            return null;
-        }
     }
 }

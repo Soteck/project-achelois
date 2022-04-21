@@ -4,8 +4,10 @@ using Controller;
 using Enums;
 using Network.Shared;
 using Player;
+using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Util;
 using Random = UnityEngine.Random;
 
@@ -22,11 +24,11 @@ namespace Network {
 
 
         private Team activeTeam = Team.Spectator;
-        private PlayerSate activeState = PlayerSate.MapCamera;
+        private PlayerSate activeState = PlayerSate.Disconnected;
         
         private ulong currentFollowing;
         public Camera activeCamera;
-        public PlayableSoldier currentSoldier;
+        public NetFirstPersonController fpsController;
         public NetSpectatorController spectatorController;
 
         private PlayerInputActions _inputActions;
@@ -108,27 +110,38 @@ namespace Network {
         }
 
         private void EnableSpectator() {
+            if (spectatorController == null) {
+                AttachSpectator();
+            }
             spectatorController.Enable();
             spectatorController.playerCamera.enabled = true;
             CameraUtil.DisableAllCameras(spectatorController.playerCamera);
         }
 
-        private void AttachSoldier() {
-            currentSoldier = PlayableSoldier.FindByOwnerId(NetworkManager.Singleton.LocalClientId);
-            spectatorController.Disable();
-            currentSoldier.Enable();
-            currentSoldier.fpsController.Enable();
-            currentSoldier.playerCamera.enabled = true;
-            CameraUtil.DisableAllCameras(currentSoldier.playerCamera);
+        private void AttachSpectator() {
+            spectatorController = NetSpectatorController.FindByOwnerId(NetworkManager.Singleton.LocalClientId);
+            Quaternion mapCameraRotation = MapController.MapCamera().transform.rotation;
+            Vector3 angles = mapCameraRotation.eulerAngles;
+            angles.z = 0f;
+            spectatorController.playerCamera.transform.localRotation = Quaternion.Euler(angles);
             
         }
 
+        private void AttachSoldier() {
+            fpsController = NetFirstPersonController.FindByOwnerId(NetworkManager.Singleton.LocalClientId);
+            spectatorController.Disable();
+            fpsController.Enable();
+            fpsController.soldier.Enable();
+            fpsController.playerCamera.enabled = true;
+            CameraUtil.DisableAllCameras(fpsController.playerCamera);
+        }
+
         private void FollowPlayer(ulong networkFollowingValue) {
-            //NetworkPlayer player = MapController.GetPlayer(networkFollowingValue);
-            PlayableSoldier soldier = PlayableSoldier.FindByOwnerId(networkFollowingValue);
-            if (soldier) {
-                currentSoldier = soldier;
-                currentSoldier.playerCamera.enabled = true;
+            NetFirstPersonController playerController = NetFirstPersonController.FindByOwnerId(NetworkManager.Singleton.LocalClientId);
+            
+            if (playerController) {
+                PlayableSoldier soldier = playerController.soldier;
+                fpsController.playerCamera.enabled = true;
                 CameraUtil.DisableAllCameras(soldier.playerCamera);
             }
         }
@@ -139,7 +152,9 @@ namespace Network {
         }
 
         private void DisableSpectator() {
-            spectatorController.Disable();
+            if (spectatorController != null) {
+                spectatorController.Disable();                
+            }
         }
 
 

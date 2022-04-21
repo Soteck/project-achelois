@@ -1229,7 +1229,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2591657511345724514}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b719299624b4d93bae5988db477498c, type: 3}
   m_Name: 
@@ -1273,6 +1273,7 @@ MonoBehaviour:
   fallTimeout: 0.15
   jumpTimeout: 0.05
   animator: {fileID: 6584912749748834672}
+  soldier: {fileID: 0}
   groundCheck: {fileID: 2591657510823577117}
   groundDistance: 0.4
   groundMask:
@@ -1346,6 +1347,7 @@ MonoBehaviour:
     m_InternalValue: 0
   networkHealth:
     m_InternalValue: 0
+  fpsController: {fileID: 0}
 --- !u!1 &2701189706130882737
 GameObject:
   m_ObjectHideFlags: 0

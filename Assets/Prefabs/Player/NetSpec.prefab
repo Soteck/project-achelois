@@ -275,7 +275,6 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
-  CanCommitToTransform: 0
 --- !u!114 &7581052813113534508
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -304,3 +303,9 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 8
+  networkPositionDirection:
+    m_InternalValue: {x: 0, y: 0, z: 0}
+  networkRotationDirection:
+    m_InternalValue: {x: 0, y: 0}
+  networkVerticalVelocity:
+    m_InternalValue: 0

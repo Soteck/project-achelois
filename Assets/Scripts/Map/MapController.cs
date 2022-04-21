@@ -121,15 +121,15 @@ public class MapController : NetworkSingleton<MapController> {
         };
     }
 
-    private void ServerAddConnectedClient(ulong id) {
+    private void ServerAddConnectedClient(ulong playerId) {
         playersInGame.Value++;
-        NetworkPlayer playerObject = NetworkManager.Singleton.ConnectedClients[id].PlayerObject
+        NetworkPlayer playerObject = NetworkManager.Singleton.ConnectedClients[playerId].PlayerObject
             .GetComponent<NetworkPlayer>();
-        _allPlayers[id] = playerObject;
-
-
-        var cameraTransform = mapCamera.transform;
-        GameObject spectator = Instantiate(spectatorPrefab, cameraTransform.position, cameraTransform.rotation);
+        _allPlayers[playerId] = playerObject;
+        
+        GameObject spectator = Instantiate(spectatorPrefab, mapCamera.transform.position, Quaternion.identity);
+        NetworkObject no = spectator.GetComponent<NetworkObject>();
+        no.SpawnWithOwnership(playerId);
         playerObject.spectatorController = spectator.GetComponent<NetSpectatorController>();
 
         playerObject.state.Value = PlayerSate.MapCamera;
@@ -186,9 +186,9 @@ public class MapController : NetworkSingleton<MapController> {
                 player.team.Value = Team.Spectator;
                 player.state.Value = PlayerSate.MapCamera;
             }
-            PlayableSoldier soldier = PlayableSoldier.FindByOwnerId(playerId);
-            if (soldier) {
-                NetworkObject no = soldier.GetComponent<NetworkObject>();
+            NetFirstPersonController controller = NetFirstPersonController.FindByOwnerId(playerId);
+            if (controller) {
+                NetworkObject no = controller.GetComponent<NetworkObject>();
                 no.Despawn();
             }
         }
