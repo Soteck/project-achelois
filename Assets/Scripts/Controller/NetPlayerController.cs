@@ -73,7 +73,7 @@ namespace Controller {
                 }
                 else {
                     if (_inputActions.Player.Jump.WasPerformedThisFrame()) {
-                        _verticalVelocity = Mathf.Sqrt(jumpHeight * 2f);
+                        _verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
                     }
                 }
             }
@@ -94,7 +94,7 @@ namespace Controller {
             if (_verticalVelocity < _terminalVelocity) {
                 _verticalVelocity += gravity * Time.deltaTime;
             }
-            controller.Move(transform.TransformDirection(new Vector3(0, _verticalVelocity, 0)));
+            controller.Move(transform.TransformDirection(new Vector3(0, _verticalVelocity * Time.deltaTime, 0)));
         }
 
         private void GroundCheck() {

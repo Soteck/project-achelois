@@ -1328,7 +1328,7 @@ MonoBehaviour:
   speed: 12
   sprintMultiplier: 1.5
   gravity: -9.81
-  jumpHeight: 0.5
+  jumpHeight: 4.5
   fallTimeout: 0.15
   jumpTimeout: 0.05
   groundCheck: {fileID: 2591657510823577117}
