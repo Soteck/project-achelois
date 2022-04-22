@@ -3,22 +3,22 @@ using Player;
 
 namespace Core {
     public class EquipmentPrefabFactory : Singleton<EquipmentPrefabFactory> {
-        private Dictionary<string, EquipableItem> itemsMap =
-            new Dictionary<string, EquipableItem>();
+        private Dictionary<string, EquipableItemLogic> itemsMap =
+            new Dictionary<string, EquipableItemLogic>();
 
-        private void DoRegister(EquipableItem prefab) {
+        private void DoRegister(EquipableItemLogic prefab) {
             itemsMap[prefab.item_id] = prefab;
         }
 
-        public EquipableItem DoGetPrefabByItemID(string item_id) {
+        public EquipableItemLogic DoGetPrefabByItemID(string item_id) {
             return itemsMap[item_id];
         }
 
-        public static EquipableItem GetPrefabByItemID(string item_id) {
+        public static EquipableItemLogic GetPrefabByItemID(string item_id) {
             return Instance.DoGetPrefabByItemID(item_id);
         }
 
-        public static void Register(EquipableItem prefab) {
+        public static void Register(EquipableItemLogic prefab) {
             Instance.DoRegister(prefab);
         }
     }

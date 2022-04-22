@@ -69,7 +69,7 @@ namespace Player {
                 NetPlayerController netFirstPersonController = Network.NetworkPlayer.networkPlayerOwner.fpsController;
                 if (netFirstPersonController) {
                     PlayableSoldier playableSoldier = netFirstPersonController.soldier;
-                    EquipableItem activeItem = playableSoldier.ActiveItem();
+                    EquipableItemLogic activeItem = playableSoldier.ActiveItem();
                     if (activeItem) {
                         return activeItem.GetStatus();
                     }

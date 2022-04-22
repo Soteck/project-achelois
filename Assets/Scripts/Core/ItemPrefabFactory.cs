@@ -1,18 +1,19 @@
 ﻿using System.Collections.Generic;
+using Player;
 
 namespace Core {
     public class ItemPrefabFactory : Singleton<ItemPrefabFactory> {
-        public EquipableItem[] items;
+        public EquipableItemLogic[] items;
 
-        private Dictionary<string, EquipableItem> itemsMap = new Dictionary<string, EquipableItem>();
+        private Dictionary<string, EquipableItemLogic> itemsMap = new Dictionary<string, EquipableItemLogic>();
 
         private void Awake() {
-            foreach (EquipableItem item in items) {
+            foreach (EquipableItemLogic item in items) {
                 itemsMap[item.item_id] = item;
             }
         }
 
-        public static EquipableItem PrefabById(string id) {
+        public static EquipableItemLogic PrefabById(string id) {
             return Instance.itemsMap[id];
         }
     }

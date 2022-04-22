@@ -13,7 +13,7 @@ namespace Player {
         public Camera playerCamera;
         public Animator animator;
 
-        private List<EquipableItem> _storedItems = new List<EquipableItem>();
+        private List<EquipableItemLogic> _storedItems = new List<EquipableItemLogic>();
 
         [SerializeField] private NetworkList<EquipableItemNetworkData> _networkItems;
         //TODO: Guardar una lista de objetos, con dos strings uno del ID y otro de metadatos
@@ -23,7 +23,7 @@ namespace Player {
 
         [SerializeField] public NetworkVariable<float> networkHealth = new NetworkVariable<float>();
 
-        private EquipableItem _changeWeapon = null;
+        private EquipableItemLogic _changeWeapon = null;
         private int localActiveItem = -1;
         public NetPlayerController playerController;
 
@@ -95,7 +95,7 @@ namespace Player {
             }
 
             if (_storedItems.Count > networkActiveItem.Value) {
-                EquipableItem activeItem = _storedItems[networkActiveItem.Value];
+                EquipableItemLogic activeItem = _storedItems[networkActiveItem.Value];
                 if (activeItem != null) {
                     Transform activeItemTransform = activeItem.transform;
                     Transform activeWeaponTransform = activeWeapon.transform;
@@ -180,7 +180,7 @@ namespace Player {
             }
         }
 
-        private EquipableItem InitEquipment(EquipableItem item) {
+        private EquipableItemLogic InitEquipment(EquipableItemLogic item) {
             item.playerCamera = playerCamera;
             item.animator = animator;
             var itemTransform = item.transform;
@@ -191,7 +191,7 @@ namespace Player {
             return item;
         }
 
-        private void Equip(EquipableItem item) {
+        private void Equip(EquipableItemLogic item) {
             UnEquip();
             if (item != null) {
                 item.gameObject.SetActive(true);
@@ -206,7 +206,7 @@ namespace Player {
             }
         }
 
-        public EquipableItem ActiveItem() {
+        public EquipableItemLogic ActiveItem() {
             if (localActiveItem != -1) {
                 return _storedItems[localActiveItem];
             }
@@ -228,7 +228,7 @@ namespace Player {
             }
 
             _networkItems.Add(itemMeta);
-            EquipableItem item = Instantiate(
+            EquipableItemLogic item = Instantiate(
                 ItemPrefabFactory.PrefabById(
                     itemMeta.itemID.ToString()
                 )
@@ -249,7 +249,7 @@ namespace Player {
 
             //ownerController.soldier.activeWeapon;
             NetworkObject spawnedItem = NetworkManager.Singleton.SpawnManager.SpawnedObjects[itemId];
-            EquipableItem item = spawnedItem.GetComponent<EquipableItem>();
+            EquipableItemLogic item = spawnedItem.GetComponent<EquipableItemLogic>();
 
             //Add instance to the client list
             if (!IsServer) {

@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 using Util;
 
 namespace Player {
-    public class Gun : EquipableItem {
+    public class GunLogic : EquipableItemLogic {
         public float damage = 10f;
         public float range = 100f;
         [Tooltip("Bullets per minute")] public float fireRate = 350f;
