@@ -1,13 +1,17 @@
 using Controller;
 using Network.Shared;
+using Player;
 using Unity.Netcode;
 using UnityEngine;
 
 public abstract class EquipableItem : NetController {
+    public EquipableItemVisual visual;
     public Camera playerCamera;
     public string item_id;
     public Animator animator;
     public bool busy = false;
+    public EquipableItemVisual spawnedVisual { get; set; }
+
     public abstract EquipableItemNetworkData ToNetWorkData();
     protected abstract void InternalCallInitMetaData(EquipableItemNetworkData meta);
 
@@ -17,4 +21,6 @@ public abstract class EquipableItem : NetController {
     public void CallInitMetaData(EquipableItemNetworkData meta) {
         InternalCallInitMetaData(meta);
     }
+
+    public abstract void AttachVisual(EquipableItemVisual visualItem);
 }

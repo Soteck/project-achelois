@@ -29,6 +29,8 @@ namespace Player {
 
         protected PlayerInputActions inputActions;
 
+        private WeaponSpawner weponSpawner;
+
         public void Awake() {
             inputActions = new PlayerInputActions();
             _networkItems = new NetworkList<EquipableItemNetworkData>();
@@ -36,6 +38,8 @@ namespace Player {
 
             inputActions.Player.Disable();
             inputActions.Player.Scroll.performed += Scroll;
+
+            weponSpawner = GetComponent<WeaponSpawner>();
             // foreach (EquipableItem item in activeWeapon.GetComponentsInChildren<EquipableItem>()) {
             //     if (!_storedItems.Contains(item)) {
             //         _storedItems.Add(InitEquipment(item, item.ToNetWorkData()));
@@ -90,12 +94,14 @@ namespace Player {
                 Equip(_storedItems[networkActiveItem.Value]);
             }
 
-            EquipableItem activeItem = _storedItems[networkActiveItem.Value];
-            if (activeItem != null) {
-                Transform activeItemTransform = activeItem.transform;
-                Transform activeWeaponTransform = activeWeapon.transform;
-                activeItemTransform.position = activeWeaponTransform.position;
-                activeItemTransform.rotation = activeWeaponTransform.rotation;
+            if (_storedItems.Count > networkActiveItem.Value) {
+                EquipableItem activeItem = _storedItems[networkActiveItem.Value];
+                if (activeItem != null) {
+                    Transform activeItemTransform = activeItem.transform;
+                    Transform activeWeaponTransform = activeWeapon.transform;
+                    activeItemTransform.position = activeWeaponTransform.position;
+                    activeItemTransform.rotation = activeWeaponTransform.rotation;
+                }
             }
         }
 
@@ -223,16 +229,12 @@ namespace Player {
 
             _networkItems.Add(itemMeta);
             EquipableItem item = Instantiate(
-                EquipmentPrefabFactory.GetPrefabByItemID(
+                ItemPrefabFactory.PrefabById(
                     itemMeta.itemID.ToString()
-                ),
-                Vector3.zero,
-                Quaternion.identity
+                )
             );
             NetworkObject no = item.GetComponent<NetworkObject>();
             no.SpawnWithOwnership(playerId);
-            //NetPlayerController ownerController = NetPlayerController.FindByOwnerId(playerId);
-
             no.TrySetParent(transform, false);
             item.CallInitMetaData(itemMeta);
             //Add instance to the server list
@@ -248,34 +250,28 @@ namespace Player {
             //ownerController.soldier.activeWeapon;
             NetworkObject spawnedItem = NetworkManager.Singleton.SpawnManager.SpawnedObjects[itemId];
             EquipableItem item = spawnedItem.GetComponent<EquipableItem>();
-            item.transform.position = activeWeapon.position;
-            item.transform.rotation = activeWeapon.rotation;
-            //item.transform.SetParent(activeWeapon);
 
-            if (item != null) {
-                //Add instance to the client list
-                if (!IsServer) {
-                    _storedItems.Add(InitEquipment(item));
-                }
-
-
-                if (_storedItems.Count == 1) {
-                    Equip(item);
-                }
-
-                animator.Rebind();
-                animator.Play("equip_" + _storedItems[networkActiveItem.Value].item_id);
+            //Add instance to the client list
+            if (!IsServer) {
+                _storedItems.Add(InitEquipment(item));
             }
-            else {
-                Debug.LogError("Item with item ID notified from the server but not found: " + itemId);
+
+            EquipableItemVisual visualItem = Instantiate(item.visual, activeWeapon);
+            item.AttachVisual(visualItem);
+
+            if (_storedItems.Count == 1) {
+                Equip(item);
             }
+
+            animator.Rebind();
+            animator.Play("equip_" + _storedItems[networkActiveItem.Value].item_id);
         }
-        
+
         public void Enable() {
             gameObject.SetActive(true);
             inputActions.Player.Enable();
         }
-        
+
         public void Disable() {
             gameObject.SetActive(false);
             inputActions.Player.Disable();

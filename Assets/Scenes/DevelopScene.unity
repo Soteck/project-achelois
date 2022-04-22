@@ -416,8 +416,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 900
-  teamARespawn: 5
-  teamBRespawn: 6
+  teamARespawn: 1
+  teamBRespawn: 2
   mapCamera: {fileID: 722770768}
   controlablePlayerPrefab: {fileID: 2591657511345724514, guid: 6a160cd4b52cf7849a7fde6a762fbb48, type: 3}
   spectatorPrefab: {fileID: 941205826761635473, guid: b9786866bfa99f94a9e36215c26c4586, type: 3}
@@ -725,7 +725,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ec8e502c9f39e64ba65e906b9c6559b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemPrefab: {fileID: 1079000542279237018, guid: fbe8bcddf166a344b9b96f5de588fa7c, type: 3}
+  itemId: mp40
   itemMeta: 32,160
 --- !u!135 &994588108
 SphereCollider:
@@ -1231,7 +1231,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ec8e502c9f39e64ba65e906b9c6559b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemPrefab: {fileID: 5669869187668256770, guid: 7e8253c58b9d0404ea3408d01fe31dd2, type: 3}
+  itemId: thompson
   itemMeta: 30,150
 --- !u!135 &1820368319
 SphereCollider:
@@ -1423,6 +1423,53 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!1 &2097972967
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2097972969}
+  - component: {fileID: 2097972968}
+  m_Layer: 0
+  m_Name: ItemPrefabFactory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2097972968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2097972967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58fefa880ba2451a8e541d9148766601, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  items:
+  - {fileID: 3394601030776815286, guid: f518364000c629b49ba16f265fd1671a, type: 3}
+  - {fileID: -2659501786489046611, guid: f6bb5f7797c1be244b80d3cbcc48077f, type: 3}
+  guns: []
+--- !u!4 &2097972969
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2097972967}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.7406616, y: 1.5918274, z: -6.198883}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2113360944
 PrefabInstance:
   m_ObjectHideFlags: 0

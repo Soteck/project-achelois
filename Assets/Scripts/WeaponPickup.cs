@@ -6,21 +6,18 @@ using Network.Shared;
 using Player;
 using UnityEngine;
 
-public class WeaponPickup : MonoBehaviour
-{
-    public EquipableItem itemPrefab;
+public class WeaponPickup : MonoBehaviour {
+    public string itemId;
     public string itemMeta;
 
-    public void Awake() {
-        EquipmentPrefabFactory.Register(itemPrefab);
-    }
 
-    private void OnTriggerEnter(Collider other)
-    {
+    private void OnTriggerEnter(Collider other) {
         PlayableSoldier holder = other.gameObject.GetComponent<PlayableSoldier>();
         if (holder) {
-            EquipableItemNetworkData data = itemPrefab.ToNetWorkData();
-            data.itemMeta = itemMeta;
+            EquipableItemNetworkData data = new EquipableItemNetworkData() {
+                itemID = itemId,
+                itemMeta = itemMeta
+            };
             holder.PickUp(data);
         }
     }

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using Player;
 
 namespace Core {
     public class EquipmentPrefabFactory : Singleton<EquipmentPrefabFactory> {
-        private Dictionary<string, EquipableItem> itemsMap = new Dictionary<string, EquipableItem>();
+        private Dictionary<string, EquipableItem> itemsMap =
+            new Dictionary<string, EquipableItem>();
 
         private void DoRegister(EquipableItem prefab) {
             itemsMap[prefab.item_id] = prefab;

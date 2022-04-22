@@ -1236,6 +1236,7 @@ GameObject:
   - component: {fileID: 6117265805383922058}
   - component: {fileID: 1197857921907703752}
   - component: {fileID: -8306263352360427543}
+  - component: {fileID: 3649358980088332639}
   m_Layer: 0
   m_Name: NetFPSP
   m_TagString: Untagged
@@ -1367,6 +1368,21 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 8
+--- !u!114 &3649358980088332639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2591657511345724514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bab21a2e0fcb4749ba6cbd92c0e70c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guns:
+  - {fileID: 3394601030776815286, guid: f518364000c629b49ba16f265fd1671a, type: 3}
+  - {fileID: -2659501786489046611, guid: f6bb5f7797c1be244b80d3cbcc48077f, type: 3}
 --- !u!1 &2701189706130882737
 GameObject:
   m_ObjectHideFlags: 0
