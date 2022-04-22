@@ -39,10 +39,13 @@ namespace Controller {
         private float _fallTimeoutDelta;
         private float _terminalVelocity = 53.0f;
         
+        private Animator _animator;
+
         protected void Awake() {
             _inputActions = new PlayerInputActions();
             playerCamera.enabled = false;
             _inputActions.Player.Disable();
+            _animator = GetComponent<Animator>();
         }
 
         void Update() {
@@ -104,7 +107,9 @@ namespace Controller {
         private void ClientInput() {
             Vector3 movementInput = KeyboardInput();
             Vector3 rotationInput = MouseInput();
-            controller.Move(transform.TransformDirection(movementInput));
+            Vector3 controllerMotion = transform.TransformDirection(movementInput);
+            //Debug.Log("Moving controller: " + controllerMotion);
+            controller.Move(controllerMotion);
 
             //Unity Y axis is vertical, rotating through it will look -Y = left // +Y = right
             //Unity X axis is horizontal, rotating through it will look -X = down // +X = up
@@ -112,7 +117,10 @@ namespace Controller {
             transform.Rotate(new Vector3(0f, rotationInput.x, 0f), Space.World);
 
             _internalXRotation = Mathf.Clamp(_internalXRotation + rotationInput.y, -90f, 90f);
-            lookTransform.localRotation = Quaternion.Euler(_internalXRotation, 0f, 0f);
+            Quaternion lookEuler = Quaternion.Euler(_internalXRotation, 0f, 0f);
+
+            lookTransform.localRotation = lookEuler;
+            //playerCamera.transform.localRotation = lookEuler;
         }
 
 

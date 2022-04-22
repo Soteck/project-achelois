@@ -27,7 +27,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: WeaponHolder/ActiveWeapon
+    path: RIG/WeaponHolder/ActiveWeapon
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -70,7 +70,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: WeaponHolder/ref_right_hand_grip
+    path: RIG/WeaponHolder/ref_right_hand_grip
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -140,7 +140,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: WeaponHolder/ref_left_hand_grip
+    path: RIG/WeaponHolder/ref_left_hand_grip
   m_CompressedRotationCurves: []
   m_EulerCurves:
   - curve:
@@ -158,7 +158,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -174,7 +174,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -253,7 +253,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson
   m_PositionCurves:
   - curve:
       serializedVersion: 2
@@ -270,7 +270,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: WeaponHolder/ActiveWeapon
+    path: RIG/WeaponHolder/ActiveWeapon
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -385,7 +385,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: WeaponHolder/ref_left_hand_grip
+    path: RIG/WeaponHolder/ref_left_hand_grip
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -419,7 +419,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: WeaponHolder/ref_right_hand_grip
+    path: RIG/WeaponHolder/ref_right_hand_grip
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -489,7 +489,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
   m_ScaleCurves:
   - curve:
       serializedVersion: 2
@@ -533,7 +533,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: WeaponHolder/ActiveWeapon
+    path: RIG/WeaponHolder/ActiveWeapon
   m_FloatCurves:
   - curve:
       serializedVersion: 2
@@ -551,7 +551,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_Weight
-    path: RigLayer_HandIK
+    path: RIG/RigLayer_HandIK
     classID: 114
     script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
   - curve:
@@ -570,7 +570,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_Weight
-    path: RigLayer_HandIK/LeftHandK
+    path: RIG/RigLayer_HandIK/LeftHandK
     classID: 114
     script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
   - curve:
@@ -589,7 +589,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_Weight
-    path: RigLayer_HandIK/RightHandK
+    path: RIG/RigLayer_HandIK/RightHandK
     classID: 114
     script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
   m_PPtrCurves: []
@@ -601,98 +601,98 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 2419236886
+      path: RIG/2419236886
       attribute: 1
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 3424279241
+      path: RIG/3424279241
       attribute: 1
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 359552153
+      path: RIG/359552153
       attribute: 1
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 3424279241
+      path: RIG/3424279241
       attribute: 2
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 2419236886
+      path: RIG/2419236886
       attribute: 2
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 2336572983
+      path: RIG/2336572983
       attribute: 4
       script: {fileID: 0}
       typeID: 4
       customType: 4
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 728660308
+      path: RIG/728660308
       attribute: 1
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 728660308
+      path: RIG/728660308
       attribute: 2
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 3157003692
+      path: RIG/3157003692
       attribute: 4
       script: {fileID: 0}
       typeID: 4
       customType: 4
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 359552153
+      path: RIG/359552153
       attribute: 4
       script: {fileID: 0}
       typeID: 4
       customType: 4
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 728660308
+      path: RIG/728660308
       attribute: 3
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 813659596
+      path: RIG/813659596
       attribute: 1257374345
       script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 3385804107
+      path: RIG/3385804107
       attribute: 1257374345
       script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 2580394989
+      path: RIG/2580394989
       attribute: 1257374345
       script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
       typeID: 114
@@ -736,7 +736,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: WeaponHolder/ActiveWeapon
+    path: RIG/WeaponHolder/ActiveWeapon
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -755,7 +755,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: WeaponHolder/ActiveWeapon
+    path: RIG/WeaponHolder/ActiveWeapon
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -774,7 +774,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: WeaponHolder/ActiveWeapon
+    path: RIG/WeaponHolder/ActiveWeapon
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -820,7 +820,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalScale.x
-    path: WeaponHolder/ActiveWeapon
+    path: RIG/WeaponHolder/ActiveWeapon
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -866,7 +866,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalScale.y
-    path: WeaponHolder/ActiveWeapon
+    path: RIG/WeaponHolder/ActiveWeapon
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -912,7 +912,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalScale.z
-    path: WeaponHolder/ActiveWeapon
+    path: RIG/WeaponHolder/ActiveWeapon
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1030,7 +1030,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: WeaponHolder/ref_left_hand_grip
+    path: RIG/WeaponHolder/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1148,7 +1148,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: WeaponHolder/ref_left_hand_grip
+    path: RIG/WeaponHolder/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1266,7 +1266,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: WeaponHolder/ref_left_hand_grip
+    path: RIG/WeaponHolder/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1303,7 +1303,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: WeaponHolder/ref_right_hand_grip
+    path: RIG/WeaponHolder/ref_right_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1340,7 +1340,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: WeaponHolder/ref_right_hand_grip
+    path: RIG/WeaponHolder/ref_right_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1377,7 +1377,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: WeaponHolder/ref_right_hand_grip
+    path: RIG/WeaponHolder/ref_right_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1450,7 +1450,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1523,7 +1523,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1596,7 +1596,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1615,7 +1615,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1634,7 +1634,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1653,7 +1653,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1672,7 +1672,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1691,7 +1691,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1710,7 +1710,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1792,7 +1792,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1874,7 +1874,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1956,7 +1956,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1975,7 +1975,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.x
-    path: WeaponHolder/ActiveWeapon
+    path: RIG/WeaponHolder/ActiveWeapon
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1994,7 +1994,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.y
-    path: WeaponHolder/ActiveWeapon
+    path: RIG/WeaponHolder/ActiveWeapon
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2013,7 +2013,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.z
-    path: WeaponHolder/ActiveWeapon
+    path: RIG/WeaponHolder/ActiveWeapon
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2032,7 +2032,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.w
-    path: WeaponHolder/ActiveWeapon
+    path: RIG/WeaponHolder/ActiveWeapon
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2078,7 +2078,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.x
-    path: WeaponHolder/ref_right_hand_grip
+    path: RIG/WeaponHolder/ref_right_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2124,7 +2124,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.y
-    path: WeaponHolder/ref_right_hand_grip
+    path: RIG/WeaponHolder/ref_right_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2170,7 +2170,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.z
-    path: WeaponHolder/ref_right_hand_grip
+    path: RIG/WeaponHolder/ref_right_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2216,7 +2216,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.w
-    path: WeaponHolder/ref_right_hand_grip
+    path: RIG/WeaponHolder/ref_right_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2235,7 +2235,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_Weight
-    path: RigLayer_HandIK
+    path: RIG/RigLayer_HandIK
     classID: 114
     script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
   - curve:
@@ -2254,7 +2254,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_Weight
-    path: RigLayer_HandIK/LeftHandK
+    path: RIG/RigLayer_HandIK/LeftHandK
     classID: 114
     script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
   - curve:
@@ -2273,7 +2273,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_Weight
-    path: RigLayer_HandIK/RightHandK
+    path: RIG/RigLayer_HandIK/RightHandK
     classID: 114
     script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
   - curve:
@@ -2346,7 +2346,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.x
-    path: WeaponHolder/ref_left_hand_grip
+    path: RIG/WeaponHolder/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2419,7 +2419,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.y
-    path: WeaponHolder/ref_left_hand_grip
+    path: RIG/WeaponHolder/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2492,7 +2492,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.z
-    path: WeaponHolder/ref_left_hand_grip
+    path: RIG/WeaponHolder/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2565,7 +2565,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.w
-    path: WeaponHolder/ref_left_hand_grip
+    path: RIG/WeaponHolder/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   m_EulerEditorCurves:
@@ -2585,7 +2585,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAngles.x
-    path: WeaponHolder/ActiveWeapon
+    path: RIG/WeaponHolder/ActiveWeapon
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2604,7 +2604,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAngles.y
-    path: WeaponHolder/ActiveWeapon
+    path: RIG/WeaponHolder/ActiveWeapon
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2623,7 +2623,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAngles.z
-    path: WeaponHolder/ActiveWeapon
+    path: RIG/WeaponHolder/ActiveWeapon
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2696,7 +2696,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAngles.x
-    path: WeaponHolder/ref_left_hand_grip
+    path: RIG/WeaponHolder/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2769,7 +2769,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAngles.y
-    path: WeaponHolder/ref_left_hand_grip
+    path: RIG/WeaponHolder/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2842,7 +2842,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAngles.z
-    path: WeaponHolder/ref_left_hand_grip
+    path: RIG/WeaponHolder/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2888,7 +2888,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAngles.x
-    path: WeaponHolder/ref_right_hand_grip
+    path: RIG/WeaponHolder/ref_right_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2934,7 +2934,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAngles.y
-    path: WeaponHolder/ref_right_hand_grip
+    path: RIG/WeaponHolder/ref_right_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2980,7 +2980,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAngles.z
-    path: WeaponHolder/ref_right_hand_grip
+    path: RIG/WeaponHolder/ref_right_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2990,7 +2990,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -3000,7 +3000,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -3010,7 +3010,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson/thompson_mag
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -3020,7 +3020,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -3030,7 +3030,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -3040,7 +3040,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -3050,7 +3050,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -3060,7 +3060,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -3070,7 +3070,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson
+    path: RIG/WeaponHolder/ActiveWeapon/ThompsonWeapon(Clone)/WeaponBody/thompson
     classID: 4
     script: {fileID: 0}
   m_HasGenericRootTransform: 0

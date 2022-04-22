@@ -5,10 +5,9 @@ using Network.Shared;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 namespace Player {
-    public class PlayableSoldier : NetController {
+    public class PlayableSoldier : NetworkBehaviour {
         public int selectedWeapon = 0;
         public Transform activeWeapon;
         public Camera playerCamera;
@@ -28,8 +27,10 @@ namespace Player {
         private int localActiveItem = -1;
         public NetPlayerController playerController;
 
-        public new void Awake() { 
-            base.Awake();
+        protected PlayerInputActions inputActions;
+
+        public void Awake() {
+            inputActions = new PlayerInputActions();
             _networkItems = new NetworkList<EquipableItemNetworkData>();
             networkActiveItem = new NetworkVariable<int>();
 
@@ -42,23 +43,32 @@ namespace Player {
             // }
         }
 
+        void Update() {
+            if (IsSpawned) {
+                if (IsClient && IsOwner) {
+                    //ClientBeforeInput();
+                    ClientInput();
+                }
 
-        protected override void ServerCalculations() {
-            //Empty
+                if (IsServer) {
+                    //ServerCalculations();
+                }
+
+                if (IsClient) {
+                    ClientMovement();
+                    //ClientVisuals();
+                }
+            }
         }
 
-        protected override void ClientBeforeInput() {
-            //Empty
-        }
-
-        protected override void ClientInput() {
+        private void ClientInput() {
             if (_changeWeapon != null) {
                 UpdateActualEquippedWeaponServerRpc(_storedItems.IndexOf(_changeWeapon));
                 _changeWeapon = null;
             }
         }
 
-        protected override void ClientMovement() {
+        private void ClientMovement() {
             if (_networkItems.Count != _storedItems.Count) {
                 foreach (var netItem in _networkItems) {
                     bool exists = false;
@@ -79,10 +89,14 @@ namespace Player {
                 networkActiveItem.Value != localActiveItem) {
                 Equip(_storedItems[networkActiveItem.Value]);
             }
-        }
 
-
-        protected override void ClientVisuals() {
+            EquipableItem activeItem = _storedItems[networkActiveItem.Value];
+            if (activeItem != null) {
+                Transform activeItemTransform = activeItem.transform;
+                Transform activeWeaponTransform = activeWeapon.transform;
+                activeItemTransform.position = activeWeaponTransform.position;
+                activeItemTransform.rotation = activeWeaponTransform.rotation;
+            }
         }
 
         // Start is called before the first frame update
@@ -155,14 +169,15 @@ namespace Player {
 
 
         public void PickUp(EquipableItemNetworkData netItem) {
-            PickupItemServerRpc(netItem, NetworkManager.Singleton.LocalClientId);
+            if (IsOwner) {
+                PickupItemServerRpc(netItem, NetworkManager.Singleton.LocalClientId);
+            }
         }
 
         private EquipableItem InitEquipment(EquipableItem item) {
             item.playerCamera = playerCamera;
             item.animator = animator;
             var itemTransform = item.transform;
-            itemTransform.parent = activeWeapon;
             itemTransform.localPosition = Vector3.zero;
             itemTransform.localRotation = Quaternion.identity;
             item.gameObject.SetActive(false);
@@ -205,36 +220,37 @@ namespace Player {
             if (_networkItems.Contains(itemMeta)) {
                 return;
             }
+
             _networkItems.Add(itemMeta);
             EquipableItem item = Instantiate(
                 EquipmentPrefabFactory.GetPrefabByItemID(
                     itemMeta.itemID.ToString()
                 ),
                 Vector3.zero,
-                Quaternion.identity,
-                activeWeapon
+                Quaternion.identity
             );
             NetworkObject no = item.GetComponent<NetworkObject>();
             no.SpawnWithOwnership(playerId);
+            //NetPlayerController ownerController = NetPlayerController.FindByOwnerId(playerId);
+
+            no.TrySetParent(transform, false);
             item.CallInitMetaData(itemMeta);
             //Add instance to the server list
             _storedItems.Add(InitEquipment(item));
-            PickupItemClientRpc(itemMeta.itemID);
+            PickupItemClientRpc(no.NetworkObjectId);
         }
 
         // ClientRpc are executed on all client instances
         [ClientRpc]
-        private void PickupItemClientRpc(NetworkString itemMetaItemID) {
+        private void PickupItemClientRpc(ulong itemId) {
             //TODO: play sound of pickup
 
-            EquipableItem[] items = activeWeapon.GetComponentsInChildren<EquipableItem>(true);
-            EquipableItem item = null;
-            foreach (EquipableItem it in items) {
-                if (it.item_id.Equals(itemMetaItemID)) {
-                    item = it;
-                    break;
-                }
-            }
+            //ownerController.soldier.activeWeapon;
+            NetworkObject spawnedItem = NetworkManager.Singleton.SpawnManager.SpawnedObjects[itemId];
+            EquipableItem item = spawnedItem.GetComponent<EquipableItem>();
+            item.transform.position = activeWeapon.position;
+            item.transform.rotation = activeWeapon.rotation;
+            //item.transform.SetParent(activeWeapon);
 
             if (item != null) {
                 //Add instance to the client list
@@ -251,9 +267,18 @@ namespace Player {
                 animator.Play("equip_" + _storedItems[networkActiveItem.Value].item_id);
             }
             else {
-                Debug.LogError("Item with item ID notified from the server but not found: " + itemMetaItemID);
+                Debug.LogError("Item with item ID notified from the server but not found: " + itemId);
             }
         }
-
+        
+        public void Enable() {
+            gameObject.SetActive(true);
+            inputActions.Player.Enable();
+        }
+        
+        public void Disable() {
+            gameObject.SetActive(false);
+            inputActions.Player.Disable();
+        }
     }
 }

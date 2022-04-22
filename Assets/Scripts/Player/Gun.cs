@@ -8,7 +8,6 @@ using Util;
 
 namespace Player {
     
-    [RequireComponent(typeof(NetworkObject))]
     public class Gun : EquipableItem {
         public GameObject magazine;
         public GameObject barrelEnd;
