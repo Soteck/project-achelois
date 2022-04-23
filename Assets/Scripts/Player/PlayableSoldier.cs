@@ -19,9 +19,20 @@ namespace Player {
         //TODO: Guardar una lista de objetos, con dos strings uno del ID y otro de metadatos
         // Sincronizar estos datos con instancias en local de EquipableItem guardadas en otro array
 
-        [SerializeField] private NetworkVariable<int> networkActiveItem;
-
-        [SerializeField] public NetworkVariable<float> networkHealth = new NetworkVariable<float>();
+        [SerializeField] 
+        private NetworkVariable<int> networkActiveItem;
+        
+        [SerializeField] 
+        public NetworkVariable<float> networkHealth = new NetworkVariable<float>();
+        
+        [SerializeField] 
+        public NetworkVariable<bool> networkInMenu = new NetworkVariable<bool>();
+        
+        [SerializeField] 
+        public NetworkVariable<bool> networkWithObjective = new NetworkVariable<bool>();
+        
+        [SerializeField] 
+        public NetworkVariable<bool> networkTexting = new NetworkVariable<bool>();
 
         private EquipableItemLogic _changeWeapon = null;
         private int localActiveItem = -1;
@@ -289,6 +300,16 @@ namespace Player {
         public void Disable() {
             gameObject.SetActive(false);
             inputActions.Player.Disable();
+        }
+
+        public bool IsTexting() {
+            return false;
+        }
+        public bool HasObjective() {
+            return false;
+        }
+        public bool InMenu() {
+            return false;
         }
     }
 }

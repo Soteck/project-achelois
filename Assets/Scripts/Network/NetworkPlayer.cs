@@ -4,12 +4,9 @@ using Controller;
 using Enums;
 using Network.Shared;
 using Player;
-using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Util;
-using Random = UnityEngine.Random;
 
 namespace Network {
     public class NetworkPlayer : NetworkBehaviour {
@@ -127,8 +124,9 @@ namespace Network {
             }
 
             spectatorController.Enable();
-            spectatorController.playerCamera.enabled = true;
-            CameraUtil.DisableAllCameras(spectatorController.playerCamera);
+            activeCamera = spectatorController.playerCamera;
+            activeCamera.enabled = true;
+            CameraUtil.DisableAllCameras(activeCamera);
             return true;
         }
 
@@ -151,8 +149,9 @@ namespace Network {
                 spectatorController?.Disable();
                 fpsController.Enable();
                 fpsController.soldier.Enable();
-                fpsController.playerCamera.enabled = true;
-                CameraUtil.DisableAllCameras(fpsController.playerCamera);
+                activeCamera = fpsController.playerCamera;
+                activeCamera.enabled = true;
+                CameraUtil.DisableAllCameras(activeCamera);
                 return true;
             }
 
@@ -165,8 +164,9 @@ namespace Network {
 
             if (playerController) {
                 PlayableSoldier soldier = playerController.soldier;
-                fpsController.playerCamera.enabled = true;
-                CameraUtil.DisableAllCameras(soldier.playerCamera);
+                activeCamera = soldier.playerCamera;
+                activeCamera.enabled = true;
+                CameraUtil.DisableAllCameras(activeCamera);
                 return true;
             }
 
@@ -175,7 +175,8 @@ namespace Network {
 
         private bool FollowMapCamera() {
             MapController.MapCamera().enabled = true;
-            CameraUtil.DisableAllCameras(MapController.MapCamera());
+            activeCamera = MapController.MapCamera();
+            CameraUtil.DisableAllCameras(activeCamera);
             return true;
         }
 
