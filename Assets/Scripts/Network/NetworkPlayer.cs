@@ -2,6 +2,7 @@
 using Config;
 using Controller;
 using Enums;
+using Map;
 using Network.Shared;
 using Player;
 using Unity.Netcode;

@@ -2,6 +2,7 @@ using System;
 using Controller;
 using Core;
 using Enums;
+using Map;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -31,7 +32,7 @@ namespace Player {
 
 
         private string getRespawnsText() {
-            float time = MapController.TimeElapsed();
+            float time = MapController.Instance.TimeElapsed();
 
             double teamARemaining = 0;
             double teamBRemaining = 0;

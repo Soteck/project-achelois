@@ -26,7 +26,7 @@ namespace Map {
         private const float SpawnFromFloor = 0.9f;
 
         void Start() {
-            NetworkManager.Singleton.OnServerStarted += () => { ServerInit(); };
+            NetworkManager.Singleton.OnServerStarted += ServerInit;
         }
 
         private void ServerInit() {
