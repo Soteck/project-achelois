@@ -62,11 +62,6 @@ namespace Player {
             // storedRounds = pickupStoredRounds;
         }
 
-        public override void OnGainedOwnership() {
-            inputActions.Player.Enable();
-        }
-
-
         protected override void ClientBeforeInput() {
             bool canShoot = false;
             if (_reloading) {
@@ -108,7 +103,7 @@ namespace Player {
             //empty
         }
 
-        protected override void InternalCallInitMetaData(EquipableItemNetworkData meta) {
+        protected override void InternalCallInitMetaData(NetworkString meta) {
             InitMetaDataServerRpc(meta);
         }
 
@@ -160,7 +155,7 @@ namespace Player {
                 if (Physics.Raycast(barrelPosition, playerCamera.transform.forward, out RaycastHit hit,
                         range)) {
                     //Debug.Log(hit.transform.name);
-                    ShootWeaponHitClientRpc(barrelPosition, nextShootTime, hit.point, hit.normal);
+                    ShootWeaponHitClientRpc(nextShootTime, hit.point, hit.normal);
 
                     Target target = hit.transform.GetComponent<Target>();
                     if (target != null) {
@@ -185,9 +180,9 @@ namespace Player {
         }
 
         [ServerRpc]
-        private void InitMetaDataServerRpc(EquipableItemNetworkData meta) {
+        private void InitMetaDataServerRpc(NetworkString meta) {
             //TODO: Improve this, ugly AF
-            string[] data = meta.itemMeta.ToString().Split(',');
+            string[] data = meta.ToString().Split(',');
             _networkClipRemainingRounds.Value = int.Parse(data[0]);
             _networkStoredRemainingRounds.Value = int.Parse(data[1]);
             // _networkClipRemainingRounds.Value = 30;
@@ -197,8 +192,7 @@ namespace Player {
         // ClientRpc are executed on all client instances
 
         [ClientRpc]
-        private void ShootWeaponHitClientRpc(
-            Vector3 barrelPosition, float nexShootTime, Vector3 hitPoint, Vector3 hitNormal) {
+        private void ShootWeaponHitClientRpc(float nexShootTime, Vector3 hitPoint, Vector3 hitNormal) {
             _muzzleFlash.Play();
             _shootSource.Play();
             _nextTimeToFire = nexShootTime;
@@ -207,6 +201,7 @@ namespace Player {
             Destroy(impactGo, 2f);
 
             if (bulletTrailPrefab != null) {
+                Vector3 barrelPosition = _barrelEnd.transform.position;
                 TrailRenderer bullet = Instantiate(bulletTrailPrefab, barrelPosition, Quaternion.identity);
                 bullet.AddPosition(barrelPosition);
                 bullet.transform.position = hitPoint;

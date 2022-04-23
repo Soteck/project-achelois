@@ -42,7 +42,10 @@ namespace Controller {
         protected abstract void ClientMovement();
         protected abstract void ClientVisuals();
 
-
+        public void EnableInputActions() {
+            inputActions.Player.Enable();
+        }
+        
         public void Enable() {
             gameObject.SetActive(true);
             inputActions.Player.Enable();

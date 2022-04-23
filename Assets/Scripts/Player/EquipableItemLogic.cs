@@ -12,12 +12,12 @@ namespace Player {
         public EquipableItemVisual spawnedVisual { get; set; }
 
         public abstract EquipableItemNetworkData ToNetWorkData();
-        protected abstract void InternalCallInitMetaData(EquipableItemNetworkData meta);
+        protected abstract void InternalCallInitMetaData(NetworkString meta);
 
         public abstract string GetStatus();
 
 
-        public void CallInitMetaData(EquipableItemNetworkData meta) {
+        public void CallInitMetaData(NetworkString meta) {
             InternalCallInitMetaData(meta);
         }
 

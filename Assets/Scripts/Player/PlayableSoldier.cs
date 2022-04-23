@@ -195,14 +195,22 @@ namespace Player {
             UnEquip();
             if (item != null) {
                 item.gameObject.SetActive(true);
+                item.visual.gameObject.SetActive(true);
                 localActiveItem = _storedItems.IndexOf(item);
                 animator.Play("equip_" + item.item_id);
+                if (IsOwner) {
+                    item.EnableInputActions();
+                }
             }
         }
 
         private void UnEquip() {
             if (localActiveItem > -1 && localActiveItem < _storedItems.Count) {
-                _storedItems[localActiveItem]?.gameObject.SetActive(false);
+                EquipableItemLogic item = _storedItems[localActiveItem];
+                if (item != null) {
+                    item.gameObject.SetActive(false);
+                    item.visual.gameObject.SetActive(false);
+                }
             }
         }
 
@@ -236,20 +244,23 @@ namespace Player {
             NetworkObject no = item.GetComponent<NetworkObject>();
             no.SpawnWithOwnership(playerId);
             no.TrySetParent(transform, false);
-            item.CallInitMetaData(itemMeta);
             //Add instance to the server list
             _storedItems.Add(InitEquipment(item));
-            PickupItemClientRpc(no.NetworkObjectId);
+            PickupItemClientRpc(no.NetworkObjectId, itemMeta.itemMeta);
         }
 
         // ClientRpc are executed on all client instances
         [ClientRpc]
-        private void PickupItemClientRpc(ulong itemId) {
+        private void PickupItemClientRpc(ulong itemId, NetworkString itemMeta) {
             //TODO: play sound of pickup
 
             //ownerController.soldier.activeWeapon;
             NetworkObject spawnedItem = NetworkManager.Singleton.SpawnManager.SpawnedObjects[itemId];
             EquipableItemLogic item = spawnedItem.GetComponent<EquipableItemLogic>();
+            if (IsOwner) {
+                item.CallInitMetaData(itemMeta);
+            }
+            
 
             //Add instance to the client list
             if (!IsServer) {
@@ -261,6 +272,9 @@ namespace Player {
 
             if (_storedItems.Count == 1) {
                 Equip(item);
+            }
+            else {
+                visualItem.gameObject.SetActive(false);
             }
 
             animator.Rebind();
