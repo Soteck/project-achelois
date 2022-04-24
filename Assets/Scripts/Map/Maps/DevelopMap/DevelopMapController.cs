@@ -1,9 +1,11 @@
-﻿using Player;
+﻿using System;
+using Core;
+using Player;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace Map.Maps.DevelopMap {
-    public class DevelopMapController : MapController<DevelopMapController> {
+    public class DevelopMapController : BaseMapController<DevelopMapController>, DevelopMapControllerInterface {
         public GameObject flagAPosition;
         public GameObject flagBPosition;
 
@@ -18,11 +20,13 @@ namespace Map.Maps.DevelopMap {
 
         //Server private values
 
+        public void Awake() {
+            MapMaster.Instance.instance = this;
+        }
 
-        void Start() {
-            if (IsServer) {
-                NetworkManager.Singleton.OnServerStarted += ServerInit;
-            }
+        new void Start() {
+            base.Start();
+            NetworkManager.Singleton.OnServerStarted += ServerInit;
         }
 
         private void ServerInit() {
@@ -39,7 +43,7 @@ namespace Map.Maps.DevelopMap {
         }
 
         public void PlayerEnteredToDropZone(PlayableSoldier holder, ObjectiveDropZone objectiveDropZone) {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

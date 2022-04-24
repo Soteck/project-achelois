@@ -463,11 +463,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 900
-  teamARespawn: 1
-  teamBRespawn: 2
+  teamARespawn: 5
+  teamBRespawn: 6
   mapCamera: {fileID: 722770768}
   controlablePlayerPrefab: {fileID: 2591657511345724514, guid: 6a160cd4b52cf7849a7fde6a762fbb48, type: 3}
   spectatorPrefab: {fileID: 941205826761635473, guid: b9786866bfa99f94a9e36215c26c4586, type: 3}
+  flagAPosition: {fileID: 1048868459}
+  flagBPosition: {fileID: 232050416}
   flagAPrefab: {fileID: 8769842758233219721, guid: 2b2f8f5eca9147047ac8df407f7ac5cc, type: 3}
   flagBPrefab: {fileID: 5925894706395500899, guid: a848798976d1d374ca25a961815e0386, type: 3}
   flagADropZone: {fileID: 295885730}

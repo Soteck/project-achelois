@@ -134,7 +134,7 @@ namespace Network {
         private bool AttachSpectator() {
             spectatorController = NetSpectatorController.FindByOwnerId(NetworkManager.Singleton.LocalClientId);
             if (spectatorController != null) {
-                Quaternion mapCameraRotation = MapController.MapCamera().transform.rotation;
+                Quaternion mapCameraRotation = MapMaster.MapInstance().MapCamera().transform.rotation;
                 Vector3 angles = mapCameraRotation.eulerAngles;
                 angles.z = 0f;
                 spectatorController.playerCamera.transform.localRotation = Quaternion.Euler(angles);
@@ -175,8 +175,8 @@ namespace Network {
         }
 
         private bool FollowMapCamera() {
-            MapController.MapCamera().enabled = true;
-            activeCamera = MapController.MapCamera();
+            MapMaster.MapInstance().MapCamera().enabled = true;
+            activeCamera = MapMaster.MapInstance().MapCamera();
             CameraUtil.DisableAllCameras(activeCamera);
             return true;
         }
@@ -196,7 +196,7 @@ namespace Network {
         //Server RPC methods
         [ServerRpc]
         private void RequestJoinTeamServerRpc(Team teamToJoin, ulong playerId) {
-            MapController.ServerRequestJoinTeam(teamToJoin, playerId);
+            MapMaster.MapInstance().ServerRequestJoinTeam(teamToJoin, playerId);
         }
 
         [ServerRpc]

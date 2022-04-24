@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3030910434894342230}
   - component: {fileID: 3030910434894342231}
   - component: {fileID: 5925894706395500899}
+  - component: {fileID: 7605090387120657513}
   m_Layer: 0
   m_Name: FLAG_B
   m_TagString: Untagged
@@ -113,3 +114,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemId: 
   itemMeta: 
+--- !u!135 &7605090387120657513
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3030910434894342233}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}

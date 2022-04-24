@@ -3,6 +3,7 @@ using Config;
 using Controller;
 using Core;
 using Enums;
+using Map.Maps;
 using Player;
 using Unity.Netcode;
 using UnityEngine;
@@ -10,7 +11,7 @@ using Logger = Core.Logger;
 using NetworkPlayer = Network.NetworkPlayer;
 
 namespace Map {
-    public class MapController<T> : NetworkSingleton<T> where T : Component {
+    public class BaseMapController<T> : NetworkSingleton<T>, BaseMapControllerInterface where T : Component {
         //Init data
         public int duration = 15 * 60;
         public int teamARespawn = 5;
@@ -104,7 +105,7 @@ namespace Map {
             // DisableAllCameras(player.activeCamera);
         }
 
-        void Start() {
+        protected void Start() {
             NetworkManager.Singleton.OnServerStarted += () => {
                 //NetworkObjectPool.Instance.InitializePool();
                 ServerInit();
@@ -194,6 +195,32 @@ namespace Map {
             }
         }
 
+        public int PlayersInGame() {
+            return playersInGame.Value;
+        }
 
+        public float TimeElapsed() {
+            return timeElapsed.Value;
+        }
+
+        public void ServerRequestJoinTeam(Team team, ulong playerId) {
+            DoServerRequestJoinTeam(team, playerId);
+        }
+
+        public NetworkPlayer GetPlayer(ulong playerId) {
+            return _allPlayers[playerId];
+        }
+
+        public Camera MapCamera() {
+            return mapCamera;
+        }
+
+        public int TeamARespawn() {
+            return teamARespawn;
+        }
+
+        public int TeamBRespawn() {
+            return teamBRespawn;
+        }
     }
 }
