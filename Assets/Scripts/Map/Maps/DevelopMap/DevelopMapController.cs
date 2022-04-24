@@ -135,6 +135,10 @@ namespace Map.Maps.DevelopMap {
             PlayableSoldier ps = playerInstance.GetComponent<PlayableSoldier>();
             Network.NetworkPlayer player = Network.NetworkPlayer.NetworkPlayerByControllerId(playerInstance.OwnerClientId);
             ObjectiveDropZone dropZone = dropZoneInstance.GetComponent<ObjectiveDropZone>();
+            
+            if (ps.HasObjective()) {
+                return;
+            }
 
             if (flagADropZone.drop_zone_id.Equals(dropZone.drop_zone_id) && player.team.Value == Team.TeamA) {
                 string objectiveId = ps.networkObjective.Value;

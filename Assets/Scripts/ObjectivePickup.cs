@@ -12,7 +12,7 @@ public class ObjectivePickup : NetworkBehaviour {
 
     private void OnTriggerEnter(Collider other) {
         PlayableSoldier holder = other.gameObject.GetComponent<PlayableSoldier>();
-        if (holder != null && holder.IsOwner) {
+        if (holder != null && holder.IsOwner && !holder.HasObjective()) {
             DevelopMapController.Instance.PlayerPickedUpObjective(holder, this);
         }
     }
