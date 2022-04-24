@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using Enums;
 using Network.Shared;
 using Player;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using Util;
 
 namespace Map.Maps.DevelopMap {
     public class DevelopMapController : BaseMapController<DevelopMapController>, DevelopMapControllerInterface {
+        
+        public TextMeshProUGUI[] scoreShowers;
+        
         public GameObject flagAPosition;
         public GameObject flagBPosition;
         
@@ -41,6 +46,19 @@ namespace Map.Maps.DevelopMap {
         new void Start() {
             base.Start();
             NetworkManager.Singleton.OnServerStarted += ServerInit;
+        }
+
+        public new void Update() {
+            base.Update();
+            UpdateScorePanels();
+        }
+
+        private void UpdateScorePanels() {
+            if (scoreShowers != null) {
+                foreach (TextMeshProUGUI scoreShower in scoreShowers) {
+                    scoreShower.SetText($"<color=\"red\">[{teamAScore.Value}</color><color=\"black\"> - </color><color=\"blue\">{teamBScore.Value}]</color>");
+                }
+            }
         }
 
         private void ServerInit() {

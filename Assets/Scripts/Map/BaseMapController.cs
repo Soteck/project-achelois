@@ -35,7 +35,7 @@ namespace Map {
         private Dictionary<ulong, NetworkPlayer> _allPlayers;
         private List<ulong> _teamAPlayers;
         private List<ulong> _teamBPlayers;
-        private bool _serverInit = false;
+        protected bool _serverInit = false;
 
 
         private void ServerInit() {
