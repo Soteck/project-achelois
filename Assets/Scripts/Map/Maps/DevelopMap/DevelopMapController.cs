@@ -103,9 +103,12 @@ namespace Map.Maps.DevelopMap {
             PlayableSoldier ps = playerInstance.GetComponent<PlayableSoldier>();
             Network.NetworkPlayer player = Network.NetworkPlayer.NetworkPlayerByControllerId(playerInstance.OwnerClientId);
             ObjectivePickup op = objectiveInstance.GetComponent<ObjectivePickup>();
-            
             NetworkString objectiveCodeValue = op.objectiveCode.Value;
+            
             //Check if can be Picked Up
+            if (ps.HasObjective()) {
+                return;
+            }
             if (player.team.Value == Team.TeamA) {
                 if (!teamBObjectiveIdentifiers.Contains(objectiveCodeValue)) {
                     return;
@@ -135,10 +138,6 @@ namespace Map.Maps.DevelopMap {
             PlayableSoldier ps = playerInstance.GetComponent<PlayableSoldier>();
             Network.NetworkPlayer player = Network.NetworkPlayer.NetworkPlayerByControllerId(playerInstance.OwnerClientId);
             ObjectiveDropZone dropZone = dropZoneInstance.GetComponent<ObjectiveDropZone>();
-            
-            if (ps.HasObjective()) {
-                return;
-            }
 
             if (flagADropZone.drop_zone_id.Equals(dropZone.drop_zone_id) && player.team.Value == Team.TeamA) {
                 string objectiveId = ps.networkObjective.Value;
@@ -146,12 +145,14 @@ namespace Map.Maps.DevelopMap {
                 teamAObjectivesDelivered.Add(objectiveId);
                 teamAScore.Value++;
                 ps.networkObjective.Value = Constants.OBJECTIVE_NONE;
+                SpawnTeamBFlag();
             }else if (flagBDropZone.drop_zone_id.Equals(dropZone.drop_zone_id) && player.team.Value == Team.TeamB) {
                 string objectiveId = ps.networkObjective.Value;
                 teamAObjectiveTaken.Remove(objectiveId);
                 teamBObjectivesDelivered.Add(objectiveId);
                 teamBScore.Value++;
                 ps.networkObjective.Value = Constants.OBJECTIVE_NONE;
+                SpawnTeamAFlag();
             }
 
         }

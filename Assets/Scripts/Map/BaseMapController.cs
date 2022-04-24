@@ -131,7 +131,11 @@ namespace Map {
                 .GetComponent<NetworkPlayer>();
             _allPlayers[playerId] = playerObject;
 
-            GameObject spectator = Instantiate(spectatorPrefab, mapCamera.transform.position, Quaternion.identity);
+            Transform cameraTransform = mapCamera.transform;
+            Vector3 spectatorRotation = cameraTransform.rotation.eulerAngles;
+            spectatorRotation.z = 0;
+            spectatorRotation.x = 0;
+            GameObject spectator = Instantiate(spectatorPrefab, cameraTransform.position, Quaternion.Euler(spectatorRotation));
             NetworkObject no = spectator.GetComponent<NetworkObject>();
             no.SpawnWithOwnership(playerId);
             playerObject.spectatorController = spectator.GetComponent<NetSpectatorController>();
