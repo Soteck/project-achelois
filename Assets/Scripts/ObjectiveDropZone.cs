@@ -6,6 +6,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(NetworkObject))]
 public class ObjectiveDropZone : NetworkBehaviour {
+    public string drop_zone_id;
 
     private void OnTriggerEnter(Collider other) {
         PlayableSoldier holder = other.gameObject.GetComponent<PlayableSoldier>();

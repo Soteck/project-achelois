@@ -396,6 +396,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20a620212d6940898f16f5683738b0d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  drop_zone_id: team_b_spawn_dropzone
 --- !u!65 &295885731
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -484,8 +485,8 @@ MonoBehaviour:
   flagBPosition: {fileID: 232050416}
   flagAPrefab: {fileID: 8769842758233219721, guid: 2b2f8f5eca9147047ac8df407f7ac5cc, type: 3}
   flagBPrefab: {fileID: 5925894706395500899, guid: a848798976d1d374ca25a961815e0386, type: 3}
-  flagADropZone: {fileID: 295885730}
-  flagBDropZone: {fileID: 1948787021}
+  flagADropZone: {fileID: 1948787021}
+  flagBDropZone: {fileID: 295885730}
 --- !u!1 &722770765
 GameObject:
   m_ObjectHideFlags: 0
@@ -1463,6 +1464,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20a620212d6940898f16f5683738b0d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  drop_zone_id: team_a_spawn_dropzone
 --- !u!65 &1948787022
 BoxCollider:
   m_ObjectHideFlags: 0

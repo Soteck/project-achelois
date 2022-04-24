@@ -5,12 +5,13 @@ using Network.Shared;
 using Player;
 using Unity.Netcode;
 using UnityEngine;
+using Util;
 
 namespace Map.Maps.DevelopMap {
     public class DevelopMapController : BaseMapController<DevelopMapController>, DevelopMapControllerInterface {
         public GameObject flagAPosition;
         public GameObject flagBPosition;
-
+        
         public ObjectivePickup flagAPrefab;
         public ObjectivePickup flagBPrefab;
 
@@ -110,8 +111,27 @@ namespace Map.Maps.DevelopMap {
         }
 
         [ServerRpc]
-        private void OnPlayerEnteredToDropZoneServerRpc(ulong playerId, ulong objectiveId) {
-            
+        private void OnPlayerEnteredToDropZoneServerRpc(ulong playerId, ulong dropZoneId) {
+            NetworkObject playerInstance = NetworkManager.Singleton.SpawnManager.SpawnedObjects[playerId];
+            NetworkObject dropZoneInstance = NetworkManager.Singleton.SpawnManager.SpawnedObjects[dropZoneId];
+            PlayableSoldier ps = playerInstance.GetComponent<PlayableSoldier>();
+            Network.NetworkPlayer player = Network.NetworkPlayer.NetworkPlayerByControllerId(playerInstance.OwnerClientId);
+            ObjectiveDropZone dropZone = dropZoneInstance.GetComponent<ObjectiveDropZone>();
+
+            if (flagADropZone.drop_zone_id.Equals(dropZone.drop_zone_id) && player.team.Value == Team.TeamA) {
+                string objectiveId = ps.networkObjective.Value;
+                teamBObjectiveTaken.Remove(objectiveId);
+                teamAObjectivesDelivered.Add(objectiveId);
+                teamAScore.Value++;
+                ps.networkObjective.Value = Constants.OBJECTIVE_NONE;
+            }else if (flagBDropZone.drop_zone_id.Equals(dropZone.drop_zone_id) && player.team.Value == Team.TeamB) {
+                string objectiveId = ps.networkObjective.Value;
+                teamAObjectiveTaken.Remove(objectiveId);
+                teamBObjectivesDelivered.Add(objectiveId);
+                teamBScore.Value++;
+                ps.networkObjective.Value = Constants.OBJECTIVE_NONE;
+            }
+
         }
         
         
