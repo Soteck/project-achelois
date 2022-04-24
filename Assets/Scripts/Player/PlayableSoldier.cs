@@ -5,6 +5,7 @@ using Network.Shared;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace Player {
     public class PlayableSoldier : NetworkBehaviour {
@@ -15,7 +16,8 @@ namespace Player {
 
         private List<EquipableItemLogic> _storedItems = new List<EquipableItemLogic>();
 
-        [SerializeField] private NetworkList<EquipableItemNetworkData> _networkItems;
+        [SerializeField] 
+        private NetworkList<EquipableItemNetworkData> _networkItems;
         //TODO: Guardar una lista de objetos, con dos strings uno del ID y otro de metadatos
         // Sincronizar estos datos con instancias en local de EquipableItem guardadas en otro array
 
@@ -29,7 +31,7 @@ namespace Player {
         public NetworkVariable<bool> networkInMenu = new NetworkVariable<bool>();
         
         [SerializeField] 
-        public NetworkVariable<bool> networkWithObjective = new NetworkVariable<bool>();
+        public NetworkVariable<NetworkString> networkObjective = new NetworkVariable<NetworkString>();
         
         [SerializeField] 
         public NetworkVariable<bool> networkTexting = new NetworkVariable<bool>();
@@ -303,13 +305,15 @@ namespace Player {
         }
 
         public bool IsTexting() {
-            return false;
+            return networkTexting.Value;
         }
         public bool HasObjective() {
-            return false;
+            return networkObjective.Value != "NoNe";
         }
         public bool InMenu() {
-            return false;
+            return networkInMenu.Value;
         }
+
+        
     }
 }

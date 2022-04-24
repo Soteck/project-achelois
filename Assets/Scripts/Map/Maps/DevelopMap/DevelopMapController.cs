@@ -1,5 +1,7 @@
-﻿using System;
-using Core;
+﻿
+using System.Collections.Generic;
+using Enums;
+using Network.Shared;
 using Player;
 using Unity.Netcode;
 using UnityEngine;
@@ -19,6 +21,17 @@ namespace Map.Maps.DevelopMap {
         private NetworkVariable<int> teamBScore = new NetworkVariable<int>();
 
         //Server private values
+        private List<string> teamAObjectiveIdentifiers;
+        private List<string> teamBObjectiveIdentifiers;
+
+        private List<string> teamAObjectiveTaken;
+        private List<string> teamBObjectiveTaken;
+
+        private List<string> teamAObjectivesDelivered;
+        private List<string> teamBObjectivesDelivered;
+
+        private int aCounter = 0;
+        private int bCounter = 0;
 
         public void Awake() {
             MapMaster.Instance.instance = this;
@@ -32,18 +45,88 @@ namespace Map.Maps.DevelopMap {
         private void ServerInit() {
             teamAScore.Value = 0;
             teamBScore.Value = 0;
-            SpawnFlag(flagAPrefab, flagAPosition.transform);
-            SpawnFlag(flagBPrefab, flagBPosition.transform);
+            teamAObjectiveIdentifiers = new List<string>();
+            teamBObjectiveIdentifiers = new List<string>();
+            teamAObjectivesDelivered = new List<string>();
+            teamBObjectivesDelivered = new List<string>();
+            teamAObjectiveTaken = new List<string>();
+            teamBObjectiveTaken = new List<string>();
+            SpawnTeamAFlag();
+            SpawnTeamBFlag();
         }
 
-        private void SpawnFlag(ObjectivePickup prefab, Transform flagTransformPosition) {
+        private void SpawnTeamAFlag() {
+            //spawn red flag
+            string code = aCounter++ + "_a_flag";
+            teamAObjectiveIdentifiers.Add(code);
+            SpawnFlag(flagAPrefab, flagAPosition.transform, code);
+        }
+
+        private void SpawnTeamBFlag() {
+            //spawn blue flag
+            string code = bCounter++ + "_b_flag";
+            teamBObjectiveIdentifiers.Add(code);
+            SpawnFlag(flagBPrefab, flagBPosition.transform, code);
+        }
+
+
+        private void SpawnFlag(ObjectivePickup prefab, Transform flagTransformPosition, string code) {
             ObjectivePickup go = Instantiate(prefab, flagTransformPosition.position, flagTransformPosition.rotation);
             NetworkObject no = go.GetComponent<NetworkObject>();
+            go.objectiveCode.Value = code;
             no.Spawn();
         }
 
+        [ServerRpc]
+        private void OnPlayerPickedUpObjectiveServerRpc(ulong playerId, ulong objectiveId) {
+            NetworkObject playerInstance = NetworkManager.Singleton.SpawnManager.SpawnedObjects[playerId];
+            NetworkObject objectiveInstance = NetworkManager.Singleton.SpawnManager.SpawnedObjects[objectiveId];
+            PlayableSoldier ps = playerInstance.GetComponent<PlayableSoldier>();
+            Network.NetworkPlayer player = Network.NetworkPlayer.NetworkPlayerByControllerId(playerInstance.OwnerClientId);
+            ObjectivePickup op = objectiveInstance.GetComponent<ObjectivePickup>();
+            
+            NetworkString objectiveCodeValue = op.objectiveCode.Value;
+            //Check if can be Picked Up
+            if (player.team.Value == Team.TeamA) {
+                if (!teamBObjectiveIdentifiers.Contains(objectiveCodeValue)) {
+                    return;
+                }
+            }else if (player.team.Value == Team.TeamB) {
+                if (!teamAObjectiveIdentifiers.Contains(objectiveCodeValue)) {
+                    return;
+                }
+            }
+            
+            //Do the actual Pick Up
+            if (player.team.Value == Team.TeamA) {
+                teamBObjectiveIdentifiers.Remove(objectiveCodeValue);
+                teamBObjectiveTaken.Add(objectiveCodeValue);
+            }else if (player.team.Value == Team.TeamB) {
+                teamAObjectiveIdentifiers.Remove(objectiveCodeValue);
+                teamAObjectiveTaken.Add(objectiveCodeValue);
+            }
+            ps.networkObjective.Value = objectiveCodeValue;
+            objectiveInstance.Despawn();
+        }
+
+        [ServerRpc]
+        private void OnPlayerEnteredToDropZoneServerRpc(ulong playerId, ulong objectiveId) {
+            
+        }
+        
+        
+
+        //Client-Side function calls
         public void PlayerEnteredToDropZone(PlayableSoldier holder, ObjectiveDropZone objectiveDropZone) {
-            throw new NotImplementedException();
+            OnPlayerEnteredToDropZoneServerRpc(
+                holder.NetworkObjectId,
+                objectiveDropZone.NetworkObjectId);
+        }
+
+        public void PlayerPickedUpObjective(PlayableSoldier holder, ObjectivePickup objectivePickup) {
+            OnPlayerPickedUpObjectiveServerRpc(
+                holder.NetworkObjectId,
+                objectivePickup.NetworkObjectId);
         }
     }
 }

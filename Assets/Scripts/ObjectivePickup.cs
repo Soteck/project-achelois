@@ -1,22 +1,19 @@
+using Map.Maps.DevelopMap;
 using Network.Shared;
 using Player;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(NetworkObject))]
 public class ObjectivePickup : NetworkBehaviour {
-    public string itemId;
-    public string itemMeta;
-
+    
+    public NetworkVariable<NetworkString> objectiveCode = new NetworkVariable<NetworkString>();
 
     private void OnTriggerEnter(Collider other) {
         PlayableSoldier holder = other.gameObject.GetComponent<PlayableSoldier>();
-        if (holder) {
-            EquipableItemNetworkData data = new EquipableItemNetworkData() {
-                itemID = itemId,
-                itemMeta = itemMeta
-            };
-            holder.PickUp(data);
+        if (holder != null && holder.IsOwner) {
+            DevelopMapController.Instance.PlayerPickedUpObjective(holder, this);
         }
     }
 }

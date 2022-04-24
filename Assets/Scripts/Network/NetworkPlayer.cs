@@ -222,5 +222,9 @@ namespace Network {
                 return null;
             }
         }
+
+        public static NetworkPlayer NetworkPlayerByControllerId(ulong playerId) {
+            return NetworkManager.Singleton.ConnectedClients[playerId].PlayerObject.GetComponent<NetworkPlayer>();
+        }
     }
 }

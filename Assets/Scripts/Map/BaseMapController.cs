@@ -7,6 +7,7 @@ using Map.Maps;
 using Player;
 using Unity.Netcode;
 using UnityEngine;
+using Util;
 using Logger = Core.Logger;
 using NetworkPlayer = Network.NetworkPlayer;
 
@@ -102,6 +103,9 @@ namespace Map {
             player.state.Value = PlayerSate.PlayingAlive;
             PlayableSoldier po = go.GetComponent<PlayableSoldier>();
             po.networkHealth.Value = 100f;
+            po.networkObjective.Value = Constants.OBJECTIVE_NONE;
+            po.networkInMenu.Value = false;
+            po.networkTexting.Value = false;
             // DisableAllCameras(player.activeCamera);
         }
 
