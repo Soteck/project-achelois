@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using CharacterController;
-using Controller;
 using Core;
 using Network.Shared;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 namespace Player {
     public class PlayableSoldier : NetworkBehaviour {
@@ -17,43 +15,33 @@ namespace Player {
 
         private List<EquipableItemLogic> _storedItems = new List<EquipableItemLogic>();
 
-        [SerializeField] 
-        private NetworkList<EquipableItemNetworkData> _networkItems;
-        //TODO: Guardar una lista de objetos, con dos strings uno del ID y otro de metadatos
-        // Sincronizar estos datos con instancias en local de EquipableItem guardadas en otro array
+        [SerializeField] private NetworkList<EquipableItemNetworkData> _networkItems;
 
-        [SerializeField] 
-        private NetworkVariable<int> networkActiveItem;
-        
-        [SerializeField] 
-        public NetworkVariable<float> networkHealth = new NetworkVariable<float>();
-        
-        [SerializeField] 
-        public NetworkVariable<bool> networkInMenu = new NetworkVariable<bool>();
-        
-        [SerializeField] 
-        public NetworkVariable<NetworkString> networkObjective = new NetworkVariable<NetworkString>();
-        
-        [SerializeField] 
-        public NetworkVariable<bool> networkTexting = new NetworkVariable<bool>();
+        [SerializeField] private NetworkVariable<int> networkActiveItem;
+
+        [SerializeField] public NetworkVariable<float> networkHealth = new NetworkVariable<float>();
+
+        [SerializeField] public NetworkVariable<bool> networkInMenu = new NetworkVariable<bool>();
+
+        [SerializeField] public NetworkVariable<NetworkString> networkObjective = new NetworkVariable<NetworkString>();
+
+        [SerializeField] public NetworkVariable<bool> networkTexting = new NetworkVariable<bool>();
 
         private EquipableItemLogic _changeWeapon = null;
-        private int localActiveItem = -1;
+        private int _localActiveItem = -1;
+
         public NetPlayerController playerController;
+        private PlayerInputActions _inputActions;
 
-        protected PlayerInputActions inputActions;
-
-        private WeaponSpawner weponSpawner;
 
         public void Awake() {
-            inputActions = new PlayerInputActions();
+            _inputActions = new PlayerInputActions();
             _networkItems = new NetworkList<EquipableItemNetworkData>();
             networkActiveItem = new NetworkVariable<int>();
 
-            inputActions.Player.Disable();
-            inputActions.Player.Scroll.performed += Scroll;
+            _inputActions.Player.Disable();
+            _inputActions.Player.Scroll.performed += Scroll;
 
-            weponSpawner = GetComponent<WeaponSpawner>();
             // foreach (EquipableItem item in activeWeapon.GetComponentsInChildren<EquipableItem>()) {
             //     if (!_storedItems.Contains(item)) {
             //         _storedItems.Add(InitEquipment(item, item.ToNetWorkData()));
@@ -104,7 +92,7 @@ namespace Player {
             }
 
             if (networkActiveItem.Value > -1 && networkActiveItem.Value < _storedItems.Count &&
-                networkActiveItem.Value != localActiveItem) {
+                networkActiveItem.Value != _localActiveItem) {
                 Equip(_storedItems[networkActiveItem.Value]);
             }
 
@@ -210,7 +198,7 @@ namespace Player {
             if (item != null) {
                 item.gameObject.SetActive(true);
                 item.visual.gameObject.SetActive(true);
-                localActiveItem = _storedItems.IndexOf(item);
+                _localActiveItem = _storedItems.IndexOf(item);
                 animator.Play("equip_" + item.item_id);
                 if (IsOwner) {
                     item.EnableInputActions();
@@ -219,8 +207,8 @@ namespace Player {
         }
 
         private void UnEquip() {
-            if (localActiveItem > -1 && localActiveItem < _storedItems.Count) {
-                EquipableItemLogic item = _storedItems[localActiveItem];
+            if (_localActiveItem > -1 && _localActiveItem < _storedItems.Count) {
+                EquipableItemLogic item = _storedItems[_localActiveItem];
                 if (item != null) {
                     item.gameObject.SetActive(false);
                     item.visual.gameObject.SetActive(false);
@@ -229,8 +217,8 @@ namespace Player {
         }
 
         public EquipableItemLogic ActiveItem() {
-            if (localActiveItem != -1) {
-                return _storedItems[localActiveItem];
+            if (_localActiveItem != -1) {
+                return _storedItems[_localActiveItem];
             }
 
             return null;
@@ -274,7 +262,7 @@ namespace Player {
             if (IsOwner) {
                 item.CallInitMetaData(itemMeta);
             }
-            
+
 
             //Add instance to the client list
             if (!IsServer) {
@@ -297,24 +285,24 @@ namespace Player {
 
         public void Enable() {
             gameObject.SetActive(true);
-            inputActions.Player.Enable();
+            _inputActions.Player.Enable();
         }
 
         public void Disable() {
             gameObject.SetActive(false);
-            inputActions.Player.Disable();
+            _inputActions.Player.Disable();
         }
 
         public bool IsTexting() {
             return networkTexting.Value;
         }
+
         public bool HasObjective() {
             return networkObjective.Value != "NoNe";
         }
+
         public bool InMenu() {
             return networkInMenu.Value;
         }
-
-        
     }
 }
