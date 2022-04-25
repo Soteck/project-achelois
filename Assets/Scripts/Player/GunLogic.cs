@@ -5,6 +5,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Util;
+using World;
 
 namespace Player {
     public class GunLogic : EquipableItemLogic {
@@ -85,8 +86,16 @@ namespace Player {
             if (!busy) {
                 InputAction fire1 = inputActions.Player.Fire1;
                 if (fire1.IsPressed()) {
-                    _hasShooted = true;
-                    ShootWeaponServerRpc(_barrelEnd.transform.position, Time.time);
+                    if (_networkClipRemainingRounds.Value > 0) {
+                        _hasShooted = true;
+                        ShootWeaponServerRpc(_barrelEnd.transform.position, Time.time);
+                    }
+                    else {
+                        if (fire1.WasPerformedThisFrame()) {
+                            DryClientRpc(Time.time + _timeBetweenShoots);
+                        }
+                    }
+                    
                 }
                 else if (inputActions.Player.Reload.WasPerformedThisFrame()) {
                     ReloadServerRpc(Time.time);
@@ -152,14 +161,16 @@ namespace Player {
             if (_networkClipRemainingRounds.Value > 0) {
                 _networkClipRemainingRounds.Value--;
 
-                if (Physics.Raycast(barrelPosition, playerCamera.transform.forward, out RaycastHit hit,
-                        range)) {
+                if (Physics.Raycast(
+                        barrelPosition, playerCamera.transform.forward, out RaycastHit hit, range
+                    )) {
                     //Debug.Log(hit.transform.name);
                     ShootWeaponHitClientRpc(nextShootTime, hit.point, hit.normal);
 
-                    Target target = hit.transform.GetComponent<Target>();
-                    if (target != null) {
-                        target.TakeDamage(damage);
+                    IDamageableEntity damageableEntity =
+                        (IDamageableEntity) hit.transform.gameObject.GetComponent(typeof(IDamageableEntity));
+                    if (damageableEntity != null) {
+                        damageableEntity.ServerTakeDamage(damage);
                     }
 
                     if (hit.rigidbody != null) {

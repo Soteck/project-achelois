@@ -5,9 +5,10 @@ using Network.Shared;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using World;
 
 namespace Player {
-    public class PlayableSoldier : NetworkBehaviour {
+    public class PlayableSoldier : NetworkBehaviour, IDamageableEntity {
         public int selectedWeapon = 0;
         public Transform activeWeapon;
         public Camera playerCamera;
@@ -224,6 +225,18 @@ namespace Player {
             return null;
         }
 
+        public void ServerTakeDamage(float amount) {
+            DamageReceivedClientRpc();
+            networkHealth.Value -= amount;
+            if (networkHealth.Value < 0) {
+                ServerDie();
+            }
+        }
+
+        public void ServerDie() {
+            
+        }
+
         // ServerRpc only executed on server side
 
         [ServerRpc]
@@ -252,6 +265,14 @@ namespace Player {
         }
 
         // ClientRpc are executed on all client instances
+        [ClientRpc]
+        private void DamageReceivedClientRpc() {
+            if (IsOwner) {
+                Debug.Log("Damage received!!!");
+            }
+        }
+        
+        
         [ClientRpc]
         private void PickupItemClientRpc(ulong itemId, NetworkString itemMeta) {
             //TODO: play sound of pickup

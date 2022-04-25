@@ -809,7 +809,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemId: mp40
-  itemMeta: 32,160
+  itemMeta: 30,30
 --- !u!135 &994588108
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1016,6 +1016,16 @@ MonoBehaviour:
       OverridingTargetPrefab: {fileID: 0}
     - Override: 0
       Prefab: {fileID: 1573891603913387053, guid: f6bb5f7797c1be244b80d3cbcc48077f, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 8769842758233219732, guid: 2b2f8f5eca9147047ac8df407f7ac5cc, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 3030910434894342233, guid: a848798976d1d374ca25a961815e0386, type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
@@ -1352,7 +1362,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemId: thompson
-  itemMeta: 30,150
+  itemMeta: 30,30
 --- !u!135 &1820368319
 SphereCollider:
   m_ObjectHideFlags: 0
