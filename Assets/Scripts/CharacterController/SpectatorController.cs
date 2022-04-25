@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace Controller {
+namespace CharacterController {
     public class SpectatorController : BaseController {
-        public CharacterController controller;
+        public UnityEngine.CharacterController controller;
 
         public float speed = 12f;
         public float mouseSensivity = 100f;

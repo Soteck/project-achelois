@@ -4,10 +4,10 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Controller {
+namespace CharacterController {
     public class NetPlayerController : NetworkBehaviour {
         public Camera playerCamera;
-        public CharacterController controller;
+        public UnityEngine.CharacterController controller;
         public Transform lookTransform;
         public PlayableSoldier soldier;
 

@@ -2,10 +2,10 @@
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Controller {
+namespace CharacterController {
     public class NetSpectatorController : NetworkBehaviour {
         public Camera playerCamera;
-        public CharacterController controller;
+        public UnityEngine.CharacterController controller;
         public Transform lookTransform;
 
         public float speed = 12f;

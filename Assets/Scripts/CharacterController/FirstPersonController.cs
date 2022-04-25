@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using Controller;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Controller {
+namespace CharacterController {
     public class FirstPersonController : BaseController {
-        public CharacterController controller;
+        public UnityEngine.CharacterController controller;
 
         public float speed = 12f;
         public float gravity = -9.81f;

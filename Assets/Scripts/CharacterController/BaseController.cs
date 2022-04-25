@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Controller {
+namespace CharacterController {
     public abstract class BaseController : MonoBehaviour {
 
         protected PlayerInputActions inputActions;

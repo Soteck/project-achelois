@@ -7,7 +7,7 @@ namespace Controller {
     [RequireComponent(typeof(NetworkObject))]
     //[RequireComponent(typeof(ClientNetworkTransform))]
     public abstract class NetController : NetworkBehaviour {
-        public CharacterController controller;
+        public UnityEngine.CharacterController controller;
 
         protected PlayerInputActions inputActions;
 
