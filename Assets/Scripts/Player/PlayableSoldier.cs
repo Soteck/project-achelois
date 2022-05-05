@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using CharacterController;
 using Core;
+using Enums;
 using Network.Shared;
 using Unity.Netcode;
 using UnityEngine;
@@ -9,6 +10,7 @@ using World;
 
 namespace Player {
     public class PlayableSoldier : NetworkBehaviour, IDamageableEntity {
+        public float knockDownHealth = -75;
         public int selectedWeapon = 0;
         public Transform activeWeapon;
         public Camera playerCamera;
@@ -27,6 +29,7 @@ namespace Player {
         [SerializeField] public NetworkVariable<NetworkString> networkObjective = new NetworkVariable<NetworkString>();
 
         [SerializeField] public NetworkVariable<bool> networkTexting = new NetworkVariable<bool>();
+        
 
         private EquipableItemLogic _changeWeapon = null;
         private int _localActiveItem = -1;
@@ -63,9 +66,13 @@ namespace Player {
 
                 if (IsClient) {
                     ClientMovement();
-                    //ClientVisuals();
+                    ClientVisuals();
                 }
             }
+        }
+
+        private void ClientVisuals() {
+
         }
 
         private void ClientInput() {
@@ -228,13 +235,14 @@ namespace Player {
         public void ServerTakeDamage(float amount) {
             DamageReceivedClientRpc();
             networkHealth.Value -= amount;
-            if (networkHealth.Value < 0) {
+            if (networkHealth.Value < knockDownHealth) {
+                //knocked down
                 ServerDie();
             }
         }
 
         public void ServerDie() {
-            
+            //TODO: Deattach entity from player
         }
 
         // ServerRpc only executed on server side

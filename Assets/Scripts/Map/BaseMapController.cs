@@ -72,7 +72,7 @@ namespace Map {
             int teamSpawningNumber = 0;
             foreach (ulong playerId in _teamAPlayers) {
                 NetworkPlayer player = _allPlayers[playerId];
-                if (player.state.Value != PlayerSate.PlayingAlive) {
+                if (player.networkState.Value != PlayerState.PlayingAlive) {
                     ServerSpawnControllablePlayer(playerId, player, teamSpawningNumber++);
                 }
             }
@@ -84,7 +84,7 @@ namespace Map {
             int teamSpawningNumber = 0;
             foreach (ulong playerId in _teamBPlayers) {
                 NetworkPlayer player = _allPlayers[playerId];
-                if (player.state.Value != PlayerSate.PlayingAlive) {
+                if (player.networkState.Value != PlayerState.PlayingAlive) {
                     ServerSpawnControllablePlayer(playerId, player, teamSpawningNumber++);
                 }
             }
@@ -101,7 +101,7 @@ namespace Map {
             no.transform.position = position;
             no.SpawnWithOwnership(playerId);
             //no.ChangeOwnership(playerId);
-            player.state.Value = PlayerSate.PlayingAlive;
+            player.networkState.Value = PlayerState.PlayingAlive;
             PlayableSoldier po = go.GetComponent<PlayableSoldier>();
             po.networkHealth.Value = 100f;
             po.networkObjective.Value = Constants.OBJECTIVE_NONE;
@@ -141,7 +141,7 @@ namespace Map {
             no.SpawnWithOwnership(playerId);
             playerObject.spectatorController = spectator.GetComponent<NetSpectatorController>();
 
-            playerObject.state.Value = PlayerSate.MapCamera;
+            playerObject.networkState.Value = PlayerState.MapCamera;
         }
 
         private void DoServerRequestJoinTeam(Team team, ulong playerId) {
@@ -150,7 +150,7 @@ namespace Map {
             bool canJoin = false;
             //Check if the change can be done
             if (player != null) {
-                from = player.team.Value;
+                from = player.networkTeam.Value;
                 if (team != from) {
                     if (team == Team.Spectator || !ConfigHolder.autoBalance) {
                         canJoin = true;
@@ -181,19 +181,19 @@ namespace Map {
                 //Add player to the new team
                 if (team == Team.TeamA) {
                     _teamAPlayers.Add(playerId);
-                    player.team.Value = Team.TeamA;
-                    player.state.Value = PlayerSate.PlayingDead;
+                    player.networkTeam.Value = Team.TeamA;
+                    player.networkState.Value = PlayerState.PlayingDead;
                     player.selectedSpawnPoint.Value = SpawnArea.GetDefaultTeamASpawnArea();
                 }
                 else if (team == Team.TeamB) {
                     _teamBPlayers.Add(playerId);
-                    player.team.Value = Team.TeamB;
-                    player.state.Value = PlayerSate.PlayingDead;
+                    player.networkTeam.Value = Team.TeamB;
+                    player.networkState.Value = PlayerState.PlayingDead;
                     player.selectedSpawnPoint.Value = SpawnArea.GetDefaultTeamBSpawnArea();
                 }
                 else {
-                    player.team.Value = Team.Spectator;
-                    player.state.Value = PlayerSate.MapCamera;
+                    player.networkTeam.Value = Team.Spectator;
+                    player.networkState.Value = PlayerState.MapCamera;
                 }
 
                 NetPlayerController controller = NetPlayerController.FindByOwnerId(playerId);

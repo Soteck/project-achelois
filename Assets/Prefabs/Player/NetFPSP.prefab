@@ -723,7 +723,9 @@ Animator:
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
-  m_WarningMessage: 
+  m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
+    are already bound by a Humanoid avatar. These transforms can only be changed
+    by Humanoid clips.\n\tTransform 'Skeleton'\n\tFrom animation clip 'KnockedDown'"
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
@@ -927,8 +929,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2591657510236247224}
-  m_LocalRotation: {x: 0.038122572, y: -0, z: -0, w: 0.99927306}
-  m_LocalPosition: {x: 0, y: 1.678, z: 0.11}
+  m_LocalRotation: {x: -0.12461263, y: -0.027717022, z: 0.000910706, w: 0.9918179}
+  m_LocalPosition: {x: -0.00021168403, y: 0.58862865, z: -0.13171035}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 902410934341393729}
@@ -1008,8 +1010,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2591657510337592779}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0.1432792, y: -0.04277496, z: 0, w: 0.9887575}
+  m_LocalPosition: {x: 0.13401173, y: 0.41326848, z: -0.13148437}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3331772548581234669}
@@ -1234,9 +1236,11 @@ GameObject:
   - component: {fileID: 2591657511345724515}
   - component: {fileID: 7853438245753691099}
   - component: {fileID: 6117265805383922058}
+  - component: {fileID: 4837064535887925525}
   - component: {fileID: 1197857921907703752}
   - component: {fileID: -8306263352360427543}
   - component: {fileID: 3649358980088332639}
+  - component: {fileID: 3147983822274581979}
   m_Layer: 0
   m_Name: NetFPSP
   m_TagString: Untagged
@@ -1321,6 +1325,19 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 0
+--- !u!114 &4837064535887925525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2591657511345724514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Animator: {fileID: 1556525490846149546}
 --- !u!114 &1197857921907703752
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1333,6 +1350,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6cab5cf223b95d4daa8f83b70995186, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  knockDownHealth: -75
   selectedWeapon: 0
   activeWeapon: {fileID: 3331772548581234669}
   playerCamera: {fileID: 2591657510236247230}
@@ -1362,6 +1380,7 @@ MonoBehaviour:
   controller: {fileID: 2591657511345724515}
   lookTransform: {fileID: 5487366833304584088}
   soldier: {fileID: 1197857921907703752}
+  animator: {fileID: 1556525490846149546}
   speed: 12
   sprintMultiplier: 1.5
   gravity: -15
@@ -1373,6 +1392,7 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 8
+  networkPlayer: {fileID: 0}
 --- !u!114 &3649358980088332639
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1388,6 +1408,25 @@ MonoBehaviour:
   guns:
   - {fileID: 3394601030776815286, guid: f518364000c629b49ba16f265fd1671a, type: 3}
   - {fileID: -2659501786489046611, guid: f6bb5f7797c1be244b80d3cbcc48077f, type: 3}
+--- !u!95 &3147983822274581979
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2591657511345724514}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &2701189706130882737
 GameObject:
   m_ObjectHideFlags: 0
@@ -1516,7 +1555,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2851746375934411390}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

@@ -1,8 +1,11 @@
 ﻿using Config;
+using Enums;
 using Player;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.Serialization;
+using NetworkPlayer = Network.NetworkPlayer;
 
 namespace CharacterController {
     public class NetPlayerController : NetworkBehaviour {
@@ -10,52 +13,90 @@ namespace CharacterController {
         public UnityEngine.CharacterController controller;
         public Transform lookTransform;
         public PlayableSoldier soldier;
+        public Animator animator;
+        public NetworkAnimator netAnimator;
 
         public float speed = 12f;
         public float sprintMultiplier = 1.5f;
         public float gravity = -9.81f;
         public float jumpHeight = 3f;
-        [FormerlySerializedAs("Fall timeout")] [Tooltip("Time required to pass before entering the fall state. Useful for walking down stairs")]
+
+        [FormerlySerializedAs("Fall timeout")]
+        [Tooltip("Time required to pass before entering the fall state. Useful for walking down stairs")]
         public float fallTimeout = 0.15f;
 
-        [FormerlySerializedAs("Jump timeout")] [Space(10)] [Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
+        [FormerlySerializedAs("Jump timeout")]
+        [Space(10)]
+        [Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
         public float jumpTimeout = 0.05f;
-        
+
         //Ground
         public Transform groundCheck;
         public float groundDistance = 0.4f;
         public LayerMask groundMask;
         protected bool isGrounded;
-        
+
         // player
         private PlayerInputActions _inputActions;
 
         // client caches positions
         private float _internalXRotation;
         private float _verticalVelocity;
-        
+
         // timeout delta times
         private float _jumpTimeoutDelta;
         private float _fallTimeoutDelta;
         private float _terminalVelocity = 53.0f;
-        
-        private Animator _animator;
+
+
+        //Client-side references
+        public NetworkPlayer networkPlayer;
+        private Vector2? _pastPosition = null;
+        private static readonly int KnockedDown = Animator.StringToHash("knockedDown");
+        private static readonly int Grounded = Animator.StringToHash("Grounded");
+        private static readonly int Speed = Animator.StringToHash("Speed");
+        private static readonly int MotionSpeed = Animator.StringToHash("MotionSpeed");
 
         protected void Awake() {
             _inputActions = new PlayerInputActions();
             playerCamera.enabled = false;
             _inputActions.Player.Disable();
-            _animator = GetComponent<Animator>();
         }
 
         void Update() {
             if (IsSpawned) {
                 if (IsClient && IsOwner) {
                     GroundCheck();
-                    ClientInput();
+                    if (soldier.networkHealth.Value > 0) {
+                        ClientInput();
+                    }
+                    else {
+                        //You're knocked down, you can only look from the floor 
+                        //TODO:
+                    }
+
                     JumpAndGravity();
+                    OwnerVisuals();
                 }
+
+                ClientVisuals();
             }
+        }
+
+        private void ClientVisuals() {
+            animator.SetBool(KnockedDown, soldier.networkHealth.Value <= 0);
+            Vector2 actualPosition = transform.position;
+            if (_pastPosition != null) {
+                float moveSpeed = (actualPosition - (Vector2) _pastPosition).magnitude / Time.deltaTime;
+                animator.SetFloat(Speed, moveSpeed);
+            }
+
+            _pastPosition = actualPosition;
+        }
+
+        private void OwnerVisuals() {
+            animator.SetBool(Grounded, isGrounded);
+            animator.SetFloat(MotionSpeed, _verticalVelocity);
         }
 
         private void JumpAndGravity() {
@@ -92,11 +133,12 @@ namespace CharacterController {
                     falling = true;
                 }
             }
-            
+
             // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
             if (_verticalVelocity < _terminalVelocity) {
                 _verticalVelocity += gravity * Time.deltaTime;
             }
+
             controller.Move(transform.TransformDirection(new Vector3(0, _verticalVelocity * Time.deltaTime, 0)));
         }
 
@@ -144,12 +186,15 @@ namespace CharacterController {
 
         private Vector3 KeyboardInput() {
             Vector2 controllerHorizontalInput = _inputActions.Player.Movement.ReadValue<Vector2>();
-            float moveSpeed = speed;
-            bool isSprinting = _inputActions.Player.Sprint.IsPressed();
-
-
-            if (isSprinting) {
-                moveSpeed *= sprintMultiplier;
+            float moveSpeed = 0;
+            if (controllerHorizontalInput[0] != 0 || controllerHorizontalInput[1] != 0) {
+                
+                moveSpeed = speed;
+                
+                if (_inputActions.Player.Sprint.IsPressed()) {
+                    moveSpeed *= sprintMultiplier;
+                }
+                
             }
 
             return new Vector3(

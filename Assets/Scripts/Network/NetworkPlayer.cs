@@ -8,6 +8,7 @@ using Network.Shared;
 using Player;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Util;
 
 namespace Network {
@@ -17,13 +18,13 @@ namespace Network {
         public NetworkVariable<Guid> selectedSpawnPoint = new NetworkVariable<Guid>();
 
 
-        public NetworkVariable<Team> team = new NetworkVariable<Team>();
-        public NetworkVariable<PlayerSate> state = new NetworkVariable<PlayerSate>();
+        public NetworkVariable<Team> networkTeam = new NetworkVariable<Team>();
+        public NetworkVariable<PlayerState> networkState = new NetworkVariable<PlayerState>();
         public NetworkVariable<ulong> networkFollowing = new NetworkVariable<ulong>();
 
 
         private Team activeTeam = Team.Spectator;
-        private PlayerSate activeState = PlayerSate.Disconnected;
+        private PlayerState activeState = PlayerState.Disconnected;
 
         private ulong currentFollowing;
         public Camera activeCamera;
@@ -66,7 +67,7 @@ namespace Network {
             bool fire2Triggered = _inputActions.Player.Fire2.WasPerformedThisFrame();
             bool jumpTriggered = _inputActions.Player.Jump.WasPerformedThisFrame();
 
-            if (activeState == PlayerSate.MapCamera && jumpTriggered) {
+            if (activeState == PlayerState.MapCamera && jumpTriggered) {
                 RequestStandaloneSpectatorServerRpc();
             }
             //Fire 1 -> spec next player // Fire2 -> previous
@@ -75,34 +76,34 @@ namespace Network {
 
 
         private void ClientVisuals() {
-            if (activeState != state.Value) {
+            if (activeState != networkState.Value) {
                 bool success = false;
-                switch (state.Value) {
-                    case PlayerSate.MapCamera:
+                switch (networkState.Value) {
+                    case PlayerState.MapCamera:
                         DisableSpectator();
                         success = FollowMapCamera();
                         break;
-                    case PlayerSate.Following:
-                    case PlayerSate.PlayingDead:
+                    case PlayerState.Following:
+                    case PlayerState.PlayingDead:
                         DisableSpectator();
                         success = FollowPlayer(networkFollowing.Value);
                         break;
-                    case PlayerSate.PlayingAlive:
+                    case PlayerState.PlayingAlive:
                         DisableSpectator();
                         success = AttachSoldier();
                         break;
-                    case PlayerSate.Spectating:
+                    case PlayerState.Spectating:
                         success = EnableSpectator();
                         break;
                 }
 
                 if (success) {
-                    activeState = state.Value;
+                    activeState = networkState.Value;
                 }
             }
 
-            if (activeTeam != team.Value) {
-                activeTeam = team.Value;
+            if (activeTeam != networkTeam.Value) {
+                activeTeam = networkTeam.Value;
                 HudController.ChangeTeam(activeTeam);
             }
 
@@ -153,6 +154,7 @@ namespace Network {
                 fpsController.soldier.Enable();
                 activeCamera = fpsController.playerCamera;
                 activeCamera.enabled = true;
+                fpsController.networkPlayer = this;
                 CameraUtil.DisableAllCameras(activeCamera);
                 return true;
             }
@@ -202,8 +204,8 @@ namespace Network {
 
         [ServerRpc]
         private void RequestStandaloneSpectatorServerRpc() {
-            if (team.Value == Team.Spectator) {
-                state.Value = PlayerSate.Spectating;
+            if (networkTeam.Value == Team.Spectator) {
+                networkState.Value = PlayerState.Spectating;
             }
         }
 
