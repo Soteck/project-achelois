@@ -7,6 +7,8 @@ namespace Map.Maps {
     public interface BaseMapControllerInterface {
         public int PlayersInGame();
         public float TimeElapsed();
+        
+        public float MapDuration();
 
         public void ServerRequestJoinTeam(Team team, ulong playerId);
 

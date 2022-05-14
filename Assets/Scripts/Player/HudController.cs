@@ -35,21 +35,25 @@ namespace Player {
         private string getRespawnsText() {
             float time = MapMaster.MapInstance().TimeElapsed();
 
-            double teamARemaining = 0;
-            double teamBRemaining = 0;
+            TimeSpan teamARespawnSpan;
+            TimeSpan teamBRespawnSpan;
+            
             int teamARespawn = MapMaster.MapInstance().TeamARespawn();
             int teamBRespawn = MapMaster.MapInstance().TeamBRespawn();
             
             if (time > 0) {
-                teamARemaining = Math.Round(teamARespawn - (time % teamARespawn));
-                teamBRemaining = Math.Round(teamBRespawn - (time % teamBRespawn));
+                teamARespawnSpan = TimeSpan.FromSeconds(teamARespawn - (time % teamARespawn));
+                teamBRespawnSpan = TimeSpan.FromSeconds(teamBRespawn - (time % teamBRespawn));
             }
 
-            return teamARemaining + "/" + teamBRemaining;
+            return teamARespawnSpan.Seconds + "/" + teamBRespawnSpan.Seconds;
         }
 
         private string getMapText() {
-            return Math.Floor(MapMaster.MapInstance().TimeElapsed()) + "";
+            float totalDuration = MapMaster.MapInstance().MapDuration();
+            float remaining = totalDuration - MapMaster.MapInstance().TimeElapsed();
+            TimeSpan timeSpan = TimeSpan.FromSeconds(remaining);
+            return timeSpan.Minutes + ":" + timeSpan.Seconds;
         }
         
         private string GetTeamTxt() {

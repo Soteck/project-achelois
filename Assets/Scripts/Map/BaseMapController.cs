@@ -212,6 +212,10 @@ namespace Map {
             return timeElapsed.Value;
         }
 
+        public float MapDuration() {
+            return mapDuration.Value;
+        }
+
         public void ServerRequestJoinTeam(Team team, ulong playerId) {
             DoServerRequestJoinTeam(team, playerId);
         }
