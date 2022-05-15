@@ -101,17 +101,6 @@ namespace CharacterController {
             gameObject.SetActive(false);
             _inputActions.Player.Disable();
         }
-
-
-        public static NetSpectatorController FindByOwnerId(ulong ownerId) {
-            NetSpectatorController[] allControllers = FindObjectsOfType<NetSpectatorController>();
-            foreach (NetSpectatorController controller in allControllers) {
-                if (controller.OwnerClientId == ownerId) {
-                    return controller;
-                }
-            }
-
-            return null;
-        }
+        
     }
 }

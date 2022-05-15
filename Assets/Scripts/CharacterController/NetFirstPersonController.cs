@@ -223,15 +223,5 @@ namespace Controller {
                 new Vector3(networkPositionDirection.Value.x, velocity, networkPositionDirection.Value.z);
         }
         
-        public static NetFirstPersonController FindByOwnerId(ulong ownerId) {
-            NetFirstPersonController[] allControllers = GameObject.FindObjectsOfType<NetFirstPersonController>();
-            foreach (NetFirstPersonController controller in allControllers) {
-                if (controller.OwnerClientId == ownerId) {
-                    return controller;
-                }
-            }
-
-            return null;
-        }
     }
 }

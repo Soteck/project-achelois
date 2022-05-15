@@ -227,15 +227,5 @@ namespace CharacterController {
 
             set => _networkPlayer = value;
         }
-        public static NetPlayerController FindByOwnerId(ulong ownerId) {
-            NetPlayerController[] allControllers = FindObjectsOfType<NetPlayerController>();
-            foreach (NetPlayerController controller in allControllers) {
-                if (controller.OwnerClientId == ownerId) {
-                    return controller;
-                }
-            }
-
-            return null;
-        }
     }
 }

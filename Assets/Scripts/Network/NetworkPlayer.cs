@@ -134,7 +134,7 @@ namespace Network {
         }
 
         private bool AttachSpectator() {
-            spectatorController = NetSpectatorController.FindByOwnerId(NetworkManager.Singleton.LocalClientId);
+            spectatorController = NetworkUtil.FindNetSpectatorControllerByOwnerId(NetworkManager.Singleton.LocalClientId);
             if (spectatorController != null) {
                 Quaternion mapCameraRotation = MapMaster.MapInstance().MapCamera().transform.rotation;
                 Vector3 angles = mapCameraRotation.eulerAngles;
@@ -147,7 +147,7 @@ namespace Network {
         }
 
         private bool AttachSoldier() {
-            fpsController = NetPlayerController.FindByOwnerId(NetworkManager.Singleton.LocalClientId);
+            fpsController = NetworkUtil.FindNetPlayerControllerByOwnerId(NetworkManager.Singleton.LocalClientId);
             if (fpsController != null) {
                 spectatorController?.Disable();
                 fpsController.Enable();
@@ -164,7 +164,7 @@ namespace Network {
 
         private bool FollowPlayer(ulong networkFollowingValue) {
             NetPlayerController playerController =
-                NetPlayerController.FindByOwnerId(NetworkManager.Singleton.LocalClientId);
+                NetworkUtil.FindNetPlayerControllerByOwnerId(NetworkManager.Singleton.LocalClientId);
 
             if (playerController) {
                 PlayableSoldier soldier = playerController.soldier;

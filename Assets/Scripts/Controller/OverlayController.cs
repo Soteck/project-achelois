@@ -262,6 +262,4 @@ public class OverlayController : MonoBehaviour {
         Cursor.lockState = CursorLockMode.Confined;
     }
     
-    
-    //FindObjectsOfType(typeof(ArmyUnit));
 }

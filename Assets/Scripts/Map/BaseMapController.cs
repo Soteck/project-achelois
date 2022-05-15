@@ -196,7 +196,7 @@ namespace Map {
                     player.networkState.Value = PlayerState.MapCamera;
                 }
 
-                NetPlayerController controller = NetPlayerController.FindByOwnerId(playerId);
+                NetPlayerController controller = NetworkUtil.FindNetPlayerControllerByOwnerId(playerId);
                 if (controller) {
                     NetworkObject no = controller.GetComponent<NetworkObject>();
                     no.Despawn();
