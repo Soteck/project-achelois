@@ -6,6 +6,7 @@ using Network.Shared;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Util;
 using World;
 
 namespace Player {
@@ -242,7 +243,7 @@ namespace Player {
         }
 
         public void ServerDie() {
-            //TODO: Deattach entity from player
+            //TODO: Detach entity from player
         }
 
         // ServerRpc only executed on server side
@@ -327,11 +328,16 @@ namespace Player {
         }
 
         public bool HasObjective() {
-            return networkObjective.Value != "NoNe";
+            return networkObjective.Value != Constants.OBJECTIVE_NONE;
         }
 
         public bool InMenu() {
             return networkInMenu.Value;
+        }
+
+        public bool IsKnockedDown() {
+            float health = networkHealth.Value;
+            return health < 0 && health > knockDownHealth;
         }
     }
 }

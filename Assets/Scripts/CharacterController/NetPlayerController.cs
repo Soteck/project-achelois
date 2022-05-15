@@ -5,6 +5,7 @@ using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Util;
 using NetworkPlayer = Network.NetworkPlayer;
 
 namespace CharacterController {
@@ -47,10 +48,12 @@ namespace CharacterController {
         private float _jumpTimeoutDelta;
         private float _fallTimeoutDelta;
         private float _terminalVelocity = 53.0f;
+        
+        
+        private NetworkPlayer _networkPlayer = null;
 
 
-        //Client-side references
-        public NetworkPlayer networkPlayer;
+        //Local client-side references only
         private Vector2? _pastPosition = null;
         private static readonly int KnockedDown = Animator.StringToHash("knockedDown");
         private static readonly int Grounded = Animator.StringToHash("Grounded");
@@ -213,7 +216,17 @@ namespace CharacterController {
             _inputActions.Player.Disable();
         }
 
+        public NetworkPlayer networkPlayer {
+            get {
+                if (_networkPlayer == null) {
+                    _networkPlayer = NetworkUtil.FindNetworkPlayerByOwnerId(OwnerClientId);
+                }
 
+                return _networkPlayer;
+            }
+
+            set => _networkPlayer = value;
+        }
         public static NetPlayerController FindByOwnerId(ulong ownerId) {
             NetPlayerController[] allControllers = FindObjectsOfType<NetPlayerController>();
             foreach (NetPlayerController controller in allControllers) {
