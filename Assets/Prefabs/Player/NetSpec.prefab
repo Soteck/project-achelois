@@ -158,7 +158,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 941205825506207719}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -201,7 +201,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 941205825506207719}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
@@ -316,17 +316,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 941205825056272537}
   controller: {fileID: 941205826761635472}
-  speed: 12
-  mouseSensivity: 15
-  jumpHeight: 3
-  gravity: -9.81
-  MoveSpeed: 2
-  SprintSpeed: 5.335
-  RotationSmoothTime: 0.12
-  SpeedChangeRate: 10
   lookTransform: {fileID: 941205825056272543}
-  groundCheck: {fileID: 941205825506207718}
-  groundDistance: 0.4
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 8
+  speed: 12
+  sprintMultiplier: 1.5

@@ -13,34 +13,71 @@ namespace Player {
         public TextMeshProUGUI teamTxt;
         public TextMeshProUGUI spawnTimeTxt;
         public TextMeshProUGUI mapTimeTxt;
+
+        [Space(15)]
         public TextMeshProUGUI ammoTxt;
+
+        public RectTransform ammoInfo;
+
+
+        [Space(15)]
         public TextMeshProUGUI healthTxt;
-        
-        
+
+        public RectTransform healthInfo;
+
+        [Space(15)]
+        public TextMeshProUGUI statusInfoTxt;
+
+        public RectTransform statusInfo;
+
+
+        [Space(15)]
         public TextMeshProUGUI teamAPlayers;
+
         public TextMeshProUGUI teamBPlayers;
         public TextMeshProUGUI spectatorPlayers;
 
         private Team _drawingTeam;
+
         private void Update() {
             teamTxt.SetText(GetTeamTxt());
             mapTimeTxt.SetText(getMapText());
             spawnTimeTxt.SetText(getRespawnsText());
-            ammoTxt.SetText(getAmmoText());
-            healthTxt.SetText(getHealthText());
-        }
-        
+            
+            string ammoText = getAmmoText();
+            if (ammoText != null) {
+                ammoInfo.gameObject.SetActive(true);
+                ammoTxt.SetText(ammoText);
+            } else {
+                ammoInfo.gameObject.SetActive(false);
+            }
+            
+            string healthText = getHealthText();
+            if (healthText != null) {
+                healthInfo.gameObject.SetActive(true);
+                healthTxt.SetText(healthText);
+            } else {
+                healthInfo.gameObject.SetActive(false);
+            }
 
+            string statusTxt = getStatusTxt();
+            if (statusTxt != null) {
+                statusInfo.gameObject.SetActive(true);
+                statusInfoTxt.SetText(statusTxt);
+            } else {
+                statusInfo.gameObject.SetActive(false);
+            }
+        }
 
         private string getRespawnsText() {
             float time = MapMaster.MapInstance().TimeElapsed();
 
             TimeSpan teamARespawnSpan;
             TimeSpan teamBRespawnSpan;
-            
+
             int teamARespawn = MapMaster.MapInstance().TeamARespawn();
             int teamBRespawn = MapMaster.MapInstance().TeamBRespawn();
-            
+
             if (time > 0) {
                 teamARespawnSpan = TimeSpan.FromSeconds(teamARespawn - (time % teamARespawn));
                 teamBRespawnSpan = TimeSpan.FromSeconds(teamBRespawn - (time % teamBRespawn));
@@ -55,7 +92,7 @@ namespace Player {
             TimeSpan timeSpan = TimeSpan.FromSeconds(remaining);
             return timeSpan.Minutes + ":" + timeSpan.Seconds;
         }
-        
+
         private string GetTeamTxt() {
             switch (_drawingTeam) {
                 case Team.Spectator:
@@ -68,8 +105,7 @@ namespace Player {
 
             return "Unknown";
         }
-        
-        
+
 
         private string getAmmoText() {
             if (Network.NetworkPlayer.networkPlayerOwner != null) {
@@ -81,10 +117,20 @@ namespace Player {
                         return activeItem.GetStatus();
                     }
                 }
-
             }
 
-            return "??/???";
+            return null;
+        }
+
+
+        private string getStatusTxt() {
+            if (Network.NetworkPlayer.networkPlayerOwner != null) {
+                if (Network.NetworkPlayer.networkPlayerOwner.networkTeam.Value == Team.Spectator) {
+                    return "You're an spectator, press L to select a team to Join.";
+                }
+            }
+
+            return null;
         }
 
         private string getHealthText() {
@@ -96,14 +142,11 @@ namespace Player {
                 }
             }
 
-            return "???";
+            return null;
         }
 
         public static void ChangeTeam(Team team) {
             Instance._drawingTeam = team;
         }
-        
-        
-
     }
 }
