@@ -337,7 +337,7 @@ namespace Player {
 
         public bool IsKnockedDown() {
             float health = networkHealth.Value;
-            return health < 0 && health > knockDownHealth;
+            return health <= 0 && health > knockDownHealth;
         }
     }
 }

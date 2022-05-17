@@ -7,6 +7,7 @@ using Map;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using NetworkPlayer = Network.NetworkPlayer;
 
 namespace Player {
     public class HudController : Singleton<HudController> {
@@ -124,9 +125,25 @@ namespace Player {
 
 
         private string getStatusTxt() {
-            if (Network.NetworkPlayer.networkPlayerOwner != null) {
-                if (Network.NetworkPlayer.networkPlayerOwner.networkTeam.Value == Team.Spectator) {
-                    return "You're an spectator, press L to select a team to Join.";
+            if (NetworkPlayer.networkPlayerOwner != null) {
+                NetworkPlayer networkPlayer = NetworkPlayer.networkPlayerOwner;
+                if (networkPlayer.networkTeam.Value == Team.Spectator) {
+                    return "You're an spectator, press [L] to select a team to Join.";
+                }
+
+                if (networkPlayer.fpsController != null) {
+                    NetPlayerController fpsController = networkPlayer.fpsController;
+                    if (fpsController.soldier != null) {
+                        PlayableSoldier playableSoldier = fpsController.soldier;
+                        if (playableSoldier.IsKnockedDown()) {
+                            return "You're knocked down. You can wait to be revived or press [Space] to respawn.";
+                        }
+                    }
+                }
+
+                if (networkPlayer.networkState.Value == PlayerState.Following) {
+                    //TODO: Add relevant info like player name instead of it's ID
+                    return "You're spectating a team mate (with id " + networkPlayer.networkFollowing.Value + ")";
                 }
             }
 
@@ -134,12 +151,13 @@ namespace Player {
         }
 
         private string getHealthText() {
-            if (Network.NetworkPlayer.networkPlayerOwner != null) {
-                NetPlayerController netFirstPersonController = Network.NetworkPlayer.networkPlayerOwner.fpsController;
+            if (NetworkPlayer.networkPlayerOwner != null) {
+                NetPlayerController netFirstPersonController = NetworkPlayer.networkPlayerOwner.fpsController;
                 if (netFirstPersonController) {
                     PlayableSoldier playableSoldier = netFirstPersonController.soldier;
                     return playableSoldier.networkHealth.Value + "";
                 }
+                
             }
 
             return null;
