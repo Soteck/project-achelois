@@ -202,7 +202,6 @@ public class OverlayController : MonoBehaviour {
     }
 
     private void DeployConsole() {
-        Logger.Draw();
         _consoleDeployed = true;
         _consoleEndMoving = Time.time + consoleDeployTime;
         _consoleMoving = true;

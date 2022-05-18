@@ -1,5 +1,4 @@
 ﻿using Config;
-using UnityEngine;
 
 namespace Core.Commands {
     public class ConfigCommand : ICommand{

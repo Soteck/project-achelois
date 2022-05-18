@@ -11,9 +11,10 @@ namespace Core {
         private TextMeshProUGUI debugAreaText = null;
 
         [SerializeField]
-        private int maxLines = 15;
+        private int maxLines = 100;
+        private int maxLength = 5000;
 
-        private List<string> lines = new List<string>();
+        private readonly List<LogLine> _lines = new List<LogLine>();
         void Awake()
         {
             if (debugAreaText == null)
@@ -24,7 +25,7 @@ namespace Core {
             AddText($"<color=\"white\">{DateTime.Now.ToString("HH:mm:ss.fff")} {this.GetType().Name} enabled</color>");
         }
 
-        void OnEnable()
+        private void OnEnable()
         {
             if (debugAreaText == null)
             {
@@ -34,32 +35,42 @@ namespace Core {
         }
 
         private void AddText(string text) {
-            lines.Add(text);
-            if (lines.Count > maxLines) {
-                lines.RemoveAt(0);
+            _lines.Add(new LogLine() {
+                drawn = false,
+                data = text
+            });
+            
+            if (_lines.Count > maxLines) {
+                _lines.RemoveAt(0);
+            }
+            DrawLog();
+        }
+
+        private void DrawLog() {
+            if (debugAreaText.text.Length > maxLength) {
+                debugAreaText.text = debugAreaText.text.Substring(maxLength, debugAreaText.text.Length);
+            }
+            
+            foreach (LogLine line in _lines) {
+                if (line.drawn) continue;
+                debugAreaText.text += line.data + '\n';
+                line.drawn = true;
             }
         }
 
-        public void DrawLog() {
-            debugAreaText.text = string.Empty;
-            foreach (string line in lines) {
-                debugAreaText.text += line + '\n';
-            }
-        }
-        
-        public void LogInfo(string message)
+        private void LogInfo(string message)
         {
-            AddText($"<color=\"green\">{DateTime.Now.ToString("HH:mm:ss.fff")} {message}</color>");
+            AddText($"<color=\"green\">{DateTime.Now:HH:mm:ss.fff} {message}</color>");
         }
 
-        public void LogError(string message)
+        private void LogError(string message)
         {
-            AddText($"<color=\"red\">{DateTime.Now.ToString("HH:mm:ss.fff")} {message}</color>");
+            AddText($"<color=\"red\">{DateTime.Now:HH:mm:ss.fff} {message}</color>");
         }
 
-        public void LogWarning(string message)
+        private void LogWarning(string message)
         {
-            AddText($"<color=\"yellow\">{DateTime.Now.ToString("HH:mm:ss.fff")} {message}</color>");
+            AddText($"<color=\"yellow\">{DateTime.Now:HH:mm:ss.fff} {message}</color>");
         }
 
         public static void Info(string message) {
@@ -73,9 +84,11 @@ namespace Core {
         public static void Warning(string message) {
             Instance.LogWarning(message);
         }
-
-        public static void Draw() {
-            Instance.DrawLog();
+        
+        
+        private class LogLine {
+            public bool drawn;
+            public string data;
         }
     }
 }
