@@ -25,6 +25,8 @@ public class OverlayController : MonoBehaviour {
     [SerializeField] private Button startHostButton;
 
     [SerializeField] private Button startClientButton;
+
+    [SerializeField] private Button quitGameButton;
     
     [SerializeField] private Button joinTeamAButton;
     
@@ -88,6 +90,11 @@ public class OverlayController : MonoBehaviour {
         
         joinSpectatorButton.onClick.AddListener(() => {
             NetworkPlayer.networkPlayerOwner.RequestJoinTeam(Team.Spectator);
+            HideAllElements();
+        });
+        
+        quitGameButton.onClick.AddListener(() => {
+            ConsoleCommandController.ExecuteCommand("quit");
             HideAllElements();
         });
     }
