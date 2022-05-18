@@ -8,7 +8,8 @@ namespace Core {
         private readonly List<ICommand> _commands = new List<ICommand>() {
             new QuitCommand(),
             new ConnectCommand(),
-            new ServerCommand()
+            new ServerCommand(),
+            new ConfigCommand()
         };
 
 
