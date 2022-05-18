@@ -1,5 +1,7 @@
+using Core;
 using Enums;
 using Player;
+using TMPro;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
 using UnityEngine;
@@ -11,6 +13,8 @@ public class OverlayController : MonoBehaviour {
     public float consoleDeployTime = 0.1f;
     public float consoleHeight = 120;
     public RectTransform console;
+    public TMP_InputField consoleInput;
+    
     public RectTransform menu;
     public RectTransform limbo;
     public RectTransform hud;
@@ -45,66 +49,44 @@ public class OverlayController : MonoBehaviour {
         HideAllElements();
         SetupActions();
         SetupButtons();
+        consoleInput.onSubmit.AddListener(value => {
+            consoleInput.text = "";
+            FocusConsole();
+            Logger.Info(value);
+            ConsoleCommandController.ExecuteCommand(value);
+        });
     }
 
     private void SetupButtons() {
         // START SERVER
-        startServerButton?.onClick.AddListener(() => {
-            if (NetworkManager.Singleton.StartServer()) {
-                Logger.Info("Server started...");
-            }
-            else {
-                Logger.Info("Unable to start server...");
-            }
+        startServerButton.onClick.AddListener(() => {
+            ConsoleCommandController.ExecuteCommand("server start");
             HideAllElements();
         });
 
         // START HOST
-        startHostButton?.onClick.AddListener(async () => {
-            // this allows the UnityMultiplayer and UnityMultiplayerRelay scene to work with and without
-            // relay features - if the Unity transport is found and is relay protocol then we redirect all the 
-            // traffic through the relay, else it just uses a LAN type (UNET) communication.
-            // if (RelayManager.Instance.IsRelayEnabled) {
-            //     await RelayManager.Instance.SetupRelay();
-            // }
-
-            if (NetworkManager.Singleton.StartHost()) {
-                Logger.Info("Host started...");
-            }
-            else {
-                Logger.Info("Unable to start host...");
-            }
+        startHostButton.onClick.AddListener(async () => {
+            ConsoleCommandController.ExecuteCommand("server host");
             HideAllElements();
         });
 
         // START CLIENT
-        startClientButton?.onClick.AddListener(async () => {
-            // if (RelayManager.Instance.IsRelayEnabled && !string.IsNullOrEmpty(joinCodeInput.text)) {
-            //     await RelayManager.Instance.JoinRelay(joinCodeInput.text);
-            // }
-            //(NetworkManager.Singleton.NetworkConfig.NetworkTransport as UNetTransport).ConnectAddress = "";
-
-            if (NetworkManager.Singleton.StartClient()) {
-                Logger.Info("Client started...");
-            }
-            else {
-                Logger.Info("Unable to start client...");
-            }
-
+        startClientButton.onClick.AddListener(async () => {
+            ConsoleCommandController.ExecuteCommand("connect localhost");
             HideAllElements();
         });
         
-        joinTeamAButton?.onClick.AddListener(() => {
+        joinTeamAButton.onClick.AddListener(() => {
             NetworkPlayer.networkPlayerOwner.RequestJoinTeam(Team.TeamA);
             HideAllElements();
         });
         
-        joinTeamBButton?.onClick.AddListener(() => {
+        joinTeamBButton.onClick.AddListener(() => {
             NetworkPlayer.networkPlayerOwner.RequestJoinTeam(Team.TeamB);
             HideAllElements();
         });        
         
-        joinSpectatorButton?.onClick.AddListener(() => {
+        joinSpectatorButton.onClick.AddListener(() => {
             NetworkPlayer.networkPlayerOwner.RequestJoinTeam(Team.Spectator);
             HideAllElements();
         });
@@ -216,7 +198,7 @@ public class OverlayController : MonoBehaviour {
         _consoleDeployed = false;
         _consoleEndMoving = Time.time + consoleDeployTime;
         _consoleMoving = true;
-        UnlockCursor();
+        LockCursor();
     }
 
     private void DeployConsole() {
@@ -225,7 +207,13 @@ public class OverlayController : MonoBehaviour {
         _consoleEndMoving = Time.time + consoleDeployTime;
         _consoleMoving = true;
         console.gameObject.SetActive(true);
-        LockCursor();
+        UnlockCursor();
+        FocusConsole();
+    }
+
+    private void FocusConsole() {
+        consoleInput.Select();
+        consoleInput.ActivateInputField();
     }
 
     private void ShowMenu() {
