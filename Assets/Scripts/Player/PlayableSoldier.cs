@@ -17,20 +17,26 @@ namespace Player {
         public Camera playerCamera;
         public Animator animator;
 
-        private List<EquipableItemLogic> _storedItems = new List<EquipableItemLogic>();
+        private readonly List<EquipableItemLogic> _storedItems = new List<EquipableItemLogic>();
 
-        [SerializeField] private NetworkList<EquipableItemNetworkData> _networkItems;
+        [SerializeField]
+        private NetworkList<EquipableItemNetworkData> _networkItems;
 
-        [SerializeField] private NetworkVariable<int> networkActiveItem;
+        [SerializeField]
+        private NetworkVariable<int> networkActiveItem;
 
-        [SerializeField] public NetworkVariable<float> networkHealth = new NetworkVariable<float>();
+        [SerializeField]
+        public NetworkVariable<float> networkHealth = new NetworkVariable<float>();
 
-        [SerializeField] public NetworkVariable<bool> networkInMenu = new NetworkVariable<bool>();
+        [SerializeField]
+        public NetworkVariable<bool> networkInMenu = new NetworkVariable<bool>();
 
-        [SerializeField] public NetworkVariable<NetworkString> networkObjective = new NetworkVariable<NetworkString>();
+        [SerializeField]
+        public NetworkVariable<NetworkString> networkObjective = new NetworkVariable<NetworkString>();
 
-        [SerializeField] public NetworkVariable<bool> networkTexting = new NetworkVariable<bool>();
-        
+        [SerializeField]
+        public NetworkVariable<bool> networkTexting = new NetworkVariable<bool>();
+
 
         private EquipableItemLogic _changeWeapon = null;
         private int _localActiveItem = -1;
@@ -73,7 +79,6 @@ namespace Player {
         }
 
         private void ClientVisuals() {
-
         }
 
         private void ClientInput() {
@@ -85,9 +90,9 @@ namespace Player {
 
         private void ClientMovement() {
             if (_networkItems.Count != _storedItems.Count) {
-                foreach (var netItem in _networkItems) {
+                foreach (EquipableItemNetworkData netItem in _networkItems) {
                     bool exists = false;
-                    foreach (var storedItem in _storedItems) {
+                    foreach (EquipableItemLogic storedItem in _storedItems) {
                         if (storedItem.item_id == netItem.itemID) {
                             exists = true;
                             break;
@@ -143,8 +148,7 @@ namespace Player {
                 if (scrollValue > 0f) {
                     if (selectedWeapon >= _storedItems.Count - 1) {
                         selectedWeapon = 0;
-                    }
-                    else {
+                    } else {
                         ++selectedWeapon;
                     }
                 }
@@ -152,8 +156,7 @@ namespace Player {
                 if (scrollValue < 0f) {
                     if (selectedWeapon <= 0) {
                         selectedWeapon = _storedItems.Count - 1;
-                    }
-                    else {
+                    } else {
                         --selectedWeapon;
                     }
                 }
@@ -260,11 +263,7 @@ namespace Player {
             }
 
             _networkItems.Add(itemMeta);
-            EquipableItemLogic item = Instantiate(
-                ItemPrefabFactory.PrefabById(
-                    itemMeta.itemID.ToString()
-                )
-            );
+            EquipableItemLogic item = Instantiate(ItemPrefabFactory.PrefabById(itemMeta.itemID.ToString()));
             NetworkObject no = item.GetComponent<NetworkObject>();
             no.SpawnWithOwnership(playerId);
             no.TrySetParent(transform, false);
@@ -280,8 +279,8 @@ namespace Player {
                 Debug.Log("Damage received!!!");
             }
         }
-        
-        
+
+
         [ClientRpc]
         private void PickupItemClientRpc(ulong itemId, NetworkString itemMeta) {
             //TODO: play sound of pickup
@@ -304,8 +303,7 @@ namespace Player {
 
             if (_storedItems.Count == 1) {
                 Equip(item);
-            }
-            else {
+            } else {
                 visualItem.gameObject.SetActive(false);
             }
 
