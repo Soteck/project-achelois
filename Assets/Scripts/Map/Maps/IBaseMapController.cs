@@ -4,11 +4,13 @@ using NetworkPlayer = Network.NetworkPlayer;
 
 
 namespace Map.Maps {
-    public interface BaseMapControllerInterface {
+    public interface IBaseMapController {
         public int PlayersInGame();
         public float TimeElapsed();
         
         public float MapDuration();
+        
+        public float WarmupDuration();
 
         public void ServerRequestJoinTeam(Team team, ulong playerId);
 
@@ -18,5 +20,15 @@ namespace Map.Maps {
 
         public int TeamARespawn();
         public int TeamBRespawn();
+
+        //
+        /*
+         * Positive value = Team A win
+         * Negative value = Team B win
+         * Value 0 = Tie
+         */
+        public int GetWinningTeam();
+
+        public MapState GetMapState();
     }
 }

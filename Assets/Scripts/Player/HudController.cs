@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using CharacterController;
 using Controller;
 using Core;
 using Enums;
 using Map;
+using Map.Maps;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -44,7 +47,7 @@ namespace Player {
             teamTxt.SetText(GetTeamTxt());
             mapTimeTxt.SetText(getMapText());
             spawnTimeTxt.SetText(getRespawnsText());
-            
+
             string ammoText = getAmmoText();
             if (ammoText != null) {
                 ammoInfo.gameObject.SetActive(true);
@@ -52,7 +55,7 @@ namespace Player {
             } else {
                 ammoInfo.gameObject.SetActive(false);
             }
-            
+
             string healthText = getHealthText();
             if (healthText != null) {
                 healthInfo.gameObject.SetActive(true);
@@ -88,8 +91,19 @@ namespace Player {
         }
 
         private string getMapText() {
-            float totalDuration = MapMaster.MapInstance().MapDuration();
-            float remaining = totalDuration - MapMaster.MapInstance().TimeElapsed();
+            IBaseMapController mapInstance = MapMaster.MapInstance();
+            MapState mapState = mapInstance.GetMapState();
+            float totalDuration = mapInstance.MapDuration();
+            float warmupDuration = mapInstance.WarmupDuration();
+            float timeElapsed = MapMaster.MapInstance().TimeElapsed();
+            float remaining;
+            if (mapState == MapState.Warmup) {
+                remaining = warmupDuration - timeElapsed;
+            }else if (mapState == MapState.Match) {
+                remaining = totalDuration - timeElapsed;
+            } else {
+                return null;
+            }
             TimeSpan timeSpan = TimeSpan.FromSeconds(remaining);
             return timeSpan.Minutes + ":" + timeSpan.Seconds;
         }
@@ -125,10 +139,11 @@ namespace Player {
 
 
         private string getStatusTxt() {
+            List<string> data = new List<string>();
             if (NetworkPlayer.networkPlayerOwner != null) {
                 NetworkPlayer networkPlayer = NetworkPlayer.networkPlayerOwner;
                 if (networkPlayer.networkTeam.Value == Team.Spectator) {
-                    return "You're an spectator, press [L] to select a team to Join.";
+                    data.Add("You're an spectator, press [L] to select a team to Join.");
                 }
 
                 if (networkPlayer.fpsController != null) {
@@ -136,17 +151,39 @@ namespace Player {
                     if (fpsController.soldier != null) {
                         PlayableSoldier playableSoldier = fpsController.soldier;
                         if (playableSoldier.IsKnockedDown()) {
-                            return "You're knocked down. You can wait to be revived or press [Space] to respawn.";
+                            data.Add( "You're knocked down. You can wait to be revived or press [Space] to respawn.");
                         }
                     }
                 }
 
-                if (networkPlayer.networkState.Value == PlayerState.Following) {
+                if (
+                    networkPlayer.networkState.Value == PlayerState.Following ||
+                    networkPlayer.networkState.Value == PlayerState.PlayingDead
+                ) {
                     //TODO: Add relevant info like player name instead of it's ID
-                    return "You're spectating a team mate (with id " + networkPlayer.networkFollowing.Value + ")";
+                    data.Add( "You're spectating a team mate (with id " + networkPlayer.networkFollowing.Value + ")");
                 }
             }
 
+            IBaseMapController mapInstance = MapMaster.MapInstance();
+            if (mapInstance != null) {
+                MapState mapState = mapInstance.GetMapState();
+                if(mapState == MapState.Warmup) {
+                    float remaining = mapInstance.WarmupDuration() - mapInstance.TimeElapsed();
+                    TimeSpan timeSpan = TimeSpan.FromSeconds(remaining);
+                    data.Add("WarmUP!!! Waiting " + timeSpan.Seconds + "s to start the map");
+                }else if (mapState == MapState.Tie) {
+                    data.Add("Map ended with a TIE!");
+                }else if (mapState == MapState.WinA) {
+                    data.Add("Map ended, winning team A!");
+                }else if (mapState == MapState.WinB) {
+                    data.Add("Map ended, winning team B!");
+                }
+            }
+
+            if (data.Count > 0) {
+                return string.Join("\n", data);
+            }
             return null;
         }
 
@@ -157,7 +194,6 @@ namespace Player {
                     PlayableSoldier playableSoldier = netFirstPersonController.soldier;
                     return playableSoldier.networkHealth.Value + "";
                 }
-                
             }
 
             return null;

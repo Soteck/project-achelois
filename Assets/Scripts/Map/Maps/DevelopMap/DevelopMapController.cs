@@ -48,6 +48,10 @@ namespace Map.Maps.DevelopMap {
             NetworkManager.Singleton.OnServerStarted += ServerInit;
         }
 
+        public override int GetWinningTeam() {
+            return teamAScore.Value - teamBScore.Value;
+        }
+
         public new void Update() {
             base.Update();
             UpdateScorePanels();

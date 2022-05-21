@@ -4,9 +4,9 @@ using Map.Maps;
 namespace Map {
     public class MapMaster : Singleton<MapMaster> {
         
-        public BaseMapControllerInterface instance { get; set; }
+        public IBaseMapController instance { get; set; }
 
-        public static BaseMapControllerInterface MapInstance() {
+        public static IBaseMapController MapInstance() {
             return Instance.instance;
         }
     }

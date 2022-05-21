@@ -1,7 +1,7 @@
+using System;
 using System.Collections.Generic;
 using CharacterController;
 using Config;
-using Controller;
 using Core;
 using Enums;
 using Map.Maps;
@@ -13,9 +13,10 @@ using Logger = Core.Logger;
 using NetworkPlayer = Network.NetworkPlayer;
 
 namespace Map {
-    public class BaseMapController<T> : NetworkSingleton<T>, BaseMapControllerInterface where T : Component {
+    public abstract class BaseMapController<T> : NetworkSingleton<T>, IBaseMapController where T : Component {
         //Init data
-        public int duration = 15 * 60;
+        public int warmUpDuration = 45;
+        public int duration = 5 * 60;
         public int teamARespawn = 5;
         public int teamBRespawn = 6;
 
@@ -25,50 +26,102 @@ namespace Map {
         public GameObject spectatorPrefab;
 
         //Variables sync between clients and server
-        private NetworkVariable<int> playersInGame = new NetworkVariable<int>();
-        private NetworkVariable<int> mapDuration = new NetworkVariable<int>();
-        private NetworkVariable<float> timeElapsed = new NetworkVariable<float>();
-        private NetworkVariable<int> team_a_respawn_count = new NetworkVariable<int>();
-        private NetworkVariable<int> team_b_respawn_count = new NetworkVariable<int>();
+        private readonly NetworkVariable<int> _networkPlayersInGame = new NetworkVariable<int>();
+        private readonly NetworkVariable<int> _networkMapDuration = new NetworkVariable<int>();
+        private readonly NetworkVariable<int> _networkWarmUpDuration = new NetworkVariable<int>();
+        private readonly NetworkVariable<float> _networkTimeElapsed = new NetworkVariable<float>();
+        private readonly NetworkVariable<int> _networkTeamARespawnCount = new NetworkVariable<int>();
+        private readonly NetworkVariable<int> _networkTeamBRespawnCount = new NetworkVariable<int>();
+        
+        private readonly NetworkVariable<MapState> _networkMapState = new NetworkVariable<MapState>();
 
 
         //This variables are on the server, but not on the client
         private Dictionary<ulong, NetworkPlayer> _allPlayers;
         private List<ulong> _teamAPlayers;
         private List<ulong> _teamBPlayers;
-        protected bool _serverInit = false;
+        protected bool serverInit = false;
 
 
         private void ServerInit() {
-            if (!_serverInit) {
+            if (!serverInit) {
                 //Init server variables
-                mapDuration.Value = duration;
-                timeElapsed.Value = 0;
-                team_a_respawn_count.Value = 0;
-                team_b_respawn_count.Value = 0;
+                _networkMapDuration.Value = duration;
+                _networkWarmUpDuration.Value = warmUpDuration;
+                _networkTimeElapsed.Value = 0;
+                _networkTeamARespawnCount.Value = 0;
+                _networkTeamBRespawnCount.Value = 0;
                 _allPlayers = new Dictionary<ulong, NetworkPlayer>();
                 _teamAPlayers = new List<ulong>();
                 _teamBPlayers = new List<ulong>();
-                _serverInit = true;
+                serverInit = true;
+                _networkMapState.Value = MapState.Warmup;
             }
         }
 
         protected void Update() {
-            if (IsServer && _serverInit) {
-                timeElapsed.Value += Time.deltaTime;
-                if (timeElapsed.Value / teamARespawn > team_a_respawn_count.Value) {
-                    ServerRespawnTeamA();
+            if (IsServer && serverInit) {
+                _networkTimeElapsed.Value += Time.deltaTime;
+                if (_networkMapState.Value == MapState.Warmup) {
+                    if (_networkTimeElapsed.Value > _networkWarmUpDuration.Value) {
+                        _networkTimeElapsed.Value = 0;
+                        _networkMapState.Value = MapState.Match;
+                        _networkTeamARespawnCount.Value = 0;
+                        _networkTeamBRespawnCount.Value = 0;
+                        DespawnAllPlayers();
+                        ServerRespawnTeamA();
+                        ServerRespawnTeamB();
+                    } else {
+                        ServerRespawnTeamA();
+                        ServerRespawnTeamB();
+                    }
                 }
 
-                if (timeElapsed.Value / teamBRespawn > team_b_respawn_count.Value) {
-                    ServerRespawnTeamB();
+                if (_networkMapState.Value == MapState.Match) {
+
+                    if (_networkTimeElapsed.Value > _networkMapDuration.Value) {
+                        int result = GetWinningTeam();
+                        if (result == 0) {
+                            _networkMapState.Value = MapState.Tie;
+                        }else if (result < 0) {
+                            _networkMapState.Value = MapState.WinA;
+                        } else {
+                            _networkMapState.Value = MapState.WinB;
+                        }
+                        
+                    } else {
+                        if (_networkTimeElapsed.Value / teamARespawn > _networkTeamARespawnCount.Value) {
+                            ServerRespawnTeamA();
+                        }
+
+                        if (_networkTimeElapsed.Value / teamBRespawn > _networkTeamBRespawnCount.Value) {
+                            ServerRespawnTeamB();
+                        }
+                    }
+
                 }
+
             }
+        }
+
+        private void DespawnAllPlayers() {
+            foreach (ulong teamAPlayerId in _teamAPlayers) {
+                DespawnPlayer(teamAPlayerId);
+            }
+
+            foreach (ulong teamBPlayerId in _teamBPlayers) {
+                DespawnPlayer(teamBPlayerId);
+            }
+        }
+
+        private void DespawnPlayer(ulong playerId) {
+            _allPlayers[playerId].networkState.Value = PlayerState.Spectating;
+            _allPlayers[playerId].fpsController.soldier.networkObject.Despawn();
         }
 
         private void ServerRespawnTeamA() {
             Logger.Info("Respawning team A");
-            team_a_respawn_count.Value++;
+            _networkTeamARespawnCount.Value++;
             int teamSpawningNumber = 0;
             foreach (ulong playerId in _teamAPlayers) {
                 NetworkPlayer player = _allPlayers[playerId];
@@ -80,7 +133,7 @@ namespace Map {
 
         private void ServerRespawnTeamB() {
             Logger.Info("Respawning team B");
-            team_b_respawn_count.Value++;
+            _networkTeamBRespawnCount.Value++;
             int teamSpawningNumber = 0;
             foreach (ulong playerId in _teamBPlayers) {
                 NetworkPlayer player = _allPlayers[playerId];
@@ -118,7 +171,7 @@ namespace Map {
                 NetworkManager.Singleton.OnClientConnectedCallback += ServerAddConnectedClient;
 
                 NetworkManager.Singleton.OnClientDisconnectCallback += (id) => {
-                    playersInGame.Value--;
+                    _networkPlayersInGame.Value--;
                     _allPlayers[id] = null;
                     _teamAPlayers.Remove(id);
                     _teamBPlayers.Remove(id);
@@ -127,7 +180,7 @@ namespace Map {
         }
 
         private void ServerAddConnectedClient(ulong playerId) {
-            playersInGame.Value++;
+            _networkPlayersInGame.Value++;
             NetworkPlayer playerObject = NetworkManager.Singleton.ConnectedClients[playerId].PlayerObject
                 .GetComponent<NetworkPlayer>();
             _allPlayers[playerId] = playerObject;
@@ -205,15 +258,19 @@ namespace Map {
         }
 
         public int PlayersInGame() {
-            return playersInGame.Value;
+            return _networkPlayersInGame.Value;
         }
 
         public float TimeElapsed() {
-            return timeElapsed.Value;
+            return _networkTimeElapsed.Value;
         }
 
         public float MapDuration() {
-            return mapDuration.Value;
+            return _networkMapDuration.Value;
+        }
+
+        public float WarmupDuration() {
+            return _networkWarmUpDuration.Value;
         }
 
         public void ServerRequestJoinTeam(Team team, ulong playerId) {
@@ -234,6 +291,12 @@ namespace Map {
 
         public int TeamBRespawn() {
             return teamBRespawn;
+        }
+
+        public abstract int GetWinningTeam();
+        
+        public MapState GetMapState() {
+            return _networkMapState.Value;
         }
     }
 }
