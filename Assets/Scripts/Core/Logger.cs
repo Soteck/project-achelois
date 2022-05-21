@@ -12,7 +12,10 @@ namespace Core {
 
         [SerializeField]
         private int maxLines = 100;
-        private int maxLength = 5000;
+
+        private const int ConsoleMaxLength = 5000;
+        private const int ConsoleChunkToDelete = 2500;
+        private const int ConsoleOverflow = ConsoleMaxLength + ConsoleChunkToDelete;
 
         private readonly List<LogLine> _lines = new List<LogLine>();
         void Awake()
@@ -47,8 +50,8 @@ namespace Core {
         }
 
         private void DrawLog() {
-            if (debugAreaText.text.Length > maxLength) {
-                debugAreaText.text = debugAreaText.text.Substring(maxLength, debugAreaText.text.Length);
+            if (debugAreaText.text.Length > ConsoleOverflow ) {
+                debugAreaText.text = debugAreaText.text.Substring(ConsoleMaxLength, debugAreaText.text.Length - ConsoleMaxLength);
             }
             
             foreach (LogLine line in _lines) {
