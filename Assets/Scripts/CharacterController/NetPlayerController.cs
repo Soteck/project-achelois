@@ -58,7 +58,6 @@ namespace CharacterController {
         private static readonly int KnockedDown = Animator.StringToHash("knockedDown");
         private static readonly int Grounded = Animator.StringToHash("Grounded");
         private static readonly int Speed = Animator.StringToHash("Speed");
-        private static readonly int MotionSpeed = Animator.StringToHash("MotionSpeed");
 
         protected void Awake() {
             _inputActions = new PlayerInputActions();
@@ -69,14 +68,9 @@ namespace CharacterController {
         void Update() {
             if (IsSpawned) {
                 if (IsClient && IsOwner) {
-                    GroundCheck();
-                    if (soldier.networkHealth.Value > 0) {
-                        ClientInput();
-                    }
-                    else {
-                        //You're knocked down, you can only look from the floor 
-                        //TODO:
-                    }
+                    GroundCheck(); 
+                    ClientInput();
+
 
                     JumpAndGravity();
                     OwnerVisuals();
@@ -87,7 +81,7 @@ namespace CharacterController {
         }
 
         private void ClientVisuals() {
-            animator.SetBool(KnockedDown, soldier.networkHealth.Value <= 0);
+            animator.SetBool(KnockedDown, soldier.IsKnockedDown() || soldier.IsDead());
             Vector2 actualPosition = transform.position;
             if (_pastPosition != null) {
                 float moveSpeed = (actualPosition - (Vector2) _pastPosition).magnitude / Time.deltaTime;
@@ -99,7 +93,6 @@ namespace CharacterController {
 
         private void OwnerVisuals() {
             animator.SetBool(Grounded, isGrounded);
-            animator.SetFloat(MotionSpeed, _verticalVelocity);
         }
 
         private void JumpAndGravity() {
@@ -119,7 +112,7 @@ namespace CharacterController {
                     _jumpTimeoutDelta -= Time.deltaTime;
                 }
                 else {
-                    if (_inputActions.Player.Jump.WasPerformedThisFrame()) {
+                    if (_inputActions.Player.Jump.WasPerformedThisFrame() && soldier.IsAlive()) {
                         _verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
                     }
                 }
@@ -150,11 +143,17 @@ namespace CharacterController {
         }
 
         private void ClientInput() {
-            Vector3 movementInput = KeyboardInput();
+            if (soldier.IsDead()) {
+                return;
+            }
+            if (soldier.IsAlive()) {
+                Vector3 movementInput = KeyboardInput();
+                Vector3 controllerMotion = transform.TransformDirection(movementInput);
+                //Debug.Log("Moving controller: " + controllerMotion);
+                controller.Move(controllerMotion);
+            }
+            
             Vector3 rotationInput = MouseInput();
-            Vector3 controllerMotion = transform.TransformDirection(movementInput);
-            //Debug.Log("Moving controller: " + controllerMotion);
-            controller.Move(controllerMotion);
 
             //Unity Y axis is vertical, rotating through it will look -Y = left // +Y = right
             //Unity X axis is horizontal, rotating through it will look -X = down // +X = up

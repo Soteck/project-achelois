@@ -72,7 +72,7 @@ namespace Map {
             int teamSpawningNumber = 0;
             foreach (ulong playerId in _teamAPlayers) {
                 NetworkPlayer player = _allPlayers[playerId];
-                if (player.networkState.Value != PlayerState.PlayingAlive) {
+                if (player.networkState.Value == PlayerState.PlayingDead) {
                     ServerSpawnControllablePlayer(playerId, player, teamSpawningNumber++);
                 }
             }
@@ -84,7 +84,7 @@ namespace Map {
             int teamSpawningNumber = 0;
             foreach (ulong playerId in _teamBPlayers) {
                 NetworkPlayer player = _allPlayers[playerId];
-                if (player.networkState.Value != PlayerState.PlayingAlive) {
+                if (player.networkState.Value == PlayerState.PlayingDead) {
                     ServerSpawnControllablePlayer(playerId, player, teamSpawningNumber++);
                 }
             }

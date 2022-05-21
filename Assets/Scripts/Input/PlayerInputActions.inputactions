@@ -148,6 +148,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "SelfKill",
+                    "type": "Button",
+                    "id": "2c1fbfce-4579-484c-9982-3894e3199750",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -401,6 +410,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "PlayerStats",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7ac608ae-9d01-4946-895a-e105cfab43df",
+                    "path": "<Keyboard>/k",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "SelfKill",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

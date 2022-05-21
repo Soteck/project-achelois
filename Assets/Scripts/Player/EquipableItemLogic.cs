@@ -10,6 +10,7 @@ namespace Player {
         public Animator animator;
         public bool busy = false;
         public EquipableItemVisual spawnedVisual { get; set; }
+        public PlayableSoldier soldierOwner;
 
         public abstract EquipableItemNetworkData ToNetWorkData();
         protected abstract void InternalCallInitMetaData(NetworkString meta);

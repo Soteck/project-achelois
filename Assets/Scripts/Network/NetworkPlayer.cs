@@ -107,10 +107,10 @@ namespace Network {
                 HudController.ChangeTeam(activeTeam);
             }
 
-            if (currentFollowing != networkFollowing.Value) {
-                currentFollowing = networkFollowing.Value;
-                FollowPlayer(currentFollowing);
-            }
+            // if (currentFollowing != networkFollowing.Value) {
+            //     currentFollowing = networkFollowing.Value;
+            //     FollowPlayer(currentFollowing);
+            // }
         }
 
         private bool EnableSpectator() {
@@ -164,7 +164,7 @@ namespace Network {
 
         private bool FollowPlayer(ulong networkFollowingValue) {
             NetPlayerController playerController =
-                NetworkUtil.FindNetPlayerControllerByOwnerId(NetworkManager.Singleton.LocalClientId);
+                NetworkUtil.FindNetPlayerControllerByOwnerId(networkFollowingValue);
 
             if (playerController) {
                 PlayableSoldier soldier = playerController.soldier;

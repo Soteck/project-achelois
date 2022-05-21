@@ -1350,7 +1350,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6cab5cf223b95d4daa8f83b70995186, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockDownHealth: -75
+  knockDownHealth: 75
+  timeToDisappearAfterDeath: 15
   selectedWeapon: 0
   activeWeapon: {fileID: 3331772548581234669}
   playerCamera: {fileID: 2591657510236247230}
@@ -1364,6 +1365,7 @@ MonoBehaviour:
   networkTexting:
     m_InternalValue: 0
   playerController: {fileID: -8306263352360427543}
+  networkObject: {fileID: 7853438245753691099}
 --- !u!114 &-8306263352360427543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1393,7 +1395,6 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 8
-  networkPlayer: {fileID: 0}
 --- !u!114 &3649358980088332639
 MonoBehaviour:
   m_ObjectHideFlags: 0

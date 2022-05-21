@@ -65,6 +65,14 @@ namespace Player {
 
         protected override void ClientBeforeInput() {
             bool canShoot = false;
+            if (!soldierOwner.IsAlive()) {
+                _reloading = false;
+                _reloadEndTime = 0;
+                _hasShooted = false;
+                _nextTimeToFire = 0;
+                busy = true;
+                return;
+            }
             if (_reloading) {
                 if (_reloadEndTime != 0 && Time.time >= _reloadEndTime) {
                     //Reload ended but not yet notified

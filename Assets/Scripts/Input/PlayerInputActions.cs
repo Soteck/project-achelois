@@ -170,6 +170,15 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SelfKill"",
+                    ""type"": ""Button"",
+                    ""id"": ""2c1fbfce-4579-484c-9982-3894e3199750"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -425,6 +434,17 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                     ""action"": ""PlayerStats"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7ac608ae-9d01-4946-895a-e105cfab43df"",
+                    ""path"": ""<Keyboard>/k"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""SelfKill"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -466,6 +486,7 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         m_Player_Menu = m_Player.FindAction("Menu", throwIfNotFound: true);
         m_Player_ConsoleOpen = m_Player.FindAction("ConsoleOpen", throwIfNotFound: true);
         m_Player_PlayerStats = m_Player.FindAction("PlayerStats", throwIfNotFound: true);
+        m_Player_SelfKill = m_Player.FindAction("SelfKill", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -541,6 +562,7 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Menu;
     private readonly InputAction m_Player_ConsoleOpen;
     private readonly InputAction m_Player_PlayerStats;
+    private readonly InputAction m_Player_SelfKill;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -561,6 +583,7 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         public InputAction @Menu => m_Wrapper.m_Player_Menu;
         public InputAction @ConsoleOpen => m_Wrapper.m_Player_ConsoleOpen;
         public InputAction @PlayerStats => m_Wrapper.m_Player_PlayerStats;
+        public InputAction @SelfKill => m_Wrapper.m_Player_SelfKill;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -618,6 +641,9 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                 @PlayerStats.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPlayerStats;
                 @PlayerStats.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPlayerStats;
                 @PlayerStats.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPlayerStats;
+                @SelfKill.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSelfKill;
+                @SelfKill.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSelfKill;
+                @SelfKill.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSelfKill;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -670,6 +696,9 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                 @PlayerStats.started += instance.OnPlayerStats;
                 @PlayerStats.performed += instance.OnPlayerStats;
                 @PlayerStats.canceled += instance.OnPlayerStats;
+                @SelfKill.started += instance.OnSelfKill;
+                @SelfKill.performed += instance.OnSelfKill;
+                @SelfKill.canceled += instance.OnSelfKill;
             }
         }
     }
@@ -701,5 +730,6 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         void OnMenu(InputAction.CallbackContext context);
         void OnConsoleOpen(InputAction.CallbackContext context);
         void OnPlayerStats(InputAction.CallbackContext context);
+        void OnSelfKill(InputAction.CallbackContext context);
     }
 }

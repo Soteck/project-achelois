@@ -1,5 +1,5 @@
 ﻿namespace Enums {
     public enum PlayerState {
-        Following, Spectating, PlayingAlive, PlayingDead, MapCamera, Disconnected
+        Following, Spectating, PlayingAlive, PlayingKnockedDown, PlayingDead, MapCamera, Disconnected
     }
 }

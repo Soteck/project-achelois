@@ -8,10 +8,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Util;
 using World;
+using NetworkPlayer = Network.NetworkPlayer;
 
 namespace Player {
     public class PlayableSoldier : NetworkBehaviour, IDamageableEntity {
-        public float knockDownHealth = -75;
+        public float knockDownHealth = 75;
+        public float timeToDisappearAfterDeath = 15f; //Seconds
         public int selectedWeapon = 0;
         public Transform activeWeapon;
         public Camera playerCamera;
@@ -42,7 +44,13 @@ namespace Player {
         private int _localActiveItem = -1;
 
         public NetPlayerController playerController;
+        public NetworkObject networkObject;
+        private NetworkPlayer _networkPlayer = null;
         private PlayerInputActions _inputActions;
+        private float _knockDownHealth = -75;
+        
+        //Server variables
+        private float _timeToDespawnObject = 0;
 
 
         public void Awake() {
@@ -52,6 +60,8 @@ namespace Player {
 
             _inputActions.Player.Disable();
             _inputActions.Player.Scroll.performed += Scroll;
+
+            _knockDownHealth = knockDownHealth * -1;
 
             // foreach (EquipableItem item in activeWeapon.GetComponentsInChildren<EquipableItem>()) {
             //     if (!_storedItems.Contains(item)) {
@@ -68,7 +78,7 @@ namespace Player {
                 }
 
                 if (IsServer) {
-                    //ServerCalculations();
+                    ServerCalculations();
                 }
 
                 if (IsClient) {
@@ -78,13 +88,28 @@ namespace Player {
             }
         }
 
+        private void ServerCalculations() {
+            if (_timeToDespawnObject > 0 && Time.time > _timeToDespawnObject) {
+                networkObject.Despawn();
+            }
+        }
+
         private void ClientVisuals() {
+
         }
 
         private void ClientInput() {
             if (_changeWeapon != null) {
                 UpdateActualEquippedWeaponServerRpc(_storedItems.IndexOf(_changeWeapon));
                 _changeWeapon = null;
+            }
+
+            if (_inputActions.Player.SelfKill.WasPerformedThisFrame()) {
+                ClientGiveUpOrSelfKill();
+            }
+
+            if (_inputActions.Player.Jump.WasPerformedThisFrame() && IsKnockedDown()) {
+                ClientGiveUpOrSelfKill();
             }
         }
 
@@ -201,6 +226,7 @@ namespace Player {
             itemTransform.localPosition = Vector3.zero;
             itemTransform.localRotation = Quaternion.identity;
             item.gameObject.SetActive(false);
+            item.soldierOwner = this;
 
             return item;
         }
@@ -236,20 +262,41 @@ namespace Player {
             return null;
         }
 
+        public void ClientGiveUpOrSelfKill() {
+            GiveUpOrSelfKillServerRpc();
+        }
+
         public void ServerTakeDamage(float amount) {
             DamageReceivedClientRpc();
             networkHealth.Value -= amount;
-            if (networkHealth.Value < knockDownHealth) {
-                //knocked down
-                ServerDie();
+            if (IsKnockedDown()) {
+                ServerNotifyKnockedDown();
+            }else if (IsDead()) {
+                ServerNotifyDeath();
             }
+
         }
 
-        public void ServerDie() {
-            //TODO: Detach entity from player
+        private void ServerNotifyDeath() {
+            networkPlayer.networkState.Value = PlayerState.PlayingDead;
+            _timeToDespawnObject = Time.time + timeToDisappearAfterDeath;
+        }
+
+        private void ServerNotifyKnockedDown() {
+            networkPlayer.networkState.Value = PlayerState.PlayingKnockedDown;
+        }
+
+        private void ServerNotifyAlive() {
+            //TODO: For revive
+            
         }
 
         // ServerRpc only executed on server side
+        [ServerRpc]
+        public void GiveUpOrSelfKillServerRpc() {
+            networkHealth.Value = _knockDownHealth - 1;
+            ServerNotifyDeath();
+        }
 
         [ServerRpc]
         private void UpdateActualEquippedWeaponServerRpc(int activeItem) {
@@ -335,7 +382,27 @@ namespace Player {
 
         public bool IsKnockedDown() {
             float health = networkHealth.Value;
-            return health <= 0 && health > knockDownHealth;
+            return health <= 0 && health > _knockDownHealth;
+        }
+
+        public bool IsAlive() {
+            return networkHealth.Value > 0;
+        }
+
+        public bool IsDead() {
+            return networkHealth.Value <= _knockDownHealth;
+        }
+        
+        public NetworkPlayer networkPlayer {
+            get {
+                if (_networkPlayer == null) {
+                    _networkPlayer = NetworkUtil.FindNetworkPlayerByOwnerId(OwnerClientId);
+                }
+
+                return _networkPlayer;
+            }
+
+            set => _networkPlayer = value;
         }
     }
 }
