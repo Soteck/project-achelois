@@ -51,6 +51,7 @@ namespace Player {
         
         //Server variables
         private float _timeToDespawnObject = 0;
+        private bool _deathNotified = false;
 
 
         public void Awake() {
@@ -278,8 +279,11 @@ namespace Player {
         }
 
         private void ServerNotifyDeath() {
-            networkPlayer.networkState.Value = PlayerState.PlayingDead;
-            _timeToDespawnObject = Time.time + timeToDisappearAfterDeath;
+            if (!_deathNotified) {
+                networkPlayer.networkState.Value = PlayerState.PlayingDead;
+                _timeToDespawnObject = Time.time + timeToDisappearAfterDeath;
+                _deathNotified = true;
+            }
         }
 
         private void ServerNotifyKnockedDown() {
