@@ -2,6 +2,7 @@
 using Unity.Netcode.Samples;
 using UnityEngine;
 
+//DEPRECATED
 namespace Controller {
     
     [RequireComponent(typeof(NetworkObject))]

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+//DEPRECATED
 namespace CharacterController {
     public class SpectatorController : BaseController {
         public UnityEngine.CharacterController controller;

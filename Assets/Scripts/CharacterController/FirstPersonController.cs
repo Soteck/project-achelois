@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+//DEPRECATED
 namespace CharacterController {
     public class FirstPersonController : BaseController {
         public UnityEngine.CharacterController controller;

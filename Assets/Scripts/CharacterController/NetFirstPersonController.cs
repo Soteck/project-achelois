@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
+//DEPRECATED
 namespace CharacterController {
     public class NetFirstPersonController : NetController {
         public float speed = 12f;

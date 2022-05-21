@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+//DEPRECATED
 namespace CharacterController {
     public abstract class BaseController : MonoBehaviour {
 
