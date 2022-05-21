@@ -280,14 +280,14 @@ namespace Player {
 
         private void ServerNotifyDeath() {
             if (!_deathNotified) {
-                networkPlayer.networkState.Value = PlayerState.PlayingDead;
+                networkPlayer.ServerNotifyStateChange(PlayerState.PlayingDead);
                 _timeToDespawnObject = Time.time + timeToDisappearAfterDeath;
                 _deathNotified = true;
             }
         }
 
         private void ServerNotifyKnockedDown() {
-            networkPlayer.networkState.Value = PlayerState.PlayingKnockedDown;
+            networkPlayer.ServerNotifyStateChange(PlayerState.PlayingKnockedDown);
         }
 
         private void ServerNotifyAlive() {

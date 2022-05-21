@@ -27,8 +27,8 @@ namespace Player {
                     
                     if (soldierNetworkPlayer != null) {
                         mustShowRevivalIcon = soldier.IsKnockedDown() &&
-                                              networkPlayer.networkTeam.Value ==
-                                              soldierNetworkPlayer.networkTeam.Value;
+                                              networkPlayer.GetNetworkTeam() ==
+                                              soldierNetworkPlayer.GetNetworkTeam();
                     }
                 }
             }

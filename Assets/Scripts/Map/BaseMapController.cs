@@ -115,7 +115,7 @@ namespace Map {
         }
 
         private void DespawnPlayer(ulong playerId) {
-            _allPlayers[playerId].networkState.Value = PlayerState.Spectating;
+            _allPlayers[playerId].ServerNotifyStateChange(PlayerState.Spectating);
             _allPlayers[playerId].fpsController.soldier.networkObject.Despawn();
         }
 
@@ -125,7 +125,7 @@ namespace Map {
             int teamSpawningNumber = 0;
             foreach (ulong playerId in _teamAPlayers) {
                 NetworkPlayer player = _allPlayers[playerId];
-                if (player.networkState.Value == PlayerState.PlayingDead) {
+                if (player.GetPlayerState() == PlayerState.PlayingDead) {
                     ServerSpawnControllablePlayer(playerId, player, teamSpawningNumber++);
                 }
             }
@@ -137,7 +137,7 @@ namespace Map {
             int teamSpawningNumber = 0;
             foreach (ulong playerId in _teamBPlayers) {
                 NetworkPlayer player = _allPlayers[playerId];
-                if (player.networkState.Value == PlayerState.PlayingDead) {
+                if (player.GetPlayerState() == PlayerState.PlayingDead) {
                     ServerSpawnControllablePlayer(playerId, player, teamSpawningNumber++);
                 }
             }
@@ -154,7 +154,7 @@ namespace Map {
             no.transform.position = position;
             no.SpawnWithOwnership(playerId);
             //no.ChangeOwnership(playerId);
-            player.networkState.Value = PlayerState.PlayingAlive;
+            player.ServerNotifyStateChange(PlayerState.PlayingAlive);
             PlayableSoldier po = go.GetComponent<PlayableSoldier>();
             po.networkHealth.Value = 100f;
             po.networkObjective.Value = Constants.OBJECTIVE_NONE;
@@ -194,7 +194,7 @@ namespace Map {
             no.SpawnWithOwnership(playerId);
             playerObject.spectatorController = spectator.GetComponent<NetSpectatorController>();
 
-            playerObject.networkState.Value = PlayerState.MapCamera;
+            playerObject.ServerNotifyStateChange(PlayerState.MapCamera);
         }
 
         private void DoServerRequestJoinTeam(Team team, ulong playerId) {
@@ -203,7 +203,7 @@ namespace Map {
             bool canJoin = false;
             //Check if the change can be done
             if (player != null) {
-                from = player.networkTeam.Value;
+                from = player.GetNetworkTeam();
                 if (team != from) {
                     if (team == Team.Spectator || !ConfigHolder.autoBalance) {
                         canJoin = true;
@@ -234,19 +234,19 @@ namespace Map {
                 //Add player to the new team
                 if (team == Team.TeamA) {
                     _teamAPlayers.Add(playerId);
-                    player.networkTeam.Value = Team.TeamA;
-                    player.networkState.Value = PlayerState.PlayingDead;
+                    player.ServerNotifyTeamChange(Team.TeamA); 
+                    player.ServerNotifyStateChange(PlayerState.PlayingDead);
                     player.selectedSpawnPoint.Value = SpawnArea.GetDefaultTeamASpawnArea();
                 }
                 else if (team == Team.TeamB) {
                     _teamBPlayers.Add(playerId);
-                    player.networkTeam.Value = Team.TeamB;
-                    player.networkState.Value = PlayerState.PlayingDead;
+                    player.ServerNotifyTeamChange(Team.TeamB); 
+                    player.ServerNotifyStateChange(PlayerState.PlayingDead);
                     player.selectedSpawnPoint.Value = SpawnArea.GetDefaultTeamBSpawnArea();
                 }
                 else {
-                    player.networkTeam.Value = Team.Spectator;
-                    player.networkState.Value = PlayerState.MapCamera;
+                    player.ServerNotifyTeamChange(Team.Spectator); 
+                    player.ServerNotifyStateChange(PlayerState.MapCamera);
                 }
 
                 NetPlayerController controller = NetworkUtil.FindNetPlayerControllerByOwnerId(playerId);

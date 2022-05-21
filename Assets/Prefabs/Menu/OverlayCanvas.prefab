@@ -422,9 +422,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06b859da63ad03c40b2f56d13f405534, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  teamTxt: {fileID: 3570804094849142685}
-  spawnTimeTxt: {fileID: 3024319789542092908}
   mapTimeTxt: {fileID: 1037139794213268150}
+  teamTxt: {fileID: 3570804094849142685}
+  teamInfo: {fileID: 82898861498467641}
+  spawnTimeTxt: {fileID: 3024319789542092908}
+  spawnTimeInfo: {fileID: 1823964066902702792}
   ammoTxt: {fileID: 4914860262311229696}
   ammoInfo: {fileID: 8403039789450179492}
   healthTxt: {fileID: 8448145751410711078}

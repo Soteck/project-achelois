@@ -8,8 +8,10 @@ using Network.Shared;
 using Player;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 using UnityEngine.Serialization;
 using Util;
+using Logger = Core.Logger;
 
 namespace Network {
     public class NetworkPlayer : NetworkBehaviour {
@@ -18,13 +20,14 @@ namespace Network {
         public NetworkVariable<Guid> selectedSpawnPoint = new NetworkVariable<Guid>();
 
 
-        public NetworkVariable<Team> networkTeam = new NetworkVariable<Team>();
-        public NetworkVariable<PlayerState> networkState = new NetworkVariable<PlayerState>();
-        public NetworkVariable<ulong> networkFollowing = new NetworkVariable<ulong>();
+        private readonly NetworkVariable<Team> _networkTeam = new NetworkVariable<Team>();
+        private readonly NetworkVariable<PlayerState> _networkState = new NetworkVariable<PlayerState>();
+        private readonly NetworkVariable<ulong> _networkFollowing = new NetworkVariable<ulong>();
 
 
-        private Team activeTeam = Team.Spectator;
-        private PlayerState activeState = PlayerState.Disconnected;
+        private Team _activeTeam = Team.Spectator;
+        private PlayerState _activeState = PlayerState.Disconnected;
+        private PlayerState _requestedState = PlayerState.Disconnected;
 
         private ulong currentFollowing;
         public Camera activeCamera;
@@ -42,12 +45,10 @@ namespace Network {
         void Update() {
             if (!initialized.Value) {
                 InitializeConfig();
-            }
-            else {
+            } else {
                 if (IsSpawned) {
                     if (IsClient && IsOwner) {
                         ClientInput();
-                        ClientVisuals();
                     }
                 }
             }
@@ -67,58 +68,19 @@ namespace Network {
             bool fire2Triggered = _inputActions.Player.Fire2.WasPerformedThisFrame();
             bool jumpTriggered = _inputActions.Player.Jump.WasPerformedThisFrame();
 
-            if (activeState == PlayerState.MapCamera && jumpTriggered) {
+            if (_activeState == PlayerState.MapCamera && jumpTriggered) {
                 RequestStandaloneSpectatorServerRpc();
             }
             //Fire 1 -> spec next player // Fire2 -> previous
             //Jump -> Go to generic spectator
         }
 
-
-        private void ClientVisuals() {
-            if (activeState != networkState.Value) {
-                bool success = false;
-                switch (networkState.Value) {
-                    case PlayerState.MapCamera:
-                        DisableSpectator();
-                        success = FollowMapCamera();
-                        break;
-                    case PlayerState.Following:
-                    case PlayerState.PlayingDead:
-                        DisableSpectator();
-                        success = FollowPlayer(networkFollowing.Value);
-                        break;
-                    case PlayerState.PlayingAlive:
-                        DisableSpectator();
-                        success = AttachSoldier();
-                        break;
-                    case PlayerState.Spectating:
-                        success = EnableSpectator();
-                        break;
-                }
-
-                if (success) {
-                    activeState = networkState.Value;
-                }
-            }
-
-            if (activeTeam != networkTeam.Value) {
-                activeTeam = networkTeam.Value;
-                HudController.ChangeTeam(activeTeam);
-            }
-
-            // if (currentFollowing != networkFollowing.Value) {
-            //     currentFollowing = networkFollowing.Value;
-            //     FollowPlayer(currentFollowing);
-            // }
-        }
-
+        
         private bool EnableSpectator() {
             bool res = false;
             if (spectatorController == null) {
                 res = AttachSpectator();
-            }
-            else {
+            } else {
                 res = true;
             }
 
@@ -134,7 +96,8 @@ namespace Network {
         }
 
         private bool AttachSpectator() {
-            spectatorController = NetworkUtil.FindNetSpectatorControllerByOwnerId(NetworkManager.Singleton.LocalClientId);
+            spectatorController =
+                NetworkUtil.FindNetSpectatorControllerByOwnerId(NetworkManager.Singleton.LocalClientId);
             if (spectatorController != null) {
                 Quaternion mapCameraRotation = MapMaster.MapInstance().MapCamera().transform.rotation;
                 Vector3 angles = mapCameraRotation.eulerAngles;
@@ -195,7 +158,48 @@ namespace Network {
             RequestJoinTeamServerRpc(teamToJoin, NetworkManager.Singleton.LocalClientId);
         }
 
+        public void ServerNotifyStateChange(PlayerState state) {
+            _networkState.Value = state;
+            NetworkStateChangedClientRpc(state);
+        }
 
+        public void ServerNotifyTeamChange(Team team) {
+            _networkTeam.Value = team;
+        }
+
+        //Client RPC methods
+        [ClientRpc]
+        private void NetworkStateChangedClientRpc(PlayerState state) {
+            if (IsOwner && _activeState != state) {
+                bool success = false;
+                switch (_networkState.Value) {
+                    case PlayerState.MapCamera:
+                        DisableSpectator();
+                        success = FollowMapCamera();
+                        break;
+                    case PlayerState.Following:
+                    case PlayerState.PlayingDead:
+                        DisableSpectator();
+                        success = FollowPlayer(_networkFollowing.Value);
+                        break;
+                    case PlayerState.PlayingAlive:
+                        DisableSpectator();
+                        success = AttachSoldier();
+                        break;
+                    case PlayerState.Spectating:
+                        success = EnableSpectator();
+                        break;
+                }
+
+                if (success) {
+                    _activeState = state;
+                } else {
+                    Logger.Error("Unable to change state to " + state);
+                }
+            }
+        }
+
+        
         //Server RPC methods
         [ServerRpc]
         private void RequestJoinTeamServerRpc(Team teamToJoin, ulong playerId) {
@@ -204,8 +208,8 @@ namespace Network {
 
         [ServerRpc]
         private void RequestStandaloneSpectatorServerRpc() {
-            if (networkTeam.Value == Team.Spectator) {
-                networkState.Value = PlayerState.Spectating;
+            if (_networkTeam.Value == Team.Spectator) {
+                _networkState.Value = PlayerState.Spectating;
             }
         }
 
@@ -216,6 +220,19 @@ namespace Network {
         }
 
         //Public accessors
+
+        public PlayerState GetPlayerState() {
+            return _networkState.Value;
+        }
+
+        public Team GetNetworkTeam() {
+            return _networkTeam.Value;
+        }
+
+        public ulong GetNetworkFollowing() {
+            return _networkFollowing.Value;
+        }
+
         public static NetworkPlayer networkPlayerOwner {
             get {
                 if (NetworkManager.Singleton.IsClient && NetworkManager.Singleton.LocalClient != null) {

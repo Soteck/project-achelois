@@ -477,6 +477,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 128c1d6bc63b408fb4284eb37c10c36e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  warmUpDuration: 120
   duration: 900
   teamARespawn: 4
   teamBRespawn: 4
