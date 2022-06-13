@@ -10,9 +10,11 @@ namespace Pickups {
         public NetworkVariable<NetworkString> objectiveCode = new NetworkVariable<NetworkString>();
 
         private void OnTriggerEnter(Collider other) {
-            PlayableSoldier holder = other.gameObject.GetComponent<PlayableSoldier>();
-            if (holder != null && holder.IsOwner && !holder.HasObjective()) {
-                PlayerPickedUpObjectiveServerRpc(holder.NetworkObjectId, NetworkObjectId);
+            if (IsServer) {
+                PlayableSoldier holder = other.gameObject.GetComponent<PlayableSoldier>();
+                if (holder != null && !holder.HasObjective()) {
+                    PlayerPickedUpObjectiveServerRpc(holder.NetworkObjectId, NetworkObjectId);
+                }
             }
         }
 

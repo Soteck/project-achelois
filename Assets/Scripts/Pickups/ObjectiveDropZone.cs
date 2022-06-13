@@ -4,15 +4,14 @@ using Unity.Netcode;
 using UnityEngine;
 
 namespace Pickups {
-    
     [RequireComponent(typeof(NetworkObject))]
     public class ObjectiveDropZone : NetworkBehaviour {
         public string drop_zone_id;
 
         private void OnTriggerEnter(Collider other) {
-            PlayableSoldier holder = other.gameObject.GetComponent<PlayableSoldier>();
-            if (holder != null && holder.IsOwner) {
-                if (holder.HasObjective()) {
+            if (IsServer) {
+                PlayableSoldier holder = other.gameObject.GetComponent<PlayableSoldier>();
+                if (holder != null && holder.HasObjective()) {
                     PlayerEnteredToDropZoneServerRpc(holder.NetworkObjectId, NetworkObjectId);
                 }
             }
