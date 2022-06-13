@@ -1,15 +1,12 @@
 ﻿using System;
 using CharacterController;
 using Config;
-using Controller;
 using Enums;
 using Map;
 using Network.Shared;
 using Player;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
-using UnityEngine.Serialization;
 using Util;
 using Logger = Core.Logger;
 
@@ -26,8 +23,6 @@ namespace Network {
 
 
         private Team _activeTeam = Team.Spectator;
-        private PlayerState _activeState = PlayerState.Disconnected;
-        private PlayerState _requestedState = PlayerState.Disconnected;
 
         private ulong currentFollowing;
         public Camera activeCamera;
@@ -68,14 +63,14 @@ namespace Network {
             bool fire2Triggered = _inputActions.Player.Fire2.WasPerformedThisFrame();
             bool jumpTriggered = _inputActions.Player.Jump.WasPerformedThisFrame();
 
-            if (_activeState == PlayerState.MapCamera && jumpTriggered) {
+            if (_networkState.Value == PlayerState.MapCamera && jumpTriggered) {
                 RequestStandaloneSpectatorServerRpc();
             }
             //Fire 1 -> spec next player // Fire2 -> previous
             //Jump -> Go to generic spectator
         }
 
-        
+
         private bool EnableSpectator() {
             bool res = false;
             if (spectatorController == null) {
@@ -134,10 +129,9 @@ namespace Network {
                 activeCamera = soldier.playerCamera;
                 activeCamera.enabled = true;
                 CameraUtil.DisableAllCameras(activeCamera);
-                return true;
             }
 
-            return false;
+            return true;
         }
 
         private bool FollowMapCamera() {
@@ -159,7 +153,6 @@ namespace Network {
         }
 
         public void ServerNotifyStateChange(PlayerState state) {
-            _networkState.Value = state;
             NetworkStateChangedClientRpc(state);
         }
 
@@ -170,9 +163,9 @@ namespace Network {
         //Client RPC methods
         [ClientRpc]
         private void NetworkStateChangedClientRpc(PlayerState state) {
-            if (IsOwner && _activeState != state) {
+            if (IsOwner && _networkState.Value != state) {
                 bool success = false;
-                switch (_networkState.Value) {
+                switch (state) {
                     case PlayerState.MapCamera:
                         DisableSpectator();
                         success = FollowMapCamera();
@@ -192,14 +185,14 @@ namespace Network {
                 }
 
                 if (success) {
-                    _activeState = state;
+                    CommitStateChangeServerRpc(state);
                 } else {
                     Logger.Error("Unable to change state to " + state);
                 }
             }
         }
 
-        
+
         //Server RPC methods
         [ServerRpc]
         private void RequestJoinTeamServerRpc(Team teamToJoin, ulong playerId) {
@@ -209,7 +202,7 @@ namespace Network {
         [ServerRpc]
         private void RequestStandaloneSpectatorServerRpc() {
             if (_networkTeam.Value == Team.Spectator) {
-                _networkState.Value = PlayerState.Spectating;
+                ServerNotifyStateChange(PlayerState.Spectating);
             }
         }
 
@@ -217,6 +210,11 @@ namespace Network {
         private void SaveNetworkDataServerRpc(PlayerNetworkData data) {
             initialized.Value = true;
             networkData.Value = data;
+        }
+
+        [ServerRpc]
+        private void CommitStateChangeServerRpc(PlayerState state) {
+            _networkState.Value = state;
         }
 
         //Public accessors
