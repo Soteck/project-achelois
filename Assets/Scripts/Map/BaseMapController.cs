@@ -55,7 +55,8 @@ namespace Map {
                 _teamAPlayers = new List<ulong>();
                 _teamBPlayers = new List<ulong>();
                 serverInit = true;
-                _networkMapState.Value = MapState.Warmup;
+                //TODO: Fix warmup
+                _networkMapState.Value = MapState.Match;
             }
         }
 
