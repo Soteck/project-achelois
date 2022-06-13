@@ -1,19 +1,27 @@
 using Map.Maps.DevelopMap;
-using Network.Shared;
 using Player;
 using Unity.Netcode;
 using UnityEngine;
 
-[RequireComponent(typeof(NetworkObject))]
-public class ObjectiveDropZone : NetworkBehaviour {
-    public string drop_zone_id;
+namespace Pickups {
+    
+    [RequireComponent(typeof(NetworkObject))]
+    public class ObjectiveDropZone : NetworkBehaviour {
+        public string drop_zone_id;
 
-    private void OnTriggerEnter(Collider other) {
-        PlayableSoldier holder = other.gameObject.GetComponent<PlayableSoldier>();
-        if (holder != null && holder.IsOwner) {
-            if (holder.HasObjective()) {
-                DevelopMapController.Instance.PlayerEnteredToDropZone(holder, this);
+        private void OnTriggerEnter(Collider other) {
+            PlayableSoldier holder = other.gameObject.GetComponent<PlayableSoldier>();
+            if (holder != null && holder.IsOwner) {
+                if (holder.HasObjective()) {
+                    PlayerEnteredToDropZoneServerRpc(holder.NetworkObjectId, NetworkObjectId);
+                }
             }
+        }
+
+
+        [ServerRpc]
+        private void PlayerEnteredToDropZoneServerRpc(ulong playerId, ulong objectiveId) {
+            DevelopMapController.Instance.ServerOnPlayerEnteredToDropZone(playerId, objectiveId);
         }
     }
 }

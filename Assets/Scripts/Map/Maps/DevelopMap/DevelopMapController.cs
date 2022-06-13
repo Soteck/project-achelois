@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Enums;
 using Network.Shared;
+using Pickups;
 using Player;
 using TMPro;
 using Unity.Netcode;
@@ -100,8 +101,7 @@ namespace Map.Maps.DevelopMap {
             no.Spawn();
         }
 
-        [ServerRpc]
-        private void OnPlayerPickedUpObjectiveServerRpc(ulong playerId, ulong objectiveId) {
+        public void ServerOnPlayerPickedUpObjective(ulong playerId, ulong objectiveId) {
             NetworkObject playerInstance = NetworkManager.Singleton.SpawnManager.SpawnedObjects[playerId];
             NetworkObject objectiveInstance = NetworkManager.Singleton.SpawnManager.SpawnedObjects[objectiveId];
             PlayableSoldier ps = playerInstance.GetComponent<PlayableSoldier>();
@@ -135,8 +135,7 @@ namespace Map.Maps.DevelopMap {
             objectiveInstance.Despawn();
         }
 
-        [ServerRpc]
-        private void OnPlayerEnteredToDropZoneServerRpc(ulong playerId, ulong dropZoneId) {
+        public void ServerOnPlayerEnteredToDropZone(ulong playerId, ulong dropZoneId) {
             NetworkObject playerInstance = NetworkManager.Singleton.SpawnManager.SpawnedObjects[playerId];
             NetworkObject dropZoneInstance = NetworkManager.Singleton.SpawnManager.SpawnedObjects[dropZoneId];
             PlayableSoldier ps = playerInstance.GetComponent<PlayableSoldier>();
@@ -160,20 +159,6 @@ namespace Map.Maps.DevelopMap {
             }
 
         }
-        
-        
 
-        //Client-Side function calls
-        public void PlayerEnteredToDropZone(PlayableSoldier holder, ObjectiveDropZone objectiveDropZone) {
-            OnPlayerEnteredToDropZoneServerRpc(
-                holder.NetworkObjectId,
-                objectiveDropZone.NetworkObjectId);
-        }
-
-        public void PlayerPickedUpObjective(PlayableSoldier holder, ObjectivePickup objectivePickup) {
-            OnPlayerPickedUpObjectiveServerRpc(
-                holder.NetworkObjectId,
-                objectivePickup.NetworkObjectId);
-        }
     }
 }

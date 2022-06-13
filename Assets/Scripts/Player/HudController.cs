@@ -112,7 +112,7 @@ namespace Player {
             MapState mapState = mapInstance.GetMapState();
             float totalDuration = mapInstance.MapDuration();
             float warmupDuration = mapInstance.WarmupDuration();
-            float timeElapsed = MapMaster.MapInstance().TimeElapsed();
+            float timeElapsed = mapInstance.TimeElapsed();
             float remaining;
             if (mapState == MapState.Warmup) {
                 remaining = warmupDuration - timeElapsed;
@@ -120,10 +120,15 @@ namespace Player {
                 remaining = totalDuration - timeElapsed;
             } else {
                 return null;
-            }
+            } 
 
             TimeSpan timeSpan = TimeSpan.FromSeconds(remaining);
-            return timeSpan.Minutes + ":" + timeSpan.Seconds;
+            int minutes = timeSpan.Minutes;
+            int seconds = timeSpan.Seconds;
+
+            return (minutes < 10 ? "0" + minutes : "" + minutes) 
+                   + ":" 
+                   + (seconds < 10 ? "0" + seconds : "" + seconds);
         }
 
         private string GetTeamTxt() {
@@ -193,7 +198,7 @@ namespace Player {
                 if (mapState == MapState.Warmup) {
                     float remaining = mapInstance.WarmupDuration() - mapInstance.TimeElapsed();
                     TimeSpan timeSpan = TimeSpan.FromSeconds(remaining);
-                    data.Add("WarmUP!!! Waiting " + timeSpan.Seconds + "s to start the map");
+                    data.Add("WarmUP!!! Waiting " + getMapText() + "s to start the map");
                 } else if (mapState == MapState.Tie) {
                     data.Add("Map ended with a TIE!");
                 } else if (mapState == MapState.WinA) {

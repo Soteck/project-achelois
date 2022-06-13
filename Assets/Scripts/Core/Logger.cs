@@ -61,18 +61,20 @@ namespace Core {
             }
         }
 
-        private void LogInfo(string message)
-        {
+        private void LogInfo(string message) {
+            Debug.Log(message);
             AddText($"<color=\"green\">{DateTime.Now:HH:mm:ss.fff} {message}</color>");
         }
 
         private void LogError(string message)
         {
+            Debug.LogError(message);
             AddText($"<color=\"red\">{DateTime.Now:HH:mm:ss.fff} {message}</color>");
         }
 
         private void LogWarning(string message)
         {
+            Debug.LogWarning(message);
             AddText($"<color=\"yellow\">{DateTime.Now:HH:mm:ss.fff} {message}</color>");
         }
 
