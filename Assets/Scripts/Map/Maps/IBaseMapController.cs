@@ -30,5 +30,9 @@ namespace Map.Maps {
         public int GetWinningTeam();
 
         public MapState GetMapState();
+        
+        public GameObject GetControllablePlayerPrefab();
+        
+        public GameObject GetSpectatorPrefab();
     }
 }

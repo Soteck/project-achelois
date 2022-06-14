@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using CharacterController;
 using Config;
+using Controller;
 using Core;
 using Enums;
 using Map.Maps;
@@ -22,7 +23,7 @@ namespace Map {
 
         //Input data
         public Camera mapCamera;
-        public GameObject controlablePlayerPrefab;
+        public GameObject controllablePlayerPrefab;
         public GameObject spectatorPrefab;
 
         //Variables sync between clients and server
@@ -127,7 +128,7 @@ namespace Map {
             foreach (ulong playerId in _teamAPlayers) {
                 NetworkPlayer player = _allPlayers[playerId];
                 if (player.GetPlayerState() == PlayerState.PlayingDead) {
-                    ServerSpawnControllablePlayer(playerId, player, teamSpawningNumber++);
+                    PlayerSpawnerController.ServerSpawnControllablePlayer(playerId, player, teamSpawningNumber++);
                 }
             }
         }
@@ -139,29 +140,9 @@ namespace Map {
             foreach (ulong playerId in _teamBPlayers) {
                 NetworkPlayer player = _allPlayers[playerId];
                 if (player.GetPlayerState() == PlayerState.PlayingDead) {
-                    ServerSpawnControllablePlayer(playerId, player, teamSpawningNumber++);
+                    PlayerSpawnerController.ServerSpawnControllablePlayer(playerId, player, teamSpawningNumber++);
                 }
             }
-        }
-
-        private void ServerSpawnControllablePlayer(ulong playerId, NetworkPlayer player, int number) {
-            //GameObject go = NetworkObjectPool.Instance.GetNetworkObject(controlablePlayerPrefab).gameObject;
-            Vector3 position = SpawnArea.GetSpawnPosition(player.selectedSpawnPoint.Value, number);
-            GameObject go = Instantiate(controlablePlayerPrefab, position, Quaternion.identity);
-            //go.transform.position = new Vector3(Random.Range(-10, 10), 10.0f, Random.Range(-10, 10));
-            //go.transform.position = go.transform.TransformDirection(position);
-
-            NetworkObject no = go.GetComponent<NetworkObject>();
-            no.transform.position = position;
-            no.SpawnWithOwnership(playerId);
-            //no.ChangeOwnership(playerId);
-            player.ServerNotifyStateChange(PlayerState.PlayingAlive);
-            PlayableSoldier po = go.GetComponent<PlayableSoldier>();
-            po.networkHealth.Value = 100f;
-            po.networkObjective.Value = Constants.OBJECTIVE_NONE;
-            po.networkInMenu.Value = false;
-            po.networkTexting.Value = false;
-            // DisableAllCameras(player.activeCamera);
         }
 
         protected void Start() {
@@ -298,6 +279,14 @@ namespace Map {
         
         public MapState GetMapState() {
             return _networkMapState.Value;
+        }
+
+        public GameObject GetControllablePlayerPrefab() {
+            return controllablePlayerPrefab;
+        }
+
+        public GameObject GetSpectatorPrefab() {
+            return spectatorPrefab;
         }
     }
 }
