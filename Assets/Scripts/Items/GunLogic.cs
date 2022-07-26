@@ -1,5 +1,6 @@
 ﻿using Config;
 using Enums;
+using Items;
 using Network.Shared;
 using Unity.Netcode;
 using UnityEngine;
@@ -7,7 +8,7 @@ using UnityEngine.InputSystem;
 using Util;
 using World;
 
-namespace Player {
+namespace Items {
     public class GunLogic : EquipableItemLogic {
         public float damage = 10f;
         public float range = 100f;

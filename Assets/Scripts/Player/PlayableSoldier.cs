@@ -2,6 +2,7 @@
 using CharacterController;
 using Core;
 using Enums;
+using Items;
 using Network.Shared;
 using Unity.Netcode;
 using UnityEngine;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CharacterController;
 using Core;
 using Enums;
+using Items;
 using Map;
 using Map.Maps;
 using TMPro;

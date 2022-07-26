@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Player {
+namespace Items {
     public class EquipableItemVisual : MonoBehaviour {
     }
 }

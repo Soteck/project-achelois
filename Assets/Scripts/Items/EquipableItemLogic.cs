@@ -1,8 +1,9 @@
 using Controller;
 using Network.Shared;
+using Player;
 using UnityEngine;
 
-namespace Player {
+namespace Items {
     public abstract class EquipableItemLogic : NetController {
         public EquipableItemVisual visual;
         public Camera playerCamera;
