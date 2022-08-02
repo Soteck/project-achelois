@@ -1277,7 +1277,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 2
   m_Height: 1.8
-  m_Radius: 0.28
+  m_Radius: 0.09
   m_SlopeLimit: 45
   m_StepOffset: 1.7
   m_SkinWidth: 0.08
@@ -1359,6 +1359,8 @@ MonoBehaviour:
   networkActiveItem:
     m_InternalValue: 0
   networkHealth:
+    m_InternalValue: 0
+  networkEnergy:
     m_InternalValue: 0
   networkInMenu:
     m_InternalValue: 0
@@ -3584,6 +3586,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5792335105281169763}
+  - component: {fileID: 8551991182254760730}
   m_Layer: 0
   m_Name: Chest
   m_TagString: Untagged
@@ -3606,6 +3609,20 @@ Transform:
   m_Father: {fileID: 1704419892886530087}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &8551991182254760730
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6894221283135401983}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.17
+  m_Height: 1.56
+  m_Direction: 1
+  m_Center: {x: 0, y: -0.41, z: 0}
 --- !u!1 &6916490201691177482
 GameObject:
   m_ObjectHideFlags: 0
@@ -3828,6 +3845,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2755765946756093854}
+  - component: {fileID: 8838712611650087964}
   m_Layer: 0
   m_Name: Head
   m_TagString: Untagged
@@ -3852,6 +3870,20 @@ Transform:
   m_Father: {fileID: 7213130330344570459}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &8838712611650087964
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7400282799010546667}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.11
+  m_Height: 0.33
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7657706356698285067
 GameObject:
   m_ObjectHideFlags: 0

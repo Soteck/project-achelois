@@ -305,6 +305,14 @@ namespace Player {
 
         }
 
+        public bool ServerCanTakeDamage() {
+            return !IsDead();
+        }
+
+        public Team ServerGetTeam() {
+            return networkPlayer.GetNetworkTeam();
+        }
+
         private void ServerNotifyDeath() {
             if (!_deathNotified) {
                 networkPlayer.ServerNotifyStateChange(PlayerState.PlayingDead);

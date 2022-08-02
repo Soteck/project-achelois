@@ -12,7 +12,10 @@ namespace Items {
     public class GunLogic : EquipableItemLogic {
         public float damage = 10f;
         public float range = 100f;
-        [Tooltip("Bullets per minute")] public float fireRate = 350f;
+
+        [Tooltip("Bullets per minute")]
+        public float fireRate = 350f;
+
         public float impactForce = 30f;
 
         public float reloadTime = 2.5f;
@@ -49,6 +52,7 @@ namespace Items {
         private AudioSource _shootSource;
         private AudioSource _reloadSource;
         private AudioSource _drySource;
+
         private bool _reloading = false;
         private bool _hasShooted = false;
         private float _timeBetweenShoots;
@@ -58,6 +62,8 @@ namespace Items {
             _shootSource = AudioUtil.AddAudio(gameObject, false, false, 1f, shootSound);
             _reloadSource = AudioUtil.AddAudio(gameObject, false, false, 1f, reloadSound);
             _drySource = AudioUtil.AddAudio(gameObject, false, false, 1f, drySound);
+
+
             inputActions.Player.Disable();
             _timeBetweenShoots = 60 / fireRate;
             // remainingRounds = pickupRounds;
@@ -74,6 +80,7 @@ namespace Items {
                 busy = true;
                 return;
             }
+
             if (_reloading) {
                 if (_reloadEndTime != 0 && Time.time >= _reloadEndTime) {
                     //Reload ended but not yet notified
@@ -81,8 +88,7 @@ namespace Items {
                     ReloadEndServerRpc();
                     _reloadEndTime = 0;
                 }
-            }
-            else {
+            } else {
                 canShoot = !_hasShooted && Time.time >= _nextTimeToFire;
             }
 
@@ -98,15 +104,12 @@ namespace Items {
                     if (_networkClipRemainingRounds.Value > 0) {
                         _hasShooted = true;
                         ShootWeaponServerRpc(_barrelEnd.transform.position, Time.time);
-                    }
-                    else {
+                    } else {
                         if (fire1.WasPerformedThisFrame()) {
                             DryClientRpc(Time.time + _timeBetweenShoots);
                         }
                     }
-                    
-                }
-                else if (inputActions.Player.Reload.WasPerformedThisFrame()) {
+                } else if (inputActions.Player.Reload.WasPerformedThisFrame()) {
                     ReloadServerRpc(Time.time);
                 }
             }
@@ -170,14 +173,42 @@ namespace Items {
             if (_networkClipRemainingRounds.Value > 0) {
                 _networkClipRemainingRounds.Value--;
 
-                if (Physics.Raycast(
-                        barrelPosition, playerCamera.transform.forward, out RaycastHit hit, range
-                    )) {
+                bool raycast = Physics.Raycast(
+                                               barrelPosition, 
+                                               playerCamera.transform.forward, 
+                                               out RaycastHit hit, 
+                                               range);
+                
+                if (raycast) {
+                    
                     //Debug.Log(hit.transform.name);
-                    ShootWeaponHitClientRpc(nextShootTime, hit.point, hit.normal);
 
+                    HitType hitType = HitType.Other;
+                    
                     IDamageableEntity damageableEntity =
-                        (IDamageableEntity) hit.transform.gameObject.GetComponent(typeof(IDamageableEntity));
+                        hit.transform.gameObject.GetComponentInParent<IDamageableEntity>();
+
+                    if (damageableEntity != null) {
+                        bool teamHit = soldierOwner.networkPlayer.GetNetworkTeam()
+                            .Equals(damageableEntity.ServerGetTeam());
+
+                        if (hit.transform.name == "Chest") {
+                            if (teamHit) {
+                                hitType = HitType.TeamBody;
+                            } else {
+                                hitType = HitType.Body;
+                            }
+                        } else if (hit.transform.name == "Head") {
+                            if (teamHit) {
+                                hitType = HitType.TeamHead;
+                            } else {
+                                hitType = HitType.Head;
+                            }
+                        }
+                    }
+
+                    ShootWeaponHitClientRpc(nextShootTime, hit.point, hit.normal, hitType);
+
                     if (damageableEntity != null) {
                         damageableEntity.ServerTakeDamage(damage);
                     }
@@ -185,16 +216,14 @@ namespace Items {
                     if (hit.rigidbody != null) {
                         hit.rigidbody.AddForce(-hit.normal * impactForce);
                     }
-                }
-                else {
+                } else {
                     ShootWeaponClientRpc(barrelPosition, nextShootTime);
                 }
 
                 if (_networkClipRemainingRounds.Value < 1) {
                     DryClientRpc(nextShootTime);
                 }
-            }
-            else {
+            } else {
                 DryClientRpc(nextShootTime);
             }
         }
@@ -212,7 +241,7 @@ namespace Items {
         // ClientRpc are executed on all client instances
 
         [ClientRpc]
-        private void ShootWeaponHitClientRpc(float nexShootTime, Vector3 hitPoint, Vector3 hitNormal) {
+        private void ShootWeaponHitClientRpc(float nexShootTime, Vector3 hitPoint, Vector3 hitNormal, HitType type) {
             _muzzleFlash.Play();
             _shootSource.Play();
             _nextTimeToFire = nexShootTime;
@@ -226,6 +255,24 @@ namespace Items {
                 bullet.AddPosition(barrelPosition);
                 bullet.transform.position = hitPoint;
                 Destroy(bullet.gameObject, 4f);
+            }
+
+            switch (type) {
+                case HitType.Head:
+                    hitHeadSource.Play();
+                    break;
+
+                case HitType.Body:
+                    hitBodySource.Play();
+                    break;
+
+                case HitType.TeamHead:
+                    hitTeamHeadSource.Play();
+                    break;
+
+                case HitType.TeamBody:
+                    hitTeamBodySource.Play();
+                    break;
             }
         }
 
