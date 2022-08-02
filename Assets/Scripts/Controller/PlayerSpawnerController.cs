@@ -9,26 +9,29 @@ using NetworkPlayer = Network.NetworkPlayer;
 
 namespace Controller {
     public class PlayerSpawnerController : NetworkSingleton<PlayerSpawnerController> {
+        private GameObject _controllablePlayerPrefab;
+        private GameObject _spectatorPrefab;
+        
         private GameObject controllablePlayerPrefab {
             get {
-                if (controllablePlayerPrefab == null) {
-                    controllablePlayerPrefab = MapMaster.MapInstance().GetControllablePlayerPrefab();
+                if (_controllablePlayerPrefab == null) {
+                    _controllablePlayerPrefab = MapMaster.MapInstance().GetControllablePlayerPrefab();
                 }
 
-                return controllablePlayerPrefab;
+                return _controllablePlayerPrefab;
             }
-            set => controllablePlayerPrefab = value;
+            set => _controllablePlayerPrefab = value;
         }
         
         private GameObject spectatorPrefab {
             get {
-                if (spectatorPrefab == null) {
-                    spectatorPrefab = MapMaster.MapInstance().GetSpectatorPrefab();
+                if (_spectatorPrefab == null) {
+                    _spectatorPrefab = MapMaster.MapInstance().GetSpectatorPrefab();
                 }
 
-                return spectatorPrefab;
+                return _spectatorPrefab;
             }
-            set => spectatorPrefab = value;
+            set => _spectatorPrefab = value;
         }
 
 

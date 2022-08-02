@@ -5,6 +5,7 @@ using Enums;
 using Items;
 using Network.Shared;
 using Unity.Netcode;
+using Unity.Netcode.Editor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Util;
@@ -221,6 +222,12 @@ namespace Player {
             }
         }
 
+        public void HealthPickUp() {
+            if (IsOwner) {
+                HealthPickupItemServerRpc(NetworkManager.Singleton.LocalClientId);
+            }
+        }
+
         private EquipableItemLogic InitEquipment(EquipableItemLogic item) {
             item.playerCamera = playerCamera;
             item.animator = animator;
@@ -322,6 +329,12 @@ namespace Player {
             //Add instance to the server list
             _storedItems.Add(InitEquipment(item));
             PickupItemClientRpc(no.NetworkObjectId, itemMeta.itemMeta);
+        }
+        
+        [ServerRpc]
+        private void HealthPickupItemServerRpc(ulong playerId) {
+            NetPlayerController controller = NetworkUtil.FindNetPlayerControllerByOwnerId(playerId);
+            controller.soldier.networkHealth.Value += 20;
         }
 
         // ClientRpc are executed on all client instances
