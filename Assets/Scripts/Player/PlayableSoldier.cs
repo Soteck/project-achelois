@@ -228,6 +228,12 @@ namespace Player {
             }
         }
 
+        public void AmmoPickUp() {
+            if (IsOwner) {
+                AmmoPickupItemServerRpc(NetworkManager.Singleton.LocalClientId);
+            }
+        }
+
         private EquipableItemLogic InitEquipment(EquipableItemLogic item) {
             item.playerCamera = playerCamera;
             item.animator = animator;
@@ -333,6 +339,12 @@ namespace Player {
         
         [ServerRpc]
         private void HealthPickupItemServerRpc(ulong playerId) {
+            NetPlayerController controller = NetworkUtil.FindNetPlayerControllerByOwnerId(playerId);
+            controller.soldier.networkHealth.Value += 20;
+        }
+        
+        [ServerRpc]
+        private void AmmoPickupItemServerRpc(ulong playerId) {
             NetPlayerController controller = NetworkUtil.FindNetPlayerControllerByOwnerId(playerId);
             controller.soldier.networkHealth.Value += 20;
         }
