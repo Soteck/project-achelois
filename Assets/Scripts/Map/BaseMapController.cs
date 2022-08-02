@@ -41,11 +41,9 @@ namespace Map {
         private Dictionary<ulong, NetworkPlayer> _allPlayers;
         private List<ulong> _teamAPlayers;
         private List<ulong> _teamBPlayers;
-        protected bool serverInit = false;
 
-
-        private void ServerInit() {
-            if (!serverInit) {
+        private void OnServerInit() {
+            if (!MapMaster.Instance.IsServerInit()) {
                 //Init server variables
                 _networkMapDuration.Value = duration;
                 _networkWarmUpDuration.Value = warmUpDuration;
@@ -55,14 +53,13 @@ namespace Map {
                 _allPlayers = new Dictionary<ulong, NetworkPlayer>();
                 _teamAPlayers = new List<ulong>();
                 _teamBPlayers = new List<ulong>();
-                serverInit = true;
                 //TODO: Fix warmup
                 _networkMapState.Value = MapState.Match;
             }
         }
 
         protected void Update() {
-            if (IsServer && serverInit) {
+            if (IsServer && MapMaster.Instance.IsServerInit()) {
                 _networkTimeElapsed.Value += Time.deltaTime;
                 if (_networkMapState.Value == MapState.Warmup) {
                     if (_networkTimeElapsed.Value > _networkWarmUpDuration.Value) {
@@ -146,9 +143,8 @@ namespace Map {
         }
 
         protected void Start() {
-            NetworkManager.Singleton.OnServerStarted += () => {
-                //NetworkObjectPool.Instance.InitializePool();
-                ServerInit();
+            MapMaster.Instance.OnServerInitCallback += () => {
+                OnServerInit();
                 ServerAddConnectedClient(NetworkManager.Singleton.LocalClientId);
                 NetworkManager.Singleton.OnClientConnectedCallback += ServerAddConnectedClient;
 

@@ -35,6 +35,12 @@ namespace Player {
 
         public RectTransform healthInfo;
 
+
+        [Space(15)]
+        public TextMeshProUGUI energyTxt;
+
+        public RectTransform energyInfo;
+
         [Space(15)]
         public TextMeshProUGUI statusInfoTxt;
 
@@ -80,6 +86,14 @@ namespace Player {
                 healthTxt.SetText(healthText);
             } else {
                 healthInfo.gameObject.SetActive(false);
+            }
+
+            string energyText = getEnergyTxt();
+            if (energyText != null) {
+                energyInfo.gameObject.SetActive(true);
+                energyTxt.SetText(energyText);
+            } else {
+                energyInfo.gameObject.SetActive(false);
             }
 
             string statusTxt = getStatusTxt();
@@ -197,8 +211,8 @@ namespace Player {
             if (mapInstance != null) {
                 MapState mapState = mapInstance.GetMapState();
                 if (mapState == MapState.Warmup) {
-                    float remaining = mapInstance.WarmupDuration() - mapInstance.TimeElapsed();
-                    TimeSpan timeSpan = TimeSpan.FromSeconds(remaining);
+                    //float remaining = mapInstance.WarmupDuration() - mapInstance.TimeElapsed();
+                    //TimeSpan timeSpan = TimeSpan.FromSeconds(remaining);
                     data.Add("WarmUP!!! Waiting " + getMapText() + "s to start the map");
                 } else if (mapState == MapState.Tie) {
                     data.Add("Map ended with a TIE!");
@@ -221,7 +235,19 @@ namespace Player {
                 NetPlayerController netFirstPersonController = NetworkPlayer.networkPlayerOwner.fpsController;
                 if (netFirstPersonController) {
                     PlayableSoldier playableSoldier = netFirstPersonController.soldier;
-                    return playableSoldier.networkHealth.Value + "";
+                    return Math.Ceiling(playableSoldier.networkHealth.Value) + "";
+                }
+            }
+
+            return null;
+        }
+
+        private string getEnergyTxt() {
+            if (NetworkPlayer.networkPlayerOwner != null) {
+                NetPlayerController netFirstPersonController = NetworkPlayer.networkPlayerOwner.fpsController;
+                if (netFirstPersonController) {
+                    PlayableSoldier playableSoldier = netFirstPersonController.soldier;
+                    return Math.Ceiling(playableSoldier.networkEnergy.Value) + " / 100";
                 }
             }
 

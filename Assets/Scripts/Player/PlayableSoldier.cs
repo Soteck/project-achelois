@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using CharacterController;
+using Config;
 using Core;
 using Enums;
 using Items;
+using Map;
 using Network.Shared;
 using Unity.Netcode;
 using Unity.Netcode.Editor;
@@ -31,6 +33,9 @@ namespace Player {
 
         [SerializeField]
         public NetworkVariable<float> networkHealth = new NetworkVariable<float>();
+
+        [SerializeField]
+        public NetworkVariable<float> networkEnergy = new NetworkVariable<float>();
 
         [SerializeField]
         public NetworkVariable<bool> networkInMenu = new NetworkVariable<bool>();
@@ -94,6 +99,14 @@ namespace Player {
         private void ServerCalculations() {
             if (_timeToDespawnObject > 0 && Time.time > _timeToDespawnObject) {
                 networkObject.Despawn();
+            }
+
+            //TODO: Any idea to make this less ugly?
+            if (networkEnergy.Value <= ConfigHolder.maxEnergy) {
+                networkEnergy.Value += Time.deltaTime * MapMaster.Instance.NetworkEnergyLoadRatio();
+                if (networkEnergy.Value > ConfigHolder.maxEnergy) {
+                    networkEnergy.Value = ConfigHolder.maxEnergy;
+                }
             }
         }
 
@@ -346,7 +359,9 @@ namespace Player {
         [ServerRpc]
         private void AmmoPickupItemServerRpc(ulong playerId) {
             NetPlayerController controller = NetworkUtil.FindNetPlayerControllerByOwnerId(playerId);
-            controller.soldier.networkHealth.Value += 20;
+            foreach (EquipableItemLogic equipableItemLogic in controller.soldier._storedItems) {
+                equipableItemLogic.ServerAmmoPickup();
+            }
         }
 
         // ClientRpc are executed on all client instances

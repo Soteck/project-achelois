@@ -4,7 +4,7 @@ using NetworkPlayer = Network.NetworkPlayer;
 
 
 namespace Map.Maps {
-    public interface IBaseMapController {
+    public interface IBaseMapController{
         public int PlayersInGame();
         public float TimeElapsed();
         

@@ -24,5 +24,7 @@ namespace Items {
         }
 
         public abstract void AttachVisual(EquipableItemVisual visualItem);
+
+        public abstract void ServerAmmoPickup();
     }
 }

@@ -282,5 +282,9 @@ namespace Items {
             _barrelEnd = ((GunVisual) visualItem).barrelEnd;
             _muzzleFlash = ((GunVisual) visualItem).muzzleFlash;
         }
+
+        public override void ServerAmmoPickup() {
+            _networkStoredRemainingRounds.Value += magazineSize;
+        }
     }
 }

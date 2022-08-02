@@ -9,6 +9,7 @@ namespace Config {
         private const float DefaultMouseSensitivity = 15f;
         private const bool DefaultAutoSave = true;
         private const bool ServerDefaultAutoBalance = true;
+        private const int ServerDefaultMaxEnergy = 100;
         private const bool DefaultAutoReload = true;
         private const bool DefaultInvertMouse = true;
 
@@ -32,6 +33,14 @@ namespace Config {
             _cfg.SaveToFile ("config.cfg");
         }
 
+        private void DoResetConfig()
+        {
+            Logger.Info("Reseting all config...");
+            this.SetupCleanCfg();
+            // Save the configuration.
+            _cfg.SaveToFile ("config.cfg");
+        }
+
         private void SetupCleanCfg()
         {
             _cfg["Player"]["Name"].StringValue = DefaultPlayerName;
@@ -40,6 +49,7 @@ namespace Config {
             _cfg["Weapons"]["AutoReload"].BoolValue = DefaultAutoReload;
             _cfg["Configuration"]["AutoSave"].BoolValue = DefaultAutoSave;
             _cfg["Server"]["AutoBalance"].BoolValue = ServerDefaultAutoBalance;
+            _cfg["Server"]["MaxEnergy"].IntValue = ServerDefaultMaxEnergy;
         }
 
         private void ShouldSave() {
@@ -50,6 +60,10 @@ namespace Config {
         
         public static void WriteConfig() {
             Instance.SaveConfig();
+        }
+        
+        public static void ResetConfig() {
+            Instance.DoResetConfig();
         }
 
         public static bool autoSave {
@@ -102,6 +116,15 @@ namespace Config {
 
             set {
                 Instance._cfg["Input"]["InvertMouse"].BoolValue = value;
+                Instance.ShouldSave();
+            }
+        }
+
+        public static int maxEnergy {
+            get => Instance._cfg["Server"]["MaxEnergy"].IntValue;
+
+            set {
+                Instance._cfg["Server"]["MaxEnergy"].IntValue = value;
                 Instance.ShouldSave();
             }
         }

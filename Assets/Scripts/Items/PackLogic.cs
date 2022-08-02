@@ -37,5 +37,9 @@ namespace Items {
         public override void AttachVisual(EquipableItemVisual visualItem) {
             throw new System.NotImplementedException();
         }
+
+        public override void ServerAmmoPickup() {
+            //N/A
+        }
     }
 }

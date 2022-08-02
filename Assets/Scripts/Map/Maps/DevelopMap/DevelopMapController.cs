@@ -46,7 +46,7 @@ namespace Map.Maps.DevelopMap {
 
         new void Start() {
             base.Start();
-            NetworkManager.Singleton.OnServerStarted += ServerInit;
+            MapMaster.Instance.OnServerInitCallback += OnServerInit;
         }
 
         public override int GetWinningTeam() {
@@ -66,7 +66,7 @@ namespace Map.Maps.DevelopMap {
             }
         }
 
-        private void ServerInit() {
+        private void OnServerInit() {
             teamAScore.Value = 0;
             teamBScore.Value = 0;
             teamAObjectiveIdentifiers = new List<string>();

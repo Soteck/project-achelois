@@ -12,6 +12,12 @@ namespace Core.Commands {
                 Logger.Info("Configuration saved");
                 return;
             }
+
+            if (args[0] == "reset") {
+                ConfigHolder.ResetConfig();
+                Logger.Info("Configuration reset!");
+                return;
+            }
             
             if (args.Length < 2) {
                 return;

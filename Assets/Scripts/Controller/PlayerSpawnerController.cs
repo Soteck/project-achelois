@@ -49,6 +49,7 @@ namespace Controller {
             player.ServerNotifyStateChange(PlayerState.PlayingAlive);
             PlayableSoldier po = go.GetComponent<PlayableSoldier>();
             po.networkHealth.Value = 100f;
+            po.networkEnergy.Value = 20f;
             po.networkObjective.Value = Constants.OBJECTIVE_NONE;
             po.networkInMenu.Value = false;
             po.networkTexting.Value = false;

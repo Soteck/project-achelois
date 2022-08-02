@@ -26,10 +26,10 @@ namespace Map {
         private const float SpawnFromFloor = 0.9f;
 
         void Start() {
-            NetworkManager.Singleton.OnServerStarted += ServerInit;
+            MapMaster.Instance.OnServerInitCallback += OnServerInit;
         }
 
-        private void ServerInit() {
+        private void OnServerInit() {
             _spawnId.Value = Guid.NewGuid();
             _spawnPoints = new List<Vector3>();
             Vector3 componentSize = GetComponent<Renderer>().bounds.size;
