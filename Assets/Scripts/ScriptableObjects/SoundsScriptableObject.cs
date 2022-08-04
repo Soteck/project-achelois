@@ -8,5 +8,10 @@ namespace ScriptableObjects {
         public AudioClip clickSound;
         public AudioClip cancelSound;
         
+        public AudioClip hitBodySound;
+        public AudioClip hitHeadSound;
+        public AudioClip hitTeamBodySound;
+        public AudioClip hitTeamHeadSound;
+        
     }
 }

@@ -1,6 +1,7 @@
 using Controller;
 using Network.Shared;
 using Player;
+using ScriptableObjects;
 using UnityEngine;
 using Util;
 
@@ -14,10 +15,9 @@ namespace Items {
         public EquipableItemVisual spawnedVisual { get; set; }
         public PlayableSoldier soldierOwner;
         
-        public AudioClip hitBodySound;
-        public AudioClip hitHeadSound;
-        public AudioClip hitTeamBodySound;
-        public AudioClip hitTeamHeadSound;
+
+        protected SoundsScriptableObject _soundsScriptableObject;
+
 
         protected AudioSource hitBodySource;
         protected AudioSource hitHeadSource;
@@ -26,10 +26,11 @@ namespace Items {
 
         public new void Awake() {
             base.Awake();
-            hitBodySource = AudioUtil.AddAudio(gameObject, false, false, 1f, hitBodySound);
-            hitHeadSource = AudioUtil.AddAudio(gameObject, false, false, 1f, hitHeadSound);
-            hitTeamBodySource = AudioUtil.AddAudio(gameObject, false, false, 1f, hitTeamBodySound);
-            hitTeamHeadSource = AudioUtil.AddAudio(gameObject, false, false, 1f, hitTeamHeadSound);
+            _soundsScriptableObject = ResourceLoaderUtil.Instance.soundsScriptableObject;
+            hitBodySource = AudioUtil.AddAudio(gameObject, false, false, 1f, _soundsScriptableObject.hitBodySound);
+            hitHeadSource = AudioUtil.AddAudio(gameObject, false, false, 1f, _soundsScriptableObject.hitHeadSound);
+            hitTeamBodySource = AudioUtil.AddAudio(gameObject, false, false, 1f, _soundsScriptableObject.hitTeamBodySound);
+            hitTeamHeadSource = AudioUtil.AddAudio(gameObject, false, false, 1f, _soundsScriptableObject.hitTeamHeadSound);
         }
         
         public abstract EquipableItemNetworkData ToNetWorkData();
