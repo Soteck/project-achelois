@@ -1,9 +1,13 @@
 ﻿using System.Collections.Generic;
 using UI;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Menu {
     public class LimboController : BaseMenuController {
+        
+        [SerializeField] private Button acceptButton;
+        [SerializeField] private Button cancelButton;
         
         public CustomSelectableButton medicClass;
         public CustomSelectableButton engineerClass;
@@ -28,10 +32,17 @@ namespace Menu {
             covertClass.OnButtonClickCallback += OnClickCallback;
             fieldClass.OnButtonClickCallback += OnClickCallback;
             
+            acceptButton.onClick.AddListener(async () => {
+                clickSource.Play();
+            });
+
+            cancelButton.onClick.AddListener(async () => {
+                cancelSource.Play();
+            });
         }
 
         private void OnClickCallback(CustomSelectableButton button) {
-            _clickSource.Play();
+            clickSource.Play();
             foreach (CustomSelectableButton customSelectableButton in _all_classes) {
                 customSelectableButton.selected = (button == customSelectableButton);
             }
