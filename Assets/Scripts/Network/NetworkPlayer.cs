@@ -17,12 +17,12 @@ namespace Network {
         public NetworkVariable<Guid> selectedSpawnPoint = new NetworkVariable<Guid>();
 
 
-        private readonly NetworkVariable<Team> _networkTeam = new NetworkVariable<Team>();
+        private readonly NetworkVariable<GameTeam> _networkTeam = new NetworkVariable<GameTeam>();
         private readonly NetworkVariable<PlayerState> _networkState = new NetworkVariable<PlayerState>();
         private readonly NetworkVariable<ulong> _networkFollowing = new NetworkVariable<ulong>();
 
 
-        private Team _activeTeam = Team.Spectator;
+        private GameTeam _activeGameTeam = GameTeam.Spectator;
 
         private ulong currentFollowing;
         public Camera activeCamera;
@@ -148,16 +148,16 @@ namespace Network {
         }
 
 
-        public void RequestJoinTeam(Team teamToJoin) {
-            RequestJoinTeamServerRpc(teamToJoin, NetworkManager.Singleton.LocalClientId);
+        public void RequestJoinTeam(GameTeam gameTeamToJoin, GameRole role) {
+            RequestJoinTeamServerRpc(gameTeamToJoin, NetworkManager.Singleton.LocalClientId);
         }
 
         public void ServerNotifyStateChange(PlayerState state) {
             NetworkStateChangedClientRpc(state);
         }
 
-        public void ServerNotifyTeamChange(Team team) {
-            _networkTeam.Value = team;
+        public void ServerNotifyTeamChange(GameTeam gameTeam) {
+            _networkTeam.Value = gameTeam;
         }
 
         //Client RPC methods
@@ -195,13 +195,13 @@ namespace Network {
 
         //Server RPC methods
         [ServerRpc]
-        private void RequestJoinTeamServerRpc(Team teamToJoin, ulong playerId) {
-            MapMaster.MapInstance().ServerRequestJoinTeam(teamToJoin, playerId);
+        private void RequestJoinTeamServerRpc(GameTeam gameTeamToJoin, ulong playerId) {
+            MapMaster.MapInstance().ServerRequestJoinTeam(gameTeamToJoin, playerId);
         }
 
         [ServerRpc]
         private void RequestStandaloneSpectatorServerRpc() {
-            if (_networkTeam.Value == Team.Spectator) {
+            if (_networkTeam.Value == GameTeam.Spectator) {
                 ServerNotifyStateChange(PlayerState.Spectating);
             }
         }
@@ -223,7 +223,7 @@ namespace Network {
             return _networkState.Value;
         }
 
-        public Team GetNetworkTeam() {
+        public GameTeam GetNetworkTeam() {
             return _networkTeam.Value;
         }
 

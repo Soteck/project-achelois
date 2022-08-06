@@ -15,8 +15,10 @@ namespace Menu {
         }
 
         protected void Start() {
-            clickSource = AudioUtil.AddAudio(gameObject, false, false, 1f, _soundsScriptableObject.clickSound);
-            cancelSource = AudioUtil.AddAudio(gameObject, false, false, 1f, _soundsScriptableObject.cancelSound);
+            clickSource = AudioUtil.AddAudio("menu_effects", "click", false, false, 1f,
+                                             _soundsScriptableObject.clickSound);
+            cancelSource = AudioUtil.AddAudio("menu_effects", "cancel", false, false, 1f,
+                                              _soundsScriptableObject.cancelSound);
         }
     }
 }

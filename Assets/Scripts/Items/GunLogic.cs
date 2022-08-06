@@ -59,9 +59,12 @@ namespace Items {
 
         public new void Awake() {
             base.Awake();
-            _shootSource = AudioUtil.AddAudio(gameObject, false, false, 1f, shootSound);
-            _reloadSource = AudioUtil.AddAudio(gameObject, false, false, 1f, reloadSound);
-            _drySource = AudioUtil.AddAudio(gameObject, false, false, 1f, drySound);
+            _shootSource = AudioUtil.AddAudio("weapons", "shoot",
+                                              false, false, 1f, shootSound);
+            _reloadSource = AudioUtil.AddAudio("weapons", "reload",
+                                               false, false, 1f, reloadSound);
+            _drySource = AudioUtil.AddAudio("weapons", "dry",
+                                            false, false, 1f, drySound);
 
 
             inputActions.Player.Disable();
@@ -174,17 +177,16 @@ namespace Items {
                 _networkClipRemainingRounds.Value--;
 
                 bool raycast = Physics.Raycast(
-                                               barrelPosition, 
-                                               playerCamera.transform.forward, 
-                                               out RaycastHit hit, 
+                                               barrelPosition,
+                                               playerCamera.transform.forward,
+                                               out RaycastHit hit,
                                                range);
-                
+
                 if (raycast) {
-                    
                     //Debug.Log(hit.transform.name);
 
                     HitType hitType = HitType.Other;
-                    
+
                     IDamageableEntity damageableEntity =
                         hit.transform.gameObject.GetComponentInParent<IDamageableEntity>();
 

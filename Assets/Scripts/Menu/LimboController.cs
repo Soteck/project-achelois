@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using Enums;
 using UI;
 using UnityEngine;
 using UnityEngine.UI;
+using NetworkPlayer = Network.NetworkPlayer;
 
 namespace Menu {
     public class LimboController : BaseMenuController {
@@ -14,8 +16,10 @@ namespace Menu {
         public CustomSelectableButton soldierClass;
         public CustomSelectableButton covertClass;
         public CustomSelectableButton fieldClass;
+        public MainUIMenuController uiController; 
 
         private List<CustomSelectableButton> _all_classes = new List<CustomSelectableButton>();
+        
         
         protected new void Start() {
             base.Start();
@@ -34,11 +38,22 @@ namespace Menu {
             
             acceptButton.onClick.AddListener(async () => {
                 clickSource.Play();
+                NetworkPlayer.networkPlayerOwner.RequestJoinTeam(GetSelectedGameTeam(), GetSelectedGameRole());
+                uiController.HideAllElements();
             });
 
             cancelButton.onClick.AddListener(async () => {
                 cancelSource.Play();
+                uiController.HideAllElements();
             });
+        }
+
+        private GameTeam GetSelectedGameTeam() {
+            return GameTeam.Spectator;
+        }
+
+        private GameRole GetSelectedGameRole() {
+            return GameRole.Covert;
         }
 
         private void OnClickCallback(CustomSelectableButton button) {

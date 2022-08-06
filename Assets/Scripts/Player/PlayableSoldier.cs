@@ -309,7 +309,7 @@ namespace Player {
             return !IsDead();
         }
 
-        public Team ServerGetTeam() {
+        public GameTeam ServerGetTeam() {
             return networkPlayer.GetNetworkTeam();
         }
 

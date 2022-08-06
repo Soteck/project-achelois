@@ -4,17 +4,16 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Logger = Core.Logger;
-using NetworkPlayer = Network.NetworkPlayer;
 
-namespace Controller {
-    public class OverlayController : MonoBehaviour {
+namespace Menu {
+    public class MainUIMenuController : MonoBehaviour {
         public float consoleDeployTime = 0.1f;
         public float consoleHeight = 120;
         public RectTransform console;
         public TMP_InputField consoleInput;
     
         public RectTransform menu;
-        public RectTransform limbo;
+        public LimboController limbo;
         public RectTransform hud;
         public RectTransform playerStats;
 
@@ -25,12 +24,6 @@ namespace Controller {
         [SerializeField] private Button startClientButton;
 
         [SerializeField] private Button quitGameButton;
-    
-        [SerializeField] private Button joinTeamAButton;
-    
-        [SerializeField] private Button joinTeamBButton;
-    
-        [SerializeField] private Button joinSpectatorButton;
 
 
         private PlayerInputActions _inputActions;
@@ -75,29 +68,14 @@ namespace Controller {
                 ConsoleCommandController.ExecuteCommand("connect localhost");
                 HideAllElements();
             });
-        
-            joinTeamAButton.onClick.AddListener(() => {
-                NetworkPlayer.networkPlayerOwner.RequestJoinTeam(Team.TeamA);
-                HideAllElements();
-            });
-        
-            joinTeamBButton.onClick.AddListener(() => {
-                NetworkPlayer.networkPlayerOwner.RequestJoinTeam(Team.TeamB);
-                HideAllElements();
-            });        
-        
-            joinSpectatorButton.onClick.AddListener(() => {
-                NetworkPlayer.networkPlayerOwner.RequestJoinTeam(Team.Spectator);
-                HideAllElements();
-            });
-        
+
             quitGameButton.onClick.AddListener(() => {
                 ConsoleCommandController.ExecuteCommand("quit");
                 HideAllElements();
             });
         }
 
-        private void HideAllElements() {
+        public void HideAllElements() {
             HideMenu();
             UndeployConsole();
             HideLimbo();

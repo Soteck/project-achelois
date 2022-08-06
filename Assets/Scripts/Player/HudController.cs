@@ -148,13 +148,13 @@ namespace Player {
 
         private string GetTeamTxt() {
             if (NetworkPlayer.networkPlayerOwner != null) {
-                Team team = NetworkPlayer.networkPlayerOwner.GetNetworkTeam();
-                switch (team) {
-                    case Team.Spectator:
+                GameTeam gameTeam = NetworkPlayer.networkPlayerOwner.GetNetworkTeam();
+                switch (gameTeam) {
+                    case GameTeam.Spectator:
                         return "Spectator";
-                    case Team.TeamA:
+                    case GameTeam.TeamA:
                         return "Team A";
-                    case Team.TeamB:
+                    case GameTeam.TeamB:
                         return "Team B";
                 }
             }
@@ -183,7 +183,7 @@ namespace Player {
             List<string> data = new List<string>();
             if (NetworkPlayer.networkPlayerOwner != null) {
                 NetworkPlayer networkPlayer = NetworkPlayer.networkPlayerOwner;
-                if (networkPlayer.GetNetworkTeam() == Team.Spectator) {
+                if (networkPlayer.GetNetworkTeam() == GameTeam.Spectator) {
                     data.Add("You're an spectator, press [L] to select a team to Join.");
                 }
 

@@ -5,7 +5,7 @@ using Unity.Netcode;
 using UnityEngine;
 
 namespace Map {
-    public class MapMaster : NetworkSingleton<MapMaster> {
+    public class MapMaster : Singleton<MapMaster> {
         [SerializeField]
         private bool serverInit = false;
 

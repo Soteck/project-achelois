@@ -175,22 +175,22 @@ namespace Map {
             playerObject.ServerNotifyStateChange(PlayerState.MapCamera);
         }
 
-        private void DoServerRequestJoinTeam(Team team, ulong playerId) {
+        private void DoServerRequestJoinTeam(GameTeam gameTeam, ulong playerId) {
             NetworkPlayer player = this._allPlayers[playerId];
-            Team from = Team.Spectator;
+            GameTeam from = GameTeam.Spectator;
             bool canJoin = false;
             //Check if the change can be done
             if (player != null) {
                 from = player.GetNetworkTeam();
-                if (team != from) {
-                    if (team == Team.Spectator || !ConfigHolder.autoBalance) {
+                if (gameTeam != from) {
+                    if (gameTeam == GameTeam.Spectator || !ConfigHolder.autoBalance) {
                         canJoin = true;
                     }
                     else {
-                        if (team == Team.TeamA) {
+                        if (gameTeam == GameTeam.TeamA) {
                             canJoin = _teamAPlayers.Count <= _teamBPlayers.Count;
                         }
-                        else if (team == Team.TeamB) {
+                        else if (gameTeam == GameTeam.TeamB) {
                             canJoin = _teamBPlayers.Count <= _teamAPlayers.Count;
                         }
                     }
@@ -202,28 +202,28 @@ namespace Map {
 
             if (canJoin) {
                 //Remove information from de previous team
-                if (from == Team.TeamA) {
+                if (from == GameTeam.TeamA) {
                     _teamAPlayers.Remove(playerId);
                 }
-                else if (from == Team.TeamB) {
+                else if (from == GameTeam.TeamB) {
                     _teamBPlayers.Remove(playerId);
                 }
 
                 //Add player to the new team
-                if (team == Team.TeamA) {
+                if (gameTeam == GameTeam.TeamA) {
                     _teamAPlayers.Add(playerId);
-                    player.ServerNotifyTeamChange(Team.TeamA); 
+                    player.ServerNotifyTeamChange(GameTeam.TeamA); 
                     player.ServerNotifyStateChange(PlayerState.PlayingDead);
                     player.selectedSpawnPoint.Value = SpawnArea.GetDefaultTeamASpawnArea();
                 }
-                else if (team == Team.TeamB) {
+                else if (gameTeam == GameTeam.TeamB) {
                     _teamBPlayers.Add(playerId);
-                    player.ServerNotifyTeamChange(Team.TeamB); 
+                    player.ServerNotifyTeamChange(GameTeam.TeamB); 
                     player.ServerNotifyStateChange(PlayerState.PlayingDead);
                     player.selectedSpawnPoint.Value = SpawnArea.GetDefaultTeamBSpawnArea();
                 }
                 else {
-                    player.ServerNotifyTeamChange(Team.Spectator); 
+                    player.ServerNotifyTeamChange(GameTeam.Spectator); 
                     player.ServerNotifyStateChange(PlayerState.MapCamera);
                 }
 
@@ -251,8 +251,8 @@ namespace Map {
             return _networkWarmUpDuration.Value;
         }
 
-        public void ServerRequestJoinTeam(Team team, ulong playerId) {
-            DoServerRequestJoinTeam(team, playerId);
+        public void ServerRequestJoinTeam(GameTeam gameTeam, ulong playerId) {
+            DoServerRequestJoinTeam(gameTeam, playerId);
         }
 
         public NetworkPlayer GetPlayer(ulong playerId) {

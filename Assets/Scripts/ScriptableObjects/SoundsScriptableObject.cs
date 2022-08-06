@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Util;
 
 namespace ScriptableObjects {
     
@@ -12,6 +13,6 @@ namespace ScriptableObjects {
         public AudioClip hitHeadSound;
         public AudioClip hitTeamBodySound;
         public AudioClip hitTeamHeadSound;
-        
+
     }
 }

@@ -10,7 +10,7 @@ namespace Map {
     [RequireComponent(typeof(NetworkObject))]
     public class SpawnArea : NetworkBehaviour {
         //Public vars
-        public Team team;
+        public GameTeam gameTeam;
         public string spawnName;
 
         //Network-shared vars
@@ -58,7 +58,7 @@ namespace Map {
 
         public static Guid GetDefaultTeamASpawnArea() {
             foreach (SpawnArea spawnArea in all_spawn_areas) {
-                if (spawnArea.team == Team.TeamA) {
+                if (spawnArea.gameTeam == GameTeam.TeamA) {
                     return spawnArea._spawnId.Value;
                 }
             }
@@ -68,7 +68,7 @@ namespace Map {
 
         public static Guid GetDefaultTeamBSpawnArea() {
             foreach (SpawnArea spawnArea in all_spawn_areas) {
-                if (spawnArea.team == Team.TeamB) {
+                if (spawnArea.gameTeam == GameTeam.TeamB) {
                     return spawnArea._spawnId.Value;
                 }
             }

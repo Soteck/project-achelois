@@ -113,21 +113,21 @@ namespace Map.Maps.DevelopMap {
             if (ps.HasObjective()) {
                 return;
             }
-            if (player.GetNetworkTeam() == Team.TeamA) {
+            if (player.GetNetworkTeam() == GameTeam.TeamA) {
                 if (!teamBObjectiveIdentifiers.Contains(objectiveCodeValue)) {
                     return;
                 }
-            }else if (player.GetNetworkTeam() == Team.TeamB) {
+            }else if (player.GetNetworkTeam() == GameTeam.TeamB) {
                 if (!teamAObjectiveIdentifiers.Contains(objectiveCodeValue)) {
                     return;
                 }
             }
             
             //Do the actual Pick Up
-            if (player.GetNetworkTeam() == Team.TeamA) {
+            if (player.GetNetworkTeam() == GameTeam.TeamA) {
                 teamBObjectiveIdentifiers.Remove(objectiveCodeValue);
                 teamBObjectiveTaken.Add(objectiveCodeValue);
-            }else if (player.GetNetworkTeam() == Team.TeamB) {
+            }else if (player.GetNetworkTeam() == GameTeam.TeamB) {
                 teamAObjectiveIdentifiers.Remove(objectiveCodeValue);
                 teamAObjectiveTaken.Add(objectiveCodeValue);
             }
@@ -142,14 +142,14 @@ namespace Map.Maps.DevelopMap {
             Network.NetworkPlayer player = Network.NetworkPlayer.NetworkPlayerByControllerId(playerInstance.OwnerClientId);
             ObjectiveDropZone dropZone = dropZoneInstance.GetComponent<ObjectiveDropZone>();
 
-            if (flagADropZone.drop_zone_id.Equals(dropZone.drop_zone_id) && player.GetNetworkTeam() == Team.TeamA) {
+            if (flagADropZone.drop_zone_id.Equals(dropZone.drop_zone_id) && player.GetNetworkTeam() == GameTeam.TeamA) {
                 string objectiveId = ps.networkObjective.Value;
                 teamBObjectiveTaken.Remove(objectiveId);
                 teamAObjectivesDelivered.Add(objectiveId);
                 teamAScore.Value++;
                 ps.networkObjective.Value = Constants.OBJECTIVE_NONE;
                 SpawnTeamBFlag();
-            }else if (flagBDropZone.drop_zone_id.Equals(dropZone.drop_zone_id) && player.GetNetworkTeam() == Team.TeamB) {
+            }else if (flagBDropZone.drop_zone_id.Equals(dropZone.drop_zone_id) && player.GetNetworkTeam() == GameTeam.TeamB) {
                 string objectiveId = ps.networkObjective.Value;
                 teamAObjectiveTaken.Remove(objectiveId);
                 teamBObjectivesDelivered.Add(objectiveId);

@@ -14,7 +14,7 @@ namespace Items {
         public bool busy = false;
         public EquipableItemVisual spawnedVisual { get; set; }
         public PlayableSoldier soldierOwner;
-        
+
 
         protected SoundsScriptableObject _soundsScriptableObject;
 
@@ -27,12 +27,16 @@ namespace Items {
         public new void Awake() {
             base.Awake();
             _soundsScriptableObject = ResourceLoaderUtil.Instance.soundsScriptableObject;
-            hitBodySource = AudioUtil.AddAudio(gameObject, false, false, 1f, _soundsScriptableObject.hitBodySound);
-            hitHeadSource = AudioUtil.AddAudio(gameObject, false, false, 1f, _soundsScriptableObject.hitHeadSound);
-            hitTeamBodySource = AudioUtil.AddAudio(gameObject, false, false, 1f, _soundsScriptableObject.hitTeamBodySound);
-            hitTeamHeadSource = AudioUtil.AddAudio(gameObject, false, false, 1f, _soundsScriptableObject.hitTeamHeadSound);
+            hitBodySource = AudioUtil.AddAudio("hit-sounds", "hit-body",
+                                               false, false, 1f, _soundsScriptableObject.hitBodySound);
+            hitHeadSource = AudioUtil.AddAudio("hit-sounds", "hit-head",
+                                               false, false, 1f, _soundsScriptableObject.hitHeadSound);
+            hitTeamBodySource = AudioUtil.AddAudio("hit-sounds", "team-body",
+                                                   false, false, 1f, _soundsScriptableObject.hitTeamBodySound);
+            hitTeamHeadSource = AudioUtil.AddAudio("hit-sounds", "team-head", 
+                                                   false, false, 1f, _soundsScriptableObject.hitTeamHeadSound);
         }
-        
+
         public abstract EquipableItemNetworkData ToNetWorkData();
         protected abstract void InternalCallInitMetaData(NetworkString meta);
 

@@ -1,5 +1,5 @@
 ﻿namespace Enums {
-    public enum Team {
+    public enum GameTeam {
         Spectator, TeamA, TeamB
     }
 }
