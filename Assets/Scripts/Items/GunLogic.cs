@@ -10,6 +10,7 @@ using World;
 
 namespace Items {
     public class GunLogic : EquipableItemLogic {
+        public string itemID;
         public float damage = 10f;
         public float range = 100f;
 
@@ -59,11 +60,11 @@ namespace Items {
 
         public new void Awake() {
             base.Awake();
-            _shootSource = AudioUtil.AddAudio("weapons", "shoot",
+            _shootSource = AudioUtil.AddAudio("weapons", itemID + "shoot",
                                               false, false, 1f, shootSound);
-            _reloadSource = AudioUtil.AddAudio("weapons", "reload",
+            _reloadSource = AudioUtil.AddAudio("weapons", itemID + "reload",
                                                false, false, 1f, reloadSound);
-            _drySource = AudioUtil.AddAudio("weapons", "dry",
+            _drySource = AudioUtil.AddAudio("weapons", itemID + "dry",
                                             false, false, 1f, drySound);
 
 

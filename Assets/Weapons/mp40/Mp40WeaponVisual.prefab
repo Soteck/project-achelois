@@ -172,6 +172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9bb7a4325214efeb0b8a5537d9371ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemID: mp40
   barrelEnd: {fileID: 3651827240750954317}
   muzzleFlash: {fileID: 5196827435082068567}
 --- !u!1 &3651827240750954317

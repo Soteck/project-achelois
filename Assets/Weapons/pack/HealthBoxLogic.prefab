@@ -63,7 +63,7 @@ MonoBehaviour:
   controller: {fileID: 0}
   visual: {fileID: 0}
   playerCamera: {fileID: 0}
-  item_id: 
+  item_id: health_box
   animator: {fileID: 0}
   busy: 0
   soldierOwner: {fileID: 0}

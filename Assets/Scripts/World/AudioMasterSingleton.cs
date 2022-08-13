@@ -13,7 +13,8 @@ namespace World {
                 _registeredAudioSources[category] = new Dictionary<string, AudioSource>();
             }
             if (_registeredAudioSources[category].ContainsKey(id)) {
-                throw new Exception("Cannot register AudioSource with ID " + id + " it already exists.");
+                // throw new Exception("Cannot register AudioSource with ID " + id + " it already exists.");
+                return _registeredAudioSources[category][id];
             }
 
             AudioSource audioSource = gameObject.AddComponent<AudioSource>();
