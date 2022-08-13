@@ -18,6 +18,7 @@ namespace Network {
 
 
         private readonly NetworkVariable<GameTeam> _networkTeam = new NetworkVariable<GameTeam>();
+        private readonly NetworkVariable<GameRole> _networkClassRole = new NetworkVariable<GameRole>();
         private readonly NetworkVariable<PlayerState> _networkState = new NetworkVariable<PlayerState>();
         private readonly NetworkVariable<ulong> _networkFollowing = new NetworkVariable<ulong>();
 
@@ -149,7 +150,7 @@ namespace Network {
 
 
         public void RequestJoinTeam(GameTeam gameTeamToJoin, GameRole role) {
-            RequestJoinTeamServerRpc(gameTeamToJoin, NetworkManager.Singleton.LocalClientId);
+            RequestJoinTeamServerRpc(gameTeamToJoin, role, NetworkManager.Singleton.LocalClientId);
         }
 
         public void ServerNotifyStateChange(PlayerState state) {
@@ -158,6 +159,10 @@ namespace Network {
 
         public void ServerNotifyTeamChange(GameTeam gameTeam) {
             _networkTeam.Value = gameTeam;
+        }
+
+        public void ServerNotifyRoleChange(GameRole gameRole) {
+            _networkClassRole.Value = gameRole;
         }
 
         //Client RPC methods
@@ -195,8 +200,8 @@ namespace Network {
 
         //Server RPC methods
         [ServerRpc]
-        private void RequestJoinTeamServerRpc(GameTeam gameTeamToJoin, ulong playerId) {
-            MapMaster.MapInstance().ServerRequestJoinTeam(gameTeamToJoin, playerId);
+        private void RequestJoinTeamServerRpc(GameTeam gameTeamToJoin, GameRole gameRole, ulong playerId) {
+            MapMaster.MapInstance().ServerRequestJoinTeam(gameTeamToJoin, gameRole, playerId);
         }
 
         [ServerRpc]
@@ -225,6 +230,10 @@ namespace Network {
 
         public GameTeam GetNetworkTeam() {
             return _networkTeam.Value;
+        }
+        
+        public GameRole GetNetworkClassRole() {
+            return _networkClassRole.Value;
         }
 
         public ulong GetNetworkFollowing() {

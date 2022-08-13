@@ -35,9 +35,9 @@ namespace Controller {
         }
 
 
-        private void DoServerSpawnControllablePlayer(ulong playerId, NetworkPlayer player, int number) {
+        private void DoServerSpawnControllablePlayer(ulong playerId, NetworkPlayer player, int spawnPosition) {
             //GameObject go = NetworkObjectPool.Instance.GetNetworkObject(controlablePlayerPrefab).gameObject;
-            Vector3 position = SpawnArea.GetSpawnPosition(player.selectedSpawnPoint.Value, number);
+            Vector3 position = SpawnArea.GetSpawnPosition(player.selectedSpawnPoint.Value, spawnPosition);
             GameObject go = Instantiate(controllablePlayerPrefab, position, Quaternion.identity);
             //go.transform.position = new Vector3(Random.Range(-10, 10), 10.0f, Random.Range(-10, 10));
             //go.transform.position = go.transform.TransformDirection(position);
@@ -48,11 +48,7 @@ namespace Controller {
             //no.ChangeOwnership(playerId);
             player.ServerNotifyStateChange(PlayerState.PlayingAlive);
             PlayableSoldier po = go.GetComponent<PlayableSoldier>();
-            po.networkHealth.Value = 100f;
-            po.networkEnergy.Value = 20f;
-            po.networkObjective.Value = Constants.OBJECTIVE_NONE;
-            po.networkInMenu.Value = false;
-            po.networkTexting.Value = false;
+            po.InitClassRole();
             // DisableAllCameras(player.activeCamera);
         }
         

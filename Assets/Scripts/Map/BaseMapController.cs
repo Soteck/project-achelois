@@ -175,7 +175,7 @@ namespace Map {
             playerObject.ServerNotifyStateChange(PlayerState.MapCamera);
         }
 
-        private void DoServerRequestJoinTeam(GameTeam gameTeam, ulong playerId) {
+        private void DoServerRequestJoinTeam(GameTeam gameTeam, GameRole gameRole, ulong playerId) {
             NetworkPlayer player = this._allPlayers[playerId];
             GameTeam from = GameTeam.Spectator;
             bool canJoin = false;
@@ -193,6 +193,10 @@ namespace Map {
                         else if (gameTeam == GameTeam.TeamB) {
                             canJoin = _teamBPlayers.Count <= _teamAPlayers.Count;
                         }
+                    }
+                } else {
+                    if (player.GetNetworkClassRole() != gameRole) {
+                        player.ServerNotifyRoleChange(gameRole);
                     }
                 }
             }
@@ -213,12 +217,14 @@ namespace Map {
                 if (gameTeam == GameTeam.TeamA) {
                     _teamAPlayers.Add(playerId);
                     player.ServerNotifyTeamChange(GameTeam.TeamA); 
+                    player.ServerNotifyRoleChange(gameRole); 
                     player.ServerNotifyStateChange(PlayerState.PlayingDead);
                     player.selectedSpawnPoint.Value = SpawnArea.GetDefaultTeamASpawnArea();
                 }
                 else if (gameTeam == GameTeam.TeamB) {
                     _teamBPlayers.Add(playerId);
-                    player.ServerNotifyTeamChange(GameTeam.TeamB); 
+                    player.ServerNotifyTeamChange(GameTeam.TeamB);  
+                    player.ServerNotifyRoleChange(gameRole);
                     player.ServerNotifyStateChange(PlayerState.PlayingDead);
                     player.selectedSpawnPoint.Value = SpawnArea.GetDefaultTeamBSpawnArea();
                 }
@@ -251,8 +257,8 @@ namespace Map {
             return _networkWarmUpDuration.Value;
         }
 
-        public void ServerRequestJoinTeam(GameTeam gameTeam, ulong playerId) {
-            DoServerRequestJoinTeam(gameTeam, playerId);
+        public void ServerRequestJoinTeam(GameTeam gameTeam, GameRole gameRole, ulong playerId) {
+            DoServerRequestJoinTeam(gameTeam, gameRole, playerId);
         }
 
         public NetworkPlayer GetPlayer(ulong playerId) {

@@ -148,15 +148,26 @@ namespace Player {
 
         private string GetTeamTxt() {
             if (NetworkPlayer.networkPlayerOwner != null) {
-                GameTeam gameTeam = NetworkPlayer.networkPlayerOwner.GetNetworkTeam();
+                NetworkPlayer owner = NetworkPlayer.networkPlayerOwner;
+                GameTeam gameTeam = owner.GetNetworkTeam();
+                GameRole gameRole = owner.GetNetworkClassRole();
+                string ret;
                 switch (gameTeam) {
                     case GameTeam.Spectator:
-                        return "Spectator";
+                        ret = "Spectator";
+                        break;
                     case GameTeam.TeamA:
-                        return "Team A";
+                        ret = "Team A";
+                        break;
                     case GameTeam.TeamB:
-                        return "Team B";
+                        ret = "Team B";
+                        break;
+                    default:
+                        ret = "N/A";
+                        break;
                 }
+
+                return ret + ": " + gameRole;
             }
 
             return null;

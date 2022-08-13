@@ -12,7 +12,7 @@ namespace Map.Maps {
         
         public float WarmupDuration();
 
-        public void ServerRequestJoinTeam(GameTeam gameTeam, ulong playerId);
+        public void ServerRequestJoinTeam(GameTeam gameTeam, GameRole gameRole, ulong playerId);
 
         public NetworkPlayer GetPlayer(ulong playerId);
 

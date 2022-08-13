@@ -229,6 +229,14 @@ namespace Player {
         }
 
 
+        public void InitClassRole() {
+            networkHealth.Value = 100f;
+            networkEnergy.Value = 20f;
+            networkObjective.Value = Constants.OBJECTIVE_NONE;
+            networkInMenu.Value = false;
+            networkTexting.Value = false;
+        }
+
         public void PickUp(EquipableItemNetworkData netItem) {
             if (IsOwner) {
                 PickupItemServerRpc(netItem, NetworkManager.Singleton.LocalClientId);
