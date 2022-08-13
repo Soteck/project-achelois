@@ -17,8 +17,8 @@ namespace CharacterController {
         public Animator animator;
         public NetworkAnimator netAnimator;
 
-        public float speed = 12f;
-        public float sprintMultiplier = 1.5f;
+        public float speed = 2f;
+        public float sprintMultiplier = 2f;
         public float gravity = -9.81f;
         public float jumpHeight = 3f;
 
