@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Enums;
+using TMPro;
 using UI;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,16 +12,19 @@ namespace Menu {
         [SerializeField] private Button acceptButton;
         [SerializeField] private Button cancelButton;
         
-        public CustomSelectableButton medicClass;
-        public CustomSelectableButton engineerClass;
-        public CustomSelectableButton soldierClass;
-        public CustomSelectableButton covertClass;
-        public CustomSelectableButton fieldClass;
-        public MainUIMenuController uiController; 
+        public GameRoleCSB medicClass;
+        public GameRoleCSB engineerClass;
+        public GameRoleCSB soldierClass;
+        public GameRoleCSB covertClass;
+        public GameRoleCSB fieldClass;
+        public MainUIMenuController uiController;
 
-        private List<CustomSelectableButton> _all_classes = new List<CustomSelectableButton>();
-        
-        
+        public TMP_Dropdown teamDropDown;
+
+        private List<GameRoleCSB> _all_classes = new List<GameRoleCSB>();
+        private GameRole _selectedRole;
+
+
         protected new void Start() {
             base.Start();
             
@@ -49,11 +53,21 @@ namespace Menu {
         }
 
         private GameTeam GetSelectedGameTeam() {
+            int value = teamDropDown.value;
+            
+            if (value == 1) {
+                return GameTeam.TeamA;
+            }
+            
+            if (value == 2) {
+                return GameTeam.TeamB;
+            }
+            
             return GameTeam.Spectator;
         }
 
         private GameRole GetSelectedGameRole() {
-            return GameRole.Covert;
+            return _selectedRole;
         }
 
         private void OnClickCallback(CustomSelectableButton button) {
@@ -61,6 +75,8 @@ namespace Menu {
             foreach (CustomSelectableButton customSelectableButton in _all_classes) {
                 customSelectableButton.selected = (button == customSelectableButton);
             }
+            //TODO: Ugly AF?
+            this._selectedRole = ((GameRoleCSB) button).gameRole;
         }
 
     }

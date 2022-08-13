@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace UI {
-    public class CustomSelectableButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
+    public class CustomSelectableButton: MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         IPointerClickHandler {
         public RectTransform backgrondNormal;
         public RectTransform backgrondHover;
