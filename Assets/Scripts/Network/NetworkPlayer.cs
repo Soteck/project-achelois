@@ -14,7 +14,7 @@ namespace Network {
     public class NetworkPlayer : NetworkBehaviour {
         public NetworkVariable<PlayerNetworkData> networkData = new NetworkVariable<PlayerNetworkData>();
         public NetworkVariable<bool> initialized = new NetworkVariable<bool>();
-        public NetworkVariable<Guid> selectedSpawnPoint = new NetworkVariable<Guid>();
+        public NetworkVariable<NetworkGuid> selectedSpawnPoint = new NetworkVariable<NetworkGuid>();
 
 
         private readonly NetworkVariable<GameTeam> _networkTeam = new NetworkVariable<GameTeam>();

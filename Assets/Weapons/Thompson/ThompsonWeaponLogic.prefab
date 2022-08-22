@@ -67,10 +67,7 @@ MonoBehaviour:
   animator: {fileID: 0}
   busy: 0
   soldierOwner: {fileID: 0}
-  hitBodySound: {fileID: 8300000, guid: b94bfd710a240c84ca32aab814f691cb, type: 3}
-  hitHeadSound: {fileID: 8300000, guid: 4a168b215ab248c429c9770b78398470, type: 3}
-  hitTeamBodySound: {fileID: 8300000, guid: e01bccd4e4adc0b43a5c273f20c7817d, type: 3}
-  hitTeamHeadSound: {fileID: 8300000, guid: e01bccd4e4adc0b43a5c273f20c7817d, type: 3}
+  itemID: thompson
   damage: 10
   range: 100
   fireRate: 600

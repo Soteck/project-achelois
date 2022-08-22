@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9bb7a4325214efeb0b8a5537d9371ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemID: thompson
   barrelEnd: {fileID: 5435744899510596785}
   muzzleFlash: {fileID: 333127417925353546}
 --- !u!1 &5333102857356467901

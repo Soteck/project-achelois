@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Enums;
+using Network.Shared;
 using Player;
 using Unity.Netcode;
 using UnityEngine;
@@ -14,7 +15,7 @@ namespace Map {
         public string spawnName;
 
         //Network-shared vars
-        private readonly NetworkVariable<Guid> _spawnId = new NetworkVariable<Guid>();
+        private readonly NetworkVariable<NetworkGuid> _spawnId = new NetworkVariable<NetworkGuid>();
 
         //Private vars
         private static List<SpawnArea> all_spawn_areas = new List<SpawnArea>();

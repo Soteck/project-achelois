@@ -235,6 +235,11 @@ namespace Player {
             networkObjective.Value = Constants.OBJECTIVE_NONE;
             networkInMenu.Value = false;
             networkTexting.Value = false;
+            EquipableItemNetworkData mp40NWD = new EquipableItemNetworkData();
+            mp40NWD.itemMeta = "32,32";
+            mp40NWD.itemID = "mp40";
+            PickUp(mp40NWD);
+            // TODO: Implement class startup here, start picking up weapon
         }
 
         public void PickUp(EquipableItemNetworkData netItem) {
